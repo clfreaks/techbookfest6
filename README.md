@@ -27,9 +27,12 @@ Common Lispの言語について説明している本はけっこうあるが、
   - qlot
     - qlotのインストール
 
-- プロジェクト例: Webスクレイピングとか ( @masatoi ?)
+- プロジェクト例1: Webスクレイピングとか ( @masatoi ?)
   - プロジェクト生成 -> asdファイルを書く
   - 機械学習でドキュメント分類とか・・・
+
+- プロジェクト例2: チャットボット ( @carrotflakes ?)
+  - CFFIなど
 
 - テスト ( @taniryo ?)
 
@@ -39,3 +42,8 @@ Common Lispの言語について説明している本はけっこうあるが、
 
 - デプロイ ( @gos-k? )
   - docker、heroku、 AWS
+
+## 執筆の流れについて
+
+章ごとにディレクトリを切ったので、その中にMarkdownかorg-modeで書いていってください。
+後で @masatoi がAsciidocに変換して調整します。
