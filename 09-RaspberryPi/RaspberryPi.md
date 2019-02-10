@@ -30,7 +30,7 @@ sudo apt install autoconf automake libcurl4-openssl-dev
 GitHubからRoswellのソースコードをダウンロードします。
 
 ```
-git clone git@github.com:roswell/roswell.git
+git clone -b release https://github.com/roswell/roswell.git
 ```
 
 ダウンロードしたRoswellのディレクトリへ移動します。
@@ -54,9 +54,9 @@ Roswellのバージョンを確認
 ros --version
 ```
 
-執筆時での最新バージョンは`19.1.10.96(b4b4gac)`でした。
+執筆時での最新バージョンは`19.1.10.96`でした。
 
-## Roswellの設定
+インストールが終わったら以下のコマンドで初期設定を行います。
 
 ```
 ros setup
@@ -64,23 +64,68 @@ ros setup
 
 ## Common Lispをインストール
 
-SBCL(Steel Bank Common Lisp)をインストール
+今回はCommon Lisp処理系の1つである`CCL (Clozure Common Lisp)`を使います。
 
 ```
-ros install sbcl-bin
+ros install ccl-bin
 ```
 
-## 動作確認
-
-REPLを起動してCommon Lispがちゃんと使えるか確認します。
+以下のコマンドでバージョンを確認します。
 
 ```
-ros run
+ros run -- --version
+```
+
+執筆時のバージョンは`Version 1.11/v1.11.5 (LinuxARM32)`でした。
+
+## Lemのインストール
+
+Common Lispで作成されたエディタである`Lem`をインストールします。__
+`ncurses`が必要なので、最初にインストールしておきます。
+
+
+```
+sudo apt install libncurses5-dev libncursesw5-dev
+```
+
+
+```
+ros install cxxxr/lem
+```
+
+環境変数を登録し、bash設定を再読み込みします。
+
+```
+echo export PATH=$PATH:~/.roswell/bin >> ~/.bashrc
+source ~/.bashrc
+```
+
+以下のコマンドでバージョンを確認します。
+
+```
+lem --version
+```
+
+執筆時のバージョンは`lem 1.5 (ARM-raspberrypi)`でした。  
+
+起動する時は、以下のコマンドを実行します。
+
+```
+lem --frontend ncurses-ccl
+```
+
+毎回これを打つのは面倒なので、エイリアスを設定し`lem`だけで起動できるようにします。
+bash設定の再読み込みも忘れずに。
+
+```
+echo alias lem=\'lem --frontend ncurses-ccl\'  >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## GPIO制御ライブラリについて
 
 GPIO制御ライブラリとして`Wiring Pi`を使用します。  
+`Raspbian Stretch`には最初からインストールされています。  
 
 公式サイト：[http://wiringpi.com/](http://wiringpi.com/)  
 
