@@ -52,7 +52,7 @@ SLIMEを用いると、SWANKサーバと通信しながら、対話的にアプ�
 
 ### 起動
 
-まず、バッファをlisp-modeにしよう。Lemでは、バッファーをlisp-modeにすると、SWANKサーバが起動する。SWANKサーバが起動すると、下のミニバッファに`Swank server running on sbcl 1.4.14`と表示される。
+まず、バッファをlisp-modeにしよう。Lemでは、バッファをlisp-modeにすると、SWANKサーバが起動する。SWANKサーバが起動すると、下のミニバッファに`Swank server running on sbcl 1.4.14`と表示される。
 
 ```
 M-x lisp-mode
@@ -348,8 +348,8 @@ M-w: マーク部分からカーソル位置までをコピー
 C-x h：全範囲選択
 
 # バッファの移動
-C-x o: 次のバッファーに移動
-C-x C-b: バッファ一覧を表示
+C-x o: 次のバッファに移動
+C-x C-b: バッファ覧を表示
 
 # ウィンドウ分割
 C-x 2：2行に分割　　C-x 3: 2列に分割
