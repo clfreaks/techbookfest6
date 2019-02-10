@@ -2,7 +2,7 @@
 
 Lemは、Common Lispで実装されたテキストエディタである。Common Lisp開発でよく用いられる機能がデフォルトで組み込まれており、複雑な設定なしにCommon Lispの開発を始めることができる。
 
-本章では、Lemのインストール方法、初期設定ファイルの書き方、SLIMEの使い方、vi-mode等を取り上げながら、Lemを用いたCommon Lispの開発について紹介する。
+本章では、Lemのインストール方法、SLIMEの使い方、vi-mode等を取り上げながら、Lemを用いたCommon Lispの開発について紹介する。
 
 ## インストール
 
