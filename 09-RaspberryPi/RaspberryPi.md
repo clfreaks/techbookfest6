@@ -124,15 +124,15 @@ source ~/.bashrc
 
 起動したときの初期画面は以下のようになります。  
 
-![lem-pic-001]()
+![lem-pic-001](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-001.png)
 
 この状態で、`M-x start-lisp-repl`コマンドを実行すると`REPL(Read-Eval-Print Loop)`が起動します。  
 
-![lem-pic-002]()
+![lem-pic-002](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-002.png)
 
 基本的にここでプログラムを実行していきます。  
 
-![lem-pic-003]()
+![lem-pic-003](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-003.png)
 
 ## GPIO制御ライブラリについて
 
@@ -154,6 +154,8 @@ cd my-dir
 mkdir cl-raspi
 ```
 
+(※) Githubアカウントを持っているのであれば、ユーザー名を使うと良いです。  
+
 プロジェクト用ディレクトリ構成は以下のようにします。
 
 ```
@@ -163,8 +165,6 @@ cl-raspi
   └─ src
        └─ ...
 ```
-
-(※) Githubアカウントを持っているのであれば、ユーザー名を使うと良いです。  
 
 `cl-raspi.asd`の中身は以下のようにします。
 
