@@ -5,7 +5,7 @@
 Raspberry Piで電子工作と言えば、Pythonで紹介している本や記事がとても多いです。  
 しかし、自分はLisperなのでCommon Lispを使ってこれをやっていきます。  
 
-# 環境の構築
+# 環境構築
 
 ハードは`Raspberry Pi 3`、OSは`Raspbian Stretch`を使用します。  
 `Raspbian Stretch`は以下のミラーサイトを使うと公式サイトよりも早くダウンロード出来ます。  
@@ -96,9 +96,26 @@ ros install cxxxr/lem
 環境変数を登録し、bash設定を再読み込みします。
 
 ```
-echo export PATH=$PATH:~/.roswell/bin >> ~/.bashrc
-source ~/.bashrc
+echo export PATH=$PATH:~/.roswell/bin >> ~/.bash_profile
+source ~/.bash_profile
 ```
+
+ついでに、`sudo`時でもLemを使えるように設定します。  
+以下のコマンドで`sudoers.tmp`ファイルを開き編集します。
+
+```
+sudo visudo
+```
+
+`env_reset`と`secure_path`の設定をコメントアウトし、PATHを保持する設定を追記します。
+
+```
+Defaults env_keep += "PATH"
+```
+
+以下のようになっていれば良いです。  
+
+![visudo](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/visudo.png)
 
 以下のコマンドでバージョンを確認します。
 
@@ -118,8 +135,15 @@ lem --frontend ncurses-ccl
 bash設定の再読み込みも忘れずに。
 
 ```
-echo alias lem=\'lem --frontend ncurses-ccl\'  >> ~/.bashrc
-source ~/.bashrc
+echo alias lem=\'lem --frontend ncurses-ccl\'  >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+ついでに、sudo時でもエイリアスを使えるようにするために以下の設定も追加します。
+
+```
+echo alias sudo=\'sudo \' >> ~/.bash_profile
+source ~/.bash_profile
 ```
 
 起動したときの初期画面は以下のようになります。  
@@ -266,6 +290,13 @@ GPIOピンの出力制御を行います。
      (delay 500)               ; Delay 500(ms)
      (digital-write +pin+ 0)   ; Turn off LED
      (delay 500)))             ; Delay 500(ms)
+```
+
+`cl-raspi`を`quicklisp`でロードし`cl-raspi/src/blink`パッケージの`main`関数を実行します。
+
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/blink:main)
 ```
 
 ## タクトスイッチでGPIO入力
