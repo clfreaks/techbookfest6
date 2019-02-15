@@ -148,15 +148,15 @@ source ~/.bash_profile
 
 起動したときの初期画面は以下のようになります。  
 
-![lem-pic-001](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-001.png)
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-001.png" width="320px">
 
 この状態で、`M-x start-lisp-repl`コマンドを実行すると`REPL(Read-Eval-Print Loop)`が起動します。  
 
-![lem-pic-002](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-002.png)
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-002.png" width="320px">
 
 基本的にここでプログラムを実行していきます。  
 
-![lem-pic-003](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-003.png)
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-003.png" width="320px">
 
 ## GPIO制御ライブラリについて
 
@@ -304,7 +304,7 @@ GPIOピンの出力制御を行います。
 - 赤色LED 1個
 - 330Ω抵抗(橙橙茶金) 1個
 
-![blink.jpg](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg)
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg" width="320px">
 
 ### 実行
 
@@ -317,12 +317,133 @@ GPIOピンの出力制御を行います。
 
 ## タクトスイッチでGPIO入力
 
-## シリアル通信
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+```
+(defpackage :cl-raspi/src/gpio-input
+  (:use :cl
+        :cl-raspi/lib-wiring-pi)
+  (:export :main))
+(in-package :cl-raspi/src/gpio-input)
+
+(defconstant +pin+ 17)
+
+(defun main ()
+  (wiringpi-setup-gpio)
+  (pin-mode +pin+ +input+)
+  (pull-updn-control +pin+ +pud-up+)
+  (loop
+     (if (= (digital-read +pin+) 0)
+         (format t "Switch ON~%")
+         (format t "Switch OFF~%"))
+     (delay 500)))
+```
+
+### 回路図
+
+電子部品は以下を使用しました。
+
+- タクトスイッチ 1個
+- 1kΩ抵抗(茶黒赤金) 1個
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/gpio-input.jpg" width="320px">
+
+### 実行
+
+## PWM
+
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+```
+(defpackage :cl-raspi/src/servomotor
+  (:use :cl
+        :cl-raspi/lib-wiring-pi)
+  (:export :main))
+(in-package :cl-raspi/src/servomotor)
+
+(defconstant +pin+ 12)
+
+(defun init ()
+  (wiringpi-setup-gpio)
+  (pin-mode +pin+ +pwm-output+)
+  (pwm-set-mode +pwm-mode-ms+)
+  (pwm-set-range 1024)
+  (pwm-set-clock 375))
+
+(defun main ()
+  (init)
+  (let ((move 0))
+    (loop
+      (setf move (read))
+      (pwm-write +pin+ move))))
+```
+
+### 回路図
+
+電子部品は以下を使用しました。
+
+- マイクロサーボ9g SG-90  
+[http://akizukidenshi.com/catalog/g/gM-08761/](http://akizukidenshi.com/catalog/g/gM-08761/)
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/servomotor.jpg" width="320px">
+
+### 実行
+
+ハードウェアPWMはrootユーザーの権限でコマンドを実行する必要があります。  
+なので、Lemを起動する時は`sudo lem`としてください。
 
 ## I2C 温度センサー
 
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+### 回路図
+
+### 実行
+
 ## SPI 3軸加速度センサー
+
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+### 回路図
+
+### 実行
 
 ## I2C LCD
 
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+### 回路図
+
+### 実行
+
 ## OLED
+
+### 使用するWiringPi関数
+
+### ラッパー作成
+
+### プログラム本体作成
+
+### 回路図
+
+### 実行
