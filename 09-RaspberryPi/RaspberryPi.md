@@ -232,6 +232,8 @@ cl-raspi
 
 ## Lチカ
 
+### 使用するWiringPi関数
+
 Lチカで必要になるWiringPiの関数は以下の4つです。
 
 - wiringPiSetupGpio  
@@ -250,7 +252,8 @@ GPIOピンの出力制御を行います。
 待機処理を行います。  
 引数で指定した値[ミリ秒)分待機します。  
 
-`lib-wiring-pi.lisp`に以下のプログラムを追記します。
+
+### ラッパー作成
 
 ```common-lisp
 ;; Init wiringPi
@@ -268,6 +271,8 @@ GPIOピンの出力制御を行います。
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
+
+### プログラム本体作成
 
 プログラム本体を`src`ディレクトリ内に`blink.lisp`という名前で作成します。
 
@@ -291,6 +296,17 @@ GPIOピンの出力制御を行います。
      (digital-write +pin+ 0)   ; Turn off LED
      (delay 500)))             ; Delay 500(ms)
 ```
+
+### 回路図
+
+電子部品は以下を使用しました。
+
+- 赤色LED 1個
+- 330Ω抵抗(橙橙茶金) 1個
+
+![blink.jpg](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg)
+
+### 実行
 
 `cl-raspi`を`quicklisp`でロードし`cl-raspi/src/blink`パッケージの`main`関数を実行します。
 
