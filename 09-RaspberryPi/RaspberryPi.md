@@ -1,23 +1,23 @@
-# Raspberry Pi¤ÇCommon Lisp¤ò»È¤ª¤¦
+# Raspberry Piã§Common Lispã‚’ä½¿ãŠã†
 
-# ¤Ï¤¸¤á¤Ë
+# ã¯ã˜ã‚ã«
 
-Raspberry Pi¤ÇÅÅ»Ò¹©ºî¤È¸À¤¨¤Ğ¡¢Python¤Ç¾Ò²ğ¤·¤Æ¤¤¤ëËÜ¤äµ­»ö¤¬¤È¤Æ¤âÂ¿¤¤¤Ç¤¹¡£  
-¤·¤«¤·¡¢¼«Ê¬¤ÏLisper¤Ê¤Î¤ÇCommon Lisp¤ò»È¤Ã¤Æ¤³¤ì¤ò¤ä¤Ã¤Æ¤¤¤­¤Ş¤¹¡£  
+Raspberry Piã§é›»å­å·¥ä½œã¨è¨€ãˆã°ã€Pythonã§ç´¹ä»‹ã—ã¦ã„ã‚‹æœ¬ã‚„è¨˜äº‹ãŒã¨ã¦ã‚‚å¤šã„ã§ã™ã€‚  
+ã—ã‹ã—ã€è‡ªåˆ†ã¯Lisperãªã®ã§Common Lispã‚’ä½¿ã£ã¦ã“ã‚Œã‚’ã‚„ã£ã¦ã„ãã¾ã™ã€‚  
 
-# ´Ä¶­¹½ÃÛ
+# ç’°å¢ƒæ§‹ç¯‰
 
-¥Ï¡¼¥É¤Ï`Raspberry Pi 3`¡¢OS¤Ï`Raspbian Stretch`¤ò»ÈÍÑ¤·¤Ş¤¹¡£  
-`Raspbian Stretch`¤Ï°Ê²¼¤Î¥ß¥é¡¼¥µ¥¤¥È¤ò»È¤¦¤È¸ø¼°¥µ¥¤¥È¤è¤ê¤âÁá¤¯¥À¥¦¥ó¥í¡¼¥É½ĞÍè¤Ş¤¹¡£  
-º£²ó¤Ï¼¹É®»ş¤Ç¤ÎºÇ¿·ÈÇ`raspbian-2018-11-15`¤ò»ÈÍÑ¤·¤Æ¤¤¤Ş¤¹¡£  
+ãƒãƒ¼ãƒ‰ã¯`Raspberry Pi 3`ã€OSã¯`Raspbian Stretch`ã‚’ä½¿ç”¨ã—ã¾ã™ã€‚  
+`Raspbian Stretch`ã¯ä»¥ä¸‹ã®ãƒŸãƒ©ãƒ¼ã‚µã‚¤ãƒˆã‚’ä½¿ã†ã¨å…¬å¼ã‚µã‚¤ãƒˆã‚ˆã‚Šã‚‚æ—©ããƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å‡ºæ¥ã¾ã™ã€‚  
+ä»Šå›ã¯åŸ·ç­†æ™‚ã§ã®æœ€æ–°ç‰ˆ`raspbian-2018-11-15`ã‚’ä½¿ç”¨ã—ã¦ã„ã¾ã™ã€‚  
 
 [http://ftp.jaist.ac.jp/pub/raspberrypi/raspbian/images/](http://ftp.jaist.ac.jp/pub/raspberrypi/raspbian/images/)
 
-## Roswell¤Î¥¤¥ó¥¹¥È¡¼¥ë
+## Roswellã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
 
 
-¤Ş¤º¤Ï¡¢Roswell¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤ËÉ¬Í×¤Ê¤â¤Î¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤Ş¤¹¡£  
-¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤Î¤Ï°Ê²¼¤Î3¤Ä¤Ç¤¹¡£  
+ã¾ãšã¯ã€Roswellã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã™ã‚‹ãŸã‚ã«å¿…è¦ãªã‚‚ã®ã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã€‚  
+ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã™ã‚‹ã®ã¯ä»¥ä¸‹ã®3ã¤ã§ã™ã€‚  
 
 - autoconf
 - automake
@@ -27,19 +27,19 @@ Raspberry Pi¤ÇÅÅ»Ò¹©ºî¤È¸À¤¨¤Ğ¡¢Python¤Ç¾Ò²ğ¤·¤Æ¤¤¤ëËÜ¤äµ­»ö¤¬¤È¤Æ¤âÂ¿¤¤¤Ç¤¹¡£
 sudo apt install autoconf automake libcurl4-openssl-dev
 ```
 
-GitHub¤«¤éRoswell¤Î¥½¡¼¥¹¥³¡¼¥É¤ò¥À¥¦¥ó¥í¡¼¥É¤·¤Ş¤¹¡£
+GitHubã‹ã‚‰Roswellã®ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã€‚
 
 ```
 git clone -b release https://github.com/roswell/roswell.git
 ```
 
-¥À¥¦¥ó¥í¡¼¥É¤·¤¿Roswell¤Î¥Ç¥£¥ì¥¯¥È¥ê¤Ø°ÜÆ°¤·¤Ş¤¹¡£
+ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ãŸRoswellã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¸ç§»å‹•ã—ã¾ã™ã€‚
 
 ```
 cd roswell
 ```
 
-°Ê²¼¤Î¥³¥Ş¥ó¥É¤ò½ç¤Ë¼Â¹Ô¤·¡¢¥¤¥ó¥¹¥È¡¼¥ë¤ò¹Ô¤¤¤Ş¤¹¡£
+ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã‚’é †ã«å®Ÿè¡Œã—ã€ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã‚’è¡Œã„ã¾ã™ã€‚
 
 ```
 ./bootstrap
@@ -48,171 +48,215 @@ make
 sudo make install
 ```
 
-Roswell¤Î¥Ğ¡¼¥¸¥ç¥ó¤ò³ÎÇ§
+Roswellã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ç¢ºèª
 
 ```
 ros --version
 ```
 
-¼¹É®»ş¤Ç¤ÎºÇ¿·¥Ğ¡¼¥¸¥ç¥ó¤Ï`19.1.10.96`¤Ç¤·¤¿¡£
+åŸ·ç­†æ™‚ã§ã®æœ€æ–°ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯`19.1.10.96`ã§ã—ãŸã€‚
 
-¥¤¥ó¥¹¥È¡¼¥ë¤¬½ª¤ï¤Ã¤¿¤é°Ê²¼¤Î¥³¥Ş¥ó¥É¤Ç½é´üÀßÄê¤ò¹Ô¤¤¤Ş¤¹¡£
+ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ãŒçµ‚ã‚ã£ãŸã‚‰ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã§åˆæœŸè¨­å®šã‚’è¡Œã„ã¾ã™ã€‚
 
 ```
 ros setup
 ```
 
-## Common Lisp¤ò¥¤¥ó¥¹¥È¡¼¥ë
+## Common Lispã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
 
-º£²ó¤ÏCommon Lisp½èÍı·Ï¤Î1¤Ä¤Ç¤¢¤ë`CCL (Clozure Common Lisp)`¤ò»È¤¤¤Ş¤¹¡£
+ä»Šå›ã¯Common Lispå‡¦ç†ç³»ã®1ã¤ã§ã‚ã‚‹`CCL (Clozure Common Lisp)`ã‚’ä½¿ã„ã¾ã™ã€‚
 
 ```
 ros install ccl-bin
 ```
 
-°Ê²¼¤Î¥³¥Ş¥ó¥É¤Ç¥Ğ¡¼¥¸¥ç¥ó¤ò³ÎÇ§¤·¤Ş¤¹¡£
+ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã§ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ç¢ºèªã—ã¾ã™ã€‚
 
 ```
 ros run -- --version
 ```
 
-¼¹É®»ş¤Î¥Ğ¡¼¥¸¥ç¥ó¤Ï`Version 1.11/v1.11.5 (LinuxARM32)`¤Ç¤·¤¿¡£
+åŸ·ç­†æ™‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯`Version 1.11/v1.11.5 (LinuxARM32)`ã§ã—ãŸã€‚
 
-## Lem¤Î¥¤¥ó¥¹¥È¡¼¥ë
+## Lemã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
 
-Common Lisp¤ÇºîÀ®¤µ¤ì¤¿¥¨¥Ç¥£¥¿¤Ç¤¢¤ë`Lem`¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤Ş¤¹¡£  
-`ncurses`¤¬É¬Í×¤Ê¤Î¤Ç¡¢ºÇ½é¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤·¤Æ¤ª¤­¤Ş¤¹¡£
+Common Lispã§ä½œæˆã•ã‚ŒãŸã‚¨ãƒ‡ã‚£ã‚¿ã§ã‚ã‚‹`Lem`ã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã€‚  
+`ncurses`ãŒå¿…è¦ãªã®ã§ã€æœ€åˆã«ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ãŠãã¾ã™ã€‚
 
 ```
 sudo apt install libncurses5-dev libncursesw5-dev
 ```
 
-Roswell¤ÇLem¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤Ş¤¹¡£
+Roswellã§Lemã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã€‚
 
 ```
 ros install cxxxr/lem
 ```
 
-´Ä¶­ÊÑ¿ô¤òÅĞÏ¿¤·¡¢bashÀßÄê¤òºÆÆÉ¤ß¹ş¤ß¤·¤Ş¤¹¡£
+ç’°å¢ƒå¤‰æ•°ã‚’ç™»éŒ²ã—ã€bashè¨­å®šã‚’å†èª­ã¿è¾¼ã¿ã—ã¾ã™ã€‚
 
 ```
 echo export PATH=$PATH:~/.roswell/bin >> ~/.bash_profile
 source ~/.bash_profile
 ```
 
-¤Ä¤¤¤Ç¤Ë¡¢`sudo`»ş¤Ç¤âLem¤ò»È¤¨¤ë¤è¤¦¤ËÀßÄê¤·¤Ş¤¹¡£  
-°Ê²¼¤Î¥³¥Ş¥ó¥É¤Ç`sudoers.tmp`¥Õ¥¡¥¤¥ë¤ò³«¤­ÊÔ½¸¤·¤Ş¤¹¡£
+ã¤ã„ã§ã«ã€`sudo`æ™‚ã§ã‚‚Lemã‚’ä½¿ãˆã‚‹ã‚ˆã†ã«è¨­å®šã—ã¾ã™ã€‚  
+ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã§`sudoers.tmp`ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãç·¨é›†ã—ã¾ã™ã€‚
 
 ```
 sudo visudo
 ```
 
-`env_reset`¤È`secure_path`¤ÎÀßÄê¤ò¥³¥á¥ó¥È¥¢¥¦¥È¤·¡¢PATH¤òÊİ»ı¤¹¤ëÀßÄê¤òÄÉµ­¤·¤Ş¤¹¡£
+`env_reset`ã¨`secure_path`ã®è¨­å®šã‚’ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã—ã€PATHã‚’ä¿æŒã™ã‚‹è¨­å®šã‚’è¿½è¨˜ã—ã¾ã™ã€‚
 
 ```
 Defaults env_keep += "PATH"
 ```
 
-°Ê²¼¤Î¤è¤¦¤Ë¤Ê¤Ã¤Æ¤¤¤ì¤ĞÎÉ¤¤¤Ç¤¹¡£  
+ä»¥ä¸‹ã®ã‚ˆã†ã«ãªã£ã¦ã„ã‚Œã°è‰¯ã„ã§ã™ã€‚  
 
 ![visudo](https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/visudo.png)
 
-°Ê²¼¤Î¥³¥Ş¥ó¥É¤Ç¥Ğ¡¼¥¸¥ç¥ó¤ò³ÎÇ§¤·¤Ş¤¹¡£
+ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã§ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ç¢ºèªã—ã¾ã™ã€‚
 
 ```
 lem --version
 ```
 
-¼¹É®»ş¤Î¥Ğ¡¼¥¸¥ç¥ó¤Ï`lem 1.5 (ARM-raspberrypi)`¤Ç¤·¤¿¡£  
+åŸ·ç­†æ™‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯`lem 1.5 (ARM-raspberrypi)`ã§ã—ãŸã€‚  
 
-µ¯Æ°¤¹¤ë»ş¤Ï¡¢°Ê²¼¤Î¥³¥Ş¥ó¥É¤ò¼Â¹Ô¤·¤Ş¤¹¡£
+èµ·å‹•ã™ã‚‹æ™‚ã¯ã€ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
 
 ```
 lem --frontend ncurses-ccl
 ```
 
-Ëè²ó¤³¤ì¤òÂÇ¤Ä¤Î¤ÏÌÌÅİ¤Ê¤Î¤Ç¡¢¥¨¥¤¥ê¥¢¥¹¤òÀßÄê¤·`lem`¤À¤±¤Çµ¯Æ°¤Ç¤­¤ë¤è¤¦¤Ë¤·¤Ş¤¹¡£  
-bashÀßÄê¤ÎºÆÆÉ¤ß¹ş¤ß¤âËº¤ì¤º¤Ë¡£
+æ¯å›ã“ã‚Œã‚’æ‰“ã¤ã®ã¯é¢å€’ãªã®ã§ã€ã‚¨ã‚¤ãƒªã‚¢ã‚¹ã‚’è¨­å®šã—`lem`ã ã‘ã§èµ·å‹•ã§ãã‚‹ã‚ˆã†ã«ã—ã¾ã™ã€‚  
+bashè¨­å®šã®å†èª­ã¿è¾¼ã¿ã‚‚å¿˜ã‚Œãšã«ã€‚
 
 ```
 echo alias lem=\'lem --frontend ncurses-ccl\'  >> ~/.bash_profile
 source ~/.bash_profile
 ```
 
-¤Ä¤¤¤Ç¤Ë¡¢sudo»ş¤Ç¤â¥¨¥¤¥ê¥¢¥¹¤ò»È¤¨¤ë¤è¤¦¤Ë¤¹¤ë¤¿¤á¤Ë°Ê²¼¤ÎÀßÄê¤âÄÉ²Ã¤·¤Ş¤¹¡£
+ã¤ã„ã§ã«ã€sudoæ™‚ã§ã‚‚ã‚¨ã‚¤ãƒªã‚¢ã‚¹ã‚’ä½¿ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã«ä»¥ä¸‹ã®è¨­å®šã‚‚è¿½åŠ ã—ã¾ã™ã€‚
 
 ```
 echo alias sudo=\'sudo \' >> ~/.bash_profile
 source ~/.bash_profile
 ```
 
-µ¯Æ°¤·¤¿¤È¤­¤Î½é´ü²èÌÌ¤Ï°Ê²¼¤Î¤è¤¦¤Ë¤Ê¤ê¤Ş¤¹¡£  
+èµ·å‹•ã—ãŸã¨ãã®åˆæœŸç”»é¢ã¯ä»¥ä¸‹ã®ã‚ˆã†ã«ãªã‚Šã¾ã™ã€‚  
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-001.png" width="320px">
 
-¤³¤Î¾õÂÖ¤Ç¡¢`M-x start-lisp-repl`¥³¥Ş¥ó¥É¤ò¼Â¹Ô¤¹¤ë¤È`REPL(Read-Eval-Print Loop)`¤¬µ¯Æ°¤·¤Ş¤¹¡£  
+ã“ã®çŠ¶æ…‹ã§ã€`M-x start-lisp-repl`ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨`REPL(Read-Eval-Print Loop)`ãŒèµ·å‹•ã—ã¾ã™ã€‚  
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-002.png" width="320px">
 
-´ğËÜÅª¤Ë¤³¤³¤Ç¥×¥í¥°¥é¥à¤ò¼Â¹Ô¤·¤Æ¤¤¤­¤Ş¤¹¡£  
+åŸºæœ¬çš„ã«ã“ã“ã§ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’å®Ÿè¡Œã—ã¦ã„ãã¾ã™ã€‚  
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-003.png" width="320px">
 
-## GPIOÀ©¸æ¥é¥¤¥Ö¥é¥ê¤Ë¤Ä¤¤¤Æ
+## GPIOåˆ¶å¾¡ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«ã¤ã„ã¦
 
-GPIOÀ©¸æ¥é¥¤¥Ö¥é¥ê¤È¤·¤Æ`Wiring Pi`¤ò»ÈÍÑ¤·¤Ş¤¹¡£  
-`Raspbian Stretch`¤Ë¤ÏºÇ½é¤«¤é¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Æ¤¤¤Ş¤¹¡£  
+GPIOåˆ¶å¾¡ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¨ã—ã¦`Wiring Pi`ã‚’ä½¿ç”¨ã—ã¾ã™ã€‚  
+`Raspbian Stretch`ã«ã¯æœ€åˆã‹ã‚‰ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã¾ã™ã€‚  
 
-¸ø¼°¥µ¥¤¥È¡§[http://wiringpi.com/](http://wiringpi.com/)  
+å…¬å¼ã‚µã‚¤ãƒˆï¼š[http://wiringpi.com/](http://wiringpi.com/)  
 
-¥é¥Ã¥Ñ¡¼¤òºîÀ®¤·Common Lisp¤«¤é¸Æ¤Ó½Ğ¤·¤Æ»ÈÍÑ¤·¤Ş¤¹¡£
+ãƒ©ãƒƒãƒ‘ãƒ¼ã‚’ä½œæˆã—Common Lispã‹ã‚‰å‘¼ã³å‡ºã—ã¦ä½¿ç”¨ã—ã¾ã™ã€‚
 
-# ÅÅ»Ò¹©ºî¤·¤Æ¤ß¤è¤¦
+# é›»å­å·¥ä½œã—ã¦ã¿ã‚ˆã†
 
-¤Ş¤º¤Ï¡¢¥×¥í¥¸¥§¥¯¥ÈÍÑ¥Ç¥£¥ì¥¯¥È¥ê¤òºîÀ®¤·¤Ş¤¹¡£
+ã¾ãšã¯ã€ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆç”¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ä½œæˆã—ã¾ã™ã€‚
 
 ```
 cd ~/.roswell/local-projects
-mkdir my-dir (¢¨)
+mkdir my-dir (â€»)
 cd my-dir
 mkdir cl-raspi
 ```
 
-(¢¨) Github¥¢¥«¥¦¥ó¥È¤ò»ı¤Ã¤Æ¤¤¤ë¤Î¤Ç¤¢¤ì¤Ğ¡¢¥æ¡¼¥¶¡¼Ì¾¤ò»È¤¦¤ÈÎÉ¤¤¤Ç¤¹¡£  
+(â€») Githubã‚¢ã‚«ã‚¦ãƒ³ãƒˆã‚’æŒã£ã¦ã„ã‚‹ã®ã§ã‚ã‚Œã°ã€ãƒ¦ãƒ¼ã‚¶ãƒ¼åã‚’ä½¿ã†ã¨è‰¯ã„ã§ã™ã€‚  
 
-¥×¥í¥¸¥§¥¯¥ÈÍÑ¥Ç¥£¥ì¥¯¥È¥ê¹½À®¤Ï°Ê²¼¤Î¤è¤¦¤Ë¤·¤Ş¤¹¡£
+ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆç”¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæ§‹æˆã¯ä»¥ä¸‹ã®ã‚ˆã†ã«ã—ã¾ã™ã€‚
 
 ```
 cl-raspi
-  ¨§¨¡ cl-raspi.asd
-  ¨§¨¡ lib-wiring-pi.lisp
-  ¨¦¨¡ src
-       ¨¦¨¡ ...
+  â”œâ”€ cl-raspi.asd
+  â”œâ”€ lib-wiring-pi.lisp
+  â””â”€ src
+       â””â”€ ...
 ```
 
-`cl-raspi.asd`¤ÎÃæ¿È¤Ï°Ê²¼¤Î¤è¤¦¤Ë¤·¤Ş¤¹¡£
+`cl-raspi.asd`ã®ä¸­èº«ã¯ä»¥ä¸‹ã®ã‚ˆã†ã«ã—ã¾ã™ã€‚
 
 ```common-lisp
 (defsystem "cl-raspi"
     :class :package-inferred-system
     :version "0.1.0"
     :license "MIT"
-    :depends-on (;; »ÈÍÑ¤¹¤ë¥é¥¤¥Ö¥é¥ê(º£²ó¤ÏCFFI)
+    :depends-on (;; ä½¿ç”¨ã™ã‚‹ãƒ©ã‚¤ãƒ–ãƒ©ãƒª(ä»Šå›ã¯CFFI)
                  "cffi"
-                 ;; ¥é¥Ã¥Ñ¡¼
+                 ;; ãƒ©ãƒƒãƒ‘ãƒ¼
                  "cl-raspi/lib-wiring-pi"
-                 ;; ¥×¥í¥°¥é¥à¤òºîÀ®¤·¤¿¤é°Ê²¼¤ËÄÉ²Ã¤·¤Æ¤¤¤¯
+                 ;; ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’ä½œæˆã—ãŸã‚‰ä»¥ä¸‹ã«è¿½åŠ ã—ã¦ã„ã
                  "cl-raspi/src/..."))
 ```
 
-`lib-wiring-pi.lisp`¤Ï¥é¥Ã¥Ñ¡¼¤Ç¤¹¡£  
-¤³¤³¤ËWiringPi¤Î´Ø¿ô¤òÄÉ²Ã¤·¤Æ¤¤¤­¤Ş¤¹¡£
+`lib-wiring-pi.lisp`ã¯ãƒ©ãƒƒãƒ‘ãƒ¼ã§ã™ã€‚  
+ã“ã“ã«WiringPiã®é–¢æ•°ã‚’è¿½åŠ ã—ã¦ã„ãã¾ã™ã€‚
+
+```common-lisp
+(defpackage :cl-raspi/lib-wiring-pi
+  (:use :cl
+        :cffi))
+(in-package :cl-raspi/lib-wiring-pi)
+
+(define-foreign-library libwiringPi
+    (:unix "libwiringPi.so"))
+
+(use-foreign-library libwiringPi)
+```
+
+æœ€å¾Œã«ã€REPLã§ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãŒç™»éŒ²ã•ã‚Œã¾ã™ã€‚  
+
+```
+(ql:register-local-projects)
+```
+
+## Lãƒã‚«
+
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
+
+Lãƒã‚«ã§å¿…è¦ã«ãªã‚‹WiringPiã®é–¢æ•°ã¯ä»¥ä¸‹ã®4ã¤ã§ã™ã€‚
+
+- wiringPiSetupGpio  
+wiringPiã®åˆæœŸåŒ–ã«ä½¿ç”¨ã€‚  
+ã‚¨ãƒ©ãƒ¼ã®å ´åˆã¯-1ãŒè¿”ã£ã¦ãã¾ã™ã€‚  
+
+- pinMode  
+GPIOãƒ”ãƒ³ã®ãƒ¢ãƒ¼ãƒ‰è¨­å®šã‚’è¡Œã„ã¾ã™ã€‚  
+ç¬¬1å¼•æ•°ã«GPIOãƒ”ãƒ³ç•ªå·ã€ç¬¬2å¼•æ•°ã«ãƒ¢ãƒ¼ãƒ‰(0ï¼šInputã€1ï¼šOutput)ã‚’è¨­å®šã€‚  
+
+- digitalWrite  
+GPIOãƒ”ãƒ³ã®å‡ºåŠ›åˆ¶å¾¡ã‚’è¡Œã„ã¾ã™ã€‚  
+ç¬¬1å¼•æ•°ã«GPIOãƒ”ãƒ³ç•ªå·ã€ç¬¬2å¼•æ•°ã«å€¤(0 or 1)ã‚’è¨­å®šã€‚  
+
+- delay  
+å¾…æ©Ÿå‡¦ç†ã‚’è¡Œã„ã¾ã™ã€‚  
+å¼•æ•°ã§æŒ‡å®šã—ãŸå€¤[ãƒŸãƒªç§’)åˆ†å¾…æ©Ÿã—ã¾ã™ã€‚  
+
+
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
 
 ```common-lisp
 (defpackage :cl-raspi/lib-wiring-pi
   (:use :cl
         :cffi)
-  (:export :wiringpi-setup-gpio
+  (:export :+output+
+           :wiringpi-setup-gpio
            :pin-mode
            :digital-write
            :delay))
@@ -222,40 +266,16 @@ cl-raspi
     (:unix "libwiringPi.so"))
 
 (use-foreign-library libwiringPi)
-```
 
-ºÇ¸å¤Ë¡¢REPL¤Ç°Ê²¼¤Î¥³¥Ş¥ó¥É¤ò¼Â¹Ô¤¹¤ë¤È¥×¥í¥¸¥§¥¯¥È¤¬ÅĞÏ¿¤µ¤ì¤Ş¤¹¡£  
+;;; Constant
 
-```
-(ql:register-local-projects)
-```
+;; Pin mode
+(defconstant +output+ 1)
 
-## L¥Á¥«
+;;;; API
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+;;; Core Library
 
-L¥Á¥«¤ÇÉ¬Í×¤Ë¤Ê¤ëWiringPi¤Î´Ø¿ô¤Ï°Ê²¼¤Î4¤Ä¤Ç¤¹¡£
-
-- wiringPiSetupGpio  
-wiringPi¤Î½é´ü²½¤Ë»ÈÍÑ¡£  
-¥¨¥é¡¼¤Î¾ì¹ç¤Ï-1¤¬ÊÖ¤Ã¤Æ¤­¤Ş¤¹¡£  
-
-- pinMode  
-GPIO¥Ô¥ó¤Î¥â¡¼¥ÉÀßÄê¤ò¹Ô¤¤¤Ş¤¹¡£  
-Âè1°ú¿ô¤ËGPIO¥Ô¥óÈÖ¹æ¡¢Âè2°ú¿ô¤Ë¥â¡¼¥É(0¡§Input¡¢1¡§Output)¤òÀßÄê¡£  
-
-- digitalWrite  
-GPIO¥Ô¥ó¤Î½ĞÎÏÀ©¸æ¤ò¹Ô¤¤¤Ş¤¹¡£  
-Âè1°ú¿ô¤ËGPIO¥Ô¥óÈÖ¹æ¡¢Âè2°ú¿ô¤ËÃÍ(0 or 1)¤òÀßÄê¡£  
-
-- delay  
-ÂÔµ¡½èÍı¤ò¹Ô¤¤¤Ş¤¹¡£  
-°ú¿ô¤Ç»ØÄê¤·¤¿ÃÍ[¥ß¥êÉÃ)Ê¬ÂÔµ¡¤·¤Ş¤¹¡£  
-
-
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
-
-```common-lisp
 ;; Init wiringPi
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
@@ -267,14 +287,16 @@ GPIO¥Ô¥ó¤Î½ĞÎÏÀ©¸æ¤ò¹Ô¤¤¤Ş¤¹¡£
 (defcfun ("digitalWrite" digital-write) :void
   (pin :int) (value :int))
 
+;;; Other
+
 ;; Delay (millisecond)
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
 
-¥×¥í¥°¥é¥àËÜÂÎ¤ò`src`¥Ç¥£¥ì¥¯¥È¥êÆâ¤Ë`blink.lisp`¤È¤¤¤¦Ì¾Á°¤ÇºîÀ®¤·¤Ş¤¹¡£
+ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ã‚’`src`ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå†…ã«`blink.lisp`ã¨ã„ã†åå‰ã§ä½œæˆã—ã¾ã™ã€‚
 
 ```common-lisp
 (defpackage :cl-raspi/src/blink
@@ -297,33 +319,99 @@ GPIO¥Ô¥ó¤Î½ĞÎÏÀ©¸æ¤ò¹Ô¤¤¤Ş¤¹¡£
      (delay 500)))             ; Delay 500(ms)
 ```
 
-### ²óÏ©¿Ş
+### å›è·¯å›³
 
-ÅÅ»ÒÉôÉÊ¤Ï°Ê²¼¤ò»ÈÍÑ¤·¤Ş¤·¤¿¡£
+é›»å­éƒ¨å“ã¯ä»¥ä¸‹ã‚’ä½¿ç”¨ã—ã¾ã—ãŸã€‚
 
-- ÀÖ¿§LED 1¸Ä
-- 330¦¸Äñ¹³(ÜôÜôÃã¶â) 1¸Ä
+- èµ¤è‰²LED 1å€‹
+- 330Î©æŠµæŠ—(æ©™æ©™èŒ¶é‡‘) 1å€‹
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg" width="320px">
 
-### ¼Â¹Ô
+### å®Ÿè¡Œ
 
-`cl-raspi`¤ò`quicklisp`¤Ç¥í¡¼¥É¤·`cl-raspi/src/blink`¥Ñ¥Ã¥±¡¼¥¸¤Î`main`´Ø¿ô¤ò¼Â¹Ô¤·¤Ş¤¹¡£
+`cl-raspi`ã‚’`quicklisp`ã§ãƒ­ãƒ¼ãƒ‰ã—`cl-raspi/src/blink`ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®`main`é–¢æ•°ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
 
 ```common-lisp
 (ql:quickload :cl-raspi)
 (cl-raspi/src/blink:main)
 ```
 
-## ¥¿¥¯¥È¥¹¥¤¥Ã¥Á¤ÇGPIOÆşÎÏ
+## ã‚¿ã‚¯ãƒˆã‚¹ã‚¤ãƒƒãƒã§GPIOå…¥åŠ›
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+å‰å›ä½œã£ãŸç‰©ã«å¿…è¦ãªé–¢æ•°ã‚’è¶³ã—ã¦ã„ãã¾ã™ã€‚  
+ä»¥ä¸‹ã®2ã¤ã‚’è¿½åŠ ã€‚
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+- pullUpDnControl  
+ç«¯å­ã«ä½•ã‚‚æ¥ç¶šã•ã‚Œã¦ã„ãªã„å ´åˆã®çŠ¶æ…‹ã‚’è¨­å®šã™ã‚‹ã®ã«ä½¿ç”¨ã€‚  
+3.3Vã®å ´åˆã¯"2"ã€0Vã®å ´åˆã¯"1"ã¨è¨­å®šã™ã‚‹ã€‚
 
+- digitalRead  
+GPIOç«¯å­ã®çŠ¶æ…‹ã‚’èª­ã¿è¾¼ã‚€ã€‚  
+ãƒœã‚¿ãƒ³ã‚’æŠ¼ã™ã¨"0"ã€æ”¾ã™ã¨"1"ã«ãªã‚‹ã€‚
+
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
+
+```common-lisp
+(defpackage :cl-raspi/lib-wiring-pi
+  (:use :cl
+        :cffi)
+  (:export :+input+
+           :+output+
+           :wiringpi-setup-gpio
+           :pin-mode
+           :digital-read
+           :digital-write
+           :pull-updn-control
+           :delay))
+(in-package :cl-raspi/lib-wiring-pi)
+
+(define-foreign-library libwiringPi
+    (:unix "libwiringPi.so"))
+
+(use-foreign-library libwiringPi)
+
+;;; Constant
+
+;; Pin mode
+(defconstant +input+  0)
+(defconstant +output+ 1)
+
+;;;; API
+
+;;; Core Library
+
+;; Init wiringPi
+(defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
+
+;; GPIO pin mode setting
+(defcfun ("pinMode" pin-mode) :void
+  (pin :int) (mode :int))
+
+;; Read the status of the GPIO pin
+(defcfun ("digitalRead" digital-read) :int
+  (pin :int))
+
+;; Output control of GPIO pin
+(defcfun ("digitalWrite" digital-write) :void
+  (pin :int) (value :int))
+  
+;; Set the state when nothing is connected to the terminal
+(defcfun ("pullUpDnControl" pull-updn-control) :void
+  (pin :int) (pud :int))
+
+;;; Other
+
+;; Delay (millisecond)
+(defcfun ("delay" delay) :void
+  (howlong :uint))
 ```
+
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
+
+```common-lisp
 (defpackage :cl-raspi/src/gpio-input
   (:use :cl
         :cl-raspi/lib-wiring-pi)
@@ -343,26 +431,134 @@ GPIO¥Ô¥ó¤Î½ĞÎÏÀ©¸æ¤ò¹Ô¤¤¤Ş¤¹¡£
      (delay 500)))
 ```
 
-### ²óÏ©¿Ş
+### å›è·¯å›³
 
-ÅÅ»ÒÉôÉÊ¤Ï°Ê²¼¤ò»ÈÍÑ¤·¤Ş¤·¤¿¡£
+é›»å­éƒ¨å“ã¯ä»¥ä¸‹ã‚’ä½¿ç”¨ã—ã¾ã—ãŸã€‚
 
-- ¥¿¥¯¥È¥¹¥¤¥Ã¥Á 1¸Ä
-- 1k¦¸Äñ¹³(Ãã¹õÀÖ¶â) 1¸Ä
+- ã‚¿ã‚¯ãƒˆã‚¹ã‚¤ãƒƒãƒ 1å€‹
+- 1kÎ©æŠµæŠ—(èŒ¶é»’èµ¤é‡‘) 1å€‹
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/gpio-input.jpg" width="320px">
 
-### ¼Â¹Ô
+### å®Ÿè¡Œ
+
+`cl-raspi`ã‚’`quicklisp`ã§ãƒ­ãƒ¼ãƒ‰ã—`cl-raspi/src/gpio-input`ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®`main`é–¢æ•°ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
+
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/gpio-input:main)
+```
 
 ## PWM
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+- pwm-set-mode  
+PWMã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿ã¯2ã¤ã®ãƒ¢ãƒ¼ãƒ‰(ãƒãƒ©ãƒ³ã‚¹ã€ãƒãƒ¼ã‚¯ã‚¹ãƒšãƒ¼ã‚¹)ã§å‹•ä½œã•ã›ã‚‹ã“ã¨ãŒå‡ºæ¥ã¾ã™ã€‚  
+ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ãƒãƒ©ãƒ³ã‚¹ãƒ¢ãƒ¼ãƒ‰ã§ã™ã€‚  
+`+pwm-mode-ms+`ã¾ãŸã¯`+pwm-mode-bal+`ã§åˆ‡ã‚Šæ›¿ãˆã¾ã™ã€‚
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+- pwm-set-range  
+PWMã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿ã®ç¯„å›²ãƒ¬ã‚¸ã‚¹ã‚¿ã‚’è¨­å®šã—ã¾ã™ã€‚  
+ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯1024ã§ã™ã€‚
 
+- pwm-set-clock  
+PWMã‚¯ãƒ­ãƒƒã‚¯ã®ç´„æ•°ã‚’è¨­å®šã—ã¾ã™ã€‚
+
+- pwm-write  
+æŒ‡å®šã•ã‚ŒãŸãƒ”ãƒ³ã®PWMãƒ¬ã‚¸ã‚¹ã‚¿ã«å€¤ã‚’æ›¸ãè¾¼ã¿ã¾ã™ã€‚  
+aspberry Piã«ã¯1ã¤ã®ã‚ªãƒ³ãƒœãƒ¼ãƒ‰PWMãƒ”ãƒ³ã€ãƒ”ãƒ³1ï¼ˆBMC_GPIO 18ã€Phys 12ï¼‰ãŒã‚ã‚Šã€ç¯„å›²ã¯0ã€œ1024ã§ã™ã€‚
+
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
+
+```common-lisp
+(defpackage :cl-raspi/lib-wiring-pi
+  (:use :cl
+        :cffi)
+  (:export :+input+
+           :+output+
+           :+pwm-output+
+           :+pwm-mode-ms+
+           :+pwm-mode-bal+
+           :wiringpi-setup-gpio
+           :pin-mode
+           :digital-read
+           :digital-write
+           :pull-updn-control
+           :pwm-set-mode
+           :pwm-set-range
+           :pwm-set-clock
+           :pwm-write
+           :delay))
+(in-package :cl-raspi/lib-wiring-pi)
+
+(define-foreign-library libwiringPi
+    (:unix "libwiringPi.so"))
+
+(use-foreign-library libwiringPi)
+
+;;; Constant
+
+;; Pin mode
+(defconstant +input+      0)
+(defconstant +output+     1)
+(defconstant +pwm-output+ 2)
+
+;; PWM
+(defconstant +pwm-mode-ms+  0)
+(defconstant +pwm-mode-bal+ 1)
+
+;;;; API
+
+;;; Core Library
+
+;; Init wiringPi
+(defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
+
+;; GPIO pin mode setting
+(defcfun ("pinMode" pin-mode) :void
+  (pin :int) (mode :int))
+
+;; Read the status of the GPIO pin
+(defcfun ("digitalRead" digital-read) :int
+  (pin :int))
+
+;; Output control of GPIO pin
+(defcfun ("digitalWrite" digital-write) :void
+  (pin :int) (value :int))
+  
+;; Set the state when nothing is connected to the terminal
+(defcfun ("pullUpDnControl" pull-updn-control) :void
+  (pin :int) (pud :int))
+
+;;; PWM Library
+
+;; PWM set mode
+(defcfun ("pwmSetMode" pwm-set-mode) :void
+  (mode :int))
+
+;; PWM set range (default 1024)
+(defcfun ("pwmSetRange" pwm-set-range) :void
+  (range :uint))
+
+;; PWM set clock
+(defcfun ("pwmSetClock" pwm-set-clock) :void
+  (divisor :int))
+
+;; PWM write
+(defcfun ("pwmWrite" pwm-write) :void
+  (pin :int) (value :int))
+
+;;; Other
+
+;; Delay (millisecond)
+(defcfun ("delay" delay) :void
+  (howlong :uint))
 ```
+
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
+
+```common-lisp
 (defpackage :cl-raspi/src/servomotor
   (:use :cl
         :cl-raspi/lib-wiring-pi)
@@ -386,64 +582,71 @@ GPIO¥Ô¥ó¤Î½ĞÎÏÀ©¸æ¤ò¹Ô¤¤¤Ş¤¹¡£
       (pwm-write +pin+ move))))
 ```
 
-### ²óÏ©¿Ş
+### å›è·¯å›³
 
-ÅÅ»ÒÉôÉÊ¤Ï°Ê²¼¤ò»ÈÍÑ¤·¤Ş¤·¤¿¡£
+é›»å­éƒ¨å“ã¯ä»¥ä¸‹ã‚’ä½¿ç”¨ã—ã¾ã—ãŸã€‚
 
-- ¥Ş¥¤¥¯¥í¥µ¡¼¥Ü9g SG-90  
+- ãƒã‚¤ã‚¯ãƒ­ã‚µãƒ¼ãƒœ9g SG-90  
 [http://akizukidenshi.com/catalog/g/gM-08761/](http://akizukidenshi.com/catalog/g/gM-08761/)
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/servomotor.jpg" width="320px">
 
-### ¼Â¹Ô
+### å®Ÿè¡Œ
 
-¥Ï¡¼¥É¥¦¥§¥¢PWM¤Ïroot¥æ¡¼¥¶¡¼¤Î¸¢¸Â¤Ç¥³¥Ş¥ó¥É¤ò¼Â¹Ô¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£  
-¤Ê¤Î¤Ç¡¢Lem¤òµ¯Æ°¤¹¤ë»ş¤Ï`sudo lem`¤È¤·¤Æ¤¯¤À¤µ¤¤¡£
+ãƒãƒ¼ãƒ‰ã‚¦ã‚§ã‚¢PWMã¯rootãƒ¦ãƒ¼ã‚¶ãƒ¼ã®æ¨©é™ã§ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚  
+ãªã®ã§ã€Lemã‚’èµ·å‹•ã™ã‚‹æ™‚ã¯`sudo lem`ã¨ã—ã¦ãã ã•ã„ã€‚
 
-## I2C ²¹ÅÙ¥»¥ó¥µ¡¼
+`cl-raspi`ã‚’`quicklisp`ã§ãƒ­ãƒ¼ãƒ‰ã—`cl-raspi/src/servomotor`ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®`main`é–¢æ•°ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/servomotor:main)
+```
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+## I2C æ¸©åº¦ã‚»ãƒ³ã‚µãƒ¼
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ²óÏ©¿Ş
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
 
-### ¼Â¹Ô
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
 
-## SPI 3¼´²ÃÂ®ÅÙ¥»¥ó¥µ¡¼
+### å›è·¯å›³
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+### å®Ÿè¡Œ
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+## SPI 3è»¸åŠ é€Ÿåº¦ã‚»ãƒ³ã‚µãƒ¼
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ²óÏ©¿Ş
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
 
-### ¼Â¹Ô
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
+
+### å›è·¯å›³
+
+### å®Ÿè¡Œ
 
 ## I2C LCD
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
 
-### ²óÏ©¿Ş
+### å›è·¯å›³
 
-### ¼Â¹Ô
+### å®Ÿè¡Œ
 
 ## OLED
 
-### »ÈÍÑ¤¹¤ëWiringPi´Ø¿ô
+### ä½¿ç”¨ã™ã‚‹WiringPié–¢æ•°
 
-### ¥é¥Ã¥Ñ¡¼ºîÀ®
+### ãƒ©ãƒƒãƒ‘ãƒ¼ä½œæˆ
 
-### ¥×¥í¥°¥é¥àËÜÂÎºîÀ®
+### ãƒ—ãƒ­ã‚°ãƒ©ãƒ æœ¬ä½“ä½œæˆ
 
-### ²óÏ©¿Ş
+### å›è·¯å›³
 
-### ¼Â¹Ô
+### å®Ÿè¡Œ
