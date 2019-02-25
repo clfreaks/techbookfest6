@@ -241,6 +241,8 @@ CFFIとは、Common Lispから外部機能を利用するためのインター�
 
 ## Lチカ
 
+電子工作の基本と言えば、LEDを点滅させるLチカです。
+
 ### 使用するWiringPi関数
 
 Lチカで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
@@ -255,7 +257,7 @@ wiringPiの初期化に使用。
 
 - pinMode  
 GPIOピンのモード設定を行います。  
-第1引数にGPIOピン番号、第2引数にモード(0：Input、1：Output)を設定。  
+第1引数にGPIOピン番号、第2引数にモード(0：Input、1：Output、2：PWM Output)を設定。  
 
 ```common-lisp
 (defcfun ("pinMode" pin-mode) :void
@@ -264,6 +266,7 @@ GPIOピンのモード設定を行います。
 ;; モード用定数
 (defconstant +input+  0)
 (defconstant +output+ 1)
+(defconstant +pwm-output+ 2)
 ```
 
 - digitalWrite  
@@ -287,7 +290,9 @@ GPIOピンの出力制御を行います。
 コードを追加したら、他のパッケージから参照出来るように、`export`に以下を追加して下さい。
 
 ```common-lisp
+:+input+
 :+output+
+:+pwm-output+
 :wiringpi-setup-gpio
 :pin-mode
 :digital-write
@@ -300,7 +305,9 @@ GPIOピンの出力制御を行います。
 (defpackage :cl-raspi/lib-wiring-pi
   (:use :cl
         :cffi)
-  (:export :+output+
+  (:export :+input+
+           :+output+
+           :+pwm-output+
            :wiringpi-setup-gpio
            :pin-mode
            :digital-write
@@ -314,6 +321,7 @@ GPIOピンの出力制御を行います。
 
 (defconstant +input+ 0)
 (defconstant +output+ 1)
+(defconstant +pwm-output+ 2)
 
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
@@ -326,6 +334,17 @@ GPIOピンの出力制御を行います。
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
+
+### 使用した電子部品と回路図
+
+電子部品は次のものを使用しました。
+
+- 赤色LED 1個
+- 330Ω抵抗(橙橙茶金) 1個
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg" width="320px">
 
 ### プログラム本体作成
 
@@ -342,7 +361,7 @@ GPIOピンの出力制御を行います。
 
 (defun main ()
   (wiringpi-setup-gpio)
-  (pin-mode +pin+ 1)
+  (pin-mode +pin+ +output+)
 
   (loop
      (digital-write +pin+ 1)   ; Turn on LED
@@ -351,14 +370,11 @@ GPIOピンの出力制御を行います。
      (delay 500)))             ; Delay 500(ms)
 ```
 
-### 回路図
+流れとしては、以下の通りです。
 
-電子部品は以下を使用しました。
-
-- 赤色LED 1個
-- 330Ω抵抗(橙橙茶金) 1個
-
-<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/blink.jpg" width="320px">
+1. `wiringpi-setup-gpio`で初期化
+2. `pin-mode`でGPIO11を出力モードに設定
+3. 無限ループ内で`digital-write`を使ってGPIO11の電圧のHigh(1)/Low(0)を切り替える
 
 ### 実行
 
@@ -369,22 +385,50 @@ GPIOピンの出力制御を行います。
 (cl-raspi/src/blink:main)
 ```
 
+これで、電子工作の基本であるLチカができました。  
+
 ## タクトスイッチでGPIO入力
+
+LチカでGPIO出力をやったので、次はタクトスイッチによるGPIO入力をやってみます。
 
 ### 使用するWiringPi関数
 
-前回作った物に必要な関数を足していきます。  
-以下の2つを追加。
+GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
+前回作った物に必要な関数を追加していきます。  
 
 - pullUpDnControl  
-端子に何も接続されていない場合の状態を設定するのに使用。  
-3.3Vの場合は"2"、0Vの場合は"1"と設定する。
+ピンのプルアップ、プルダウンを設定します。  
+第1引数にGPIOピン番号、第2引数にモード(0：PUD_OFF、1：PUD_DOWN、2：PUD_UP)を設定。
+
+```common-lisp
+(defcfun ("pullUpDnControl" pull-updn-control) :void
+  (pin :int) (pud :int))
+
+;; モード用定数
+(defconstant +pud-off+  0)
+(defconstant +pud-down+ 1)
+(defconstant +pud-up+   2)
+```
 
 - digitalRead  
-GPIO端子の状態を読み込む。  
-ボタンを押すと"0"、放すと"1"になる。
+指定したピンの状態を読んでHIGH(1) またはLOW(0) の値を返します。
 
-### ラッパー作成
+```common-lisp
+(defcfun ("digitalRead" digital-read) :int
+  (pin :int))
+```
+
+コードを追加したら、他のパッケージから参照出来るように、`export`に以下を追加して下さい。
+
+```common-lisp
+:+pud-off+
+:+pud-down+
+:+pud-up+
+:digital-read
+:pull-updn-control
+```
+
+最終的に`lib-wiring-pi.lisp`は以下のようになっているはずです。
 
 ```common-lisp
 (defpackage :cl-raspi/lib-wiring-pi
@@ -392,6 +436,7 @@ GPIO端子の状態を読み込む。
         :cffi)
   (:export :+input+
            :+output+
+           :+pwm-output+
            :+pud-off+
            :+pud-down+
            :+pud-up+
@@ -408,48 +453,46 @@ GPIO端子の状態を読み込む。
 
 (use-foreign-library libwiringPi)
 
-;;; Constant
-
-;; Pin mode
 (defconstant +input+  0)
 (defconstant +output+ 1)
+(defconstant +pwm-output+ 2)
 
-;; Pull up/down/none
 (defconstant +pud-off+  0)
 (defconstant +pud-down+ 1)
 (defconstant +pud-up+   2)
 
-;;;; API
-
-;;; Core Library
-
-;; Init wiringPi
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
-;; GPIO pin mode setting
 (defcfun ("pinMode" pin-mode) :void
   (pin :int) (mode :int))
 
-;; Read the status of the GPIO pin
 (defcfun ("digitalRead" digital-read) :int
   (pin :int))
 
-;; Output control of GPIO pin
 (defcfun ("digitalWrite" digital-write) :void
   (pin :int) (value :int))
-  
-;; Set the state when nothing is connected to the terminal
+
 (defcfun ("pullUpDnControl" pull-updn-control) :void
   (pin :int) (pud :int))
 
-;;; Other
-
-;; Delay (millisecond)
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
 
+### 使用した電子部品と回路図
+
+電子部品は次のものを使用しました。
+
+- タクトスイッチ 1個
+- 1kΩ抵抗(茶黒赤金) 1個
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/gpio-input.jpg" width="320px">
+
 ### プログラム本体作成
+
+プログラム本体を`src`ディレクトリ内に`gpio-input.lisp`という名前で作成します。
 
 ```common-lisp
 (defpackage :cl-raspi/src/gpio-input
@@ -471,14 +514,13 @@ GPIO端子の状態を読み込む。
      (delay 500)))
 ```
 
-### 回路図
+流れとしては、以下の通りです。
 
-電子部品は以下を使用しました。
-
-- タクトスイッチ 1個
-- 1kΩ抵抗(茶黒赤金) 1個
-
-<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/gpio-input.jpg" width="320px">
+1. `wiringpi-setup-gpio`で初期化
+2. `pin-mode`でGPIO17を入力モードに設定
+3. `pull-updn-control`でGPIO17ピンを`PUD_UP`モードに設定
+4. 無限ループ内でタクトスイッチ押下を待ち受ける
+5. タクトスイッチが押下されるとピンの状態がLOW(0)になり、離すとHIGH(1)になる
 
 ### 実行
 
@@ -489,7 +531,12 @@ GPIO端子の状態を読み込む。
 (cl-raspi/src/gpio-input:main)
 ```
 
-## PWM
+これで、スイッチによる外部からの入力を感知出来るようになりました。
+
+## PWM (Pulse Width Modulation)
+
+PWMとは、電力を制御する方式の1つで、オンとオフを繰り返し切り替えて出力される電圧を制御します。  
+今回は、サーボモーターの制御に使用します。
 
 ### 使用するWiringPi関数
 
@@ -498,18 +545,53 @@ PWMジェネレータは2つのモード(バランス、マークスペース)�
 デフォルトはバランスモードです。  
 `+pwm-mode-ms+`または`+pwm-mode-bal+`で切り替えます。
 
+```common-lisp
+(defcfun ("pwmSetMode" pwm-set-mode) :void
+  (mode :int))
+
+;; モード用定数
+(defconstant +pwm-mode-ms+  0)
+(defconstant +pwm-mode-bal+ 1)
+```
+
 - pwm-set-range  
 PWMジェネレータの範囲レジスタを設定します。  
 デフォルトは1024です。
 
+```common-lisp
+(defcfun ("pwmSetRange" pwm-set-range) :void
+  (range :uint))
+```
+
 - pwm-set-clock  
 PWMクロックの約数を設定します。
+
+```common-lisp
+(defcfun ("pwmSetClock" pwm-set-clock) :void
+  (divisor :int))
+```
 
 - pwm-write  
 指定されたピンのPWMレジスタに値を書き込みます。  
 aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 12）があり、範囲は0〜1024です。
 
-### ラッパー作成
+```common-lisp
+(defcfun ("pwmWrite" pwm-write) :void
+  (pin :int) (value :int))
+```
+
+コードを追加したら、他のパッケージから参照出来るように、`export`に以下を追加して下さい。
+
+```common-lisp
+:+pwm-mode-ms+
+:+pwm-mode-bal+
+:pwm-set-mode
+:pwm-set-range
+:pwm-set-clock
+:pwm-write
+```
+
+最終的に`lib-wiring-pi.lisp`は以下のようになっているはずです。
 
 ```common-lisp
 (defpackage :cl-raspi/lib-wiring-pi
@@ -540,71 +622,61 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 
 (use-foreign-library libwiringPi)
 
-;;; Constant
-
-;; Pin mode
 (defconstant +input+      0)
 (defconstant +output+     1)
 (defconstant +pwm-output+ 2)
 
-;; PWM
-(defconstant +pwm-mode-ms+  0)
-(defconstant +pwm-mode-bal+ 1)
-
-;; Pull up/down/none
 (defconstant +pud-off+  0)
 (defconstant +pud-down+ 1)
 (defconstant +pud-up+   2)
 
-;;;; API
+(defconstant +pwm-mode-ms+  0)
+(defconstant +pwm-mode-bal+ 1)
 
-;;; Core Library
-
-;; Init wiringPi
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
-;; GPIO pin mode setting
 (defcfun ("pinMode" pin-mode) :void
   (pin :int) (mode :int))
 
-;; Read the status of the GPIO pin
 (defcfun ("digitalRead" digital-read) :int
   (pin :int))
 
-;; Output control of GPIO pin
 (defcfun ("digitalWrite" digital-write) :void
   (pin :int) (value :int))
   
-;; Set the state when nothing is connected to the terminal
 (defcfun ("pullUpDnControl" pull-updn-control) :void
   (pin :int) (pud :int))
 
-;;; PWM Library
-
-;; PWM set mode
 (defcfun ("pwmSetMode" pwm-set-mode) :void
   (mode :int))
 
-;; PWM set range (default 1024)
 (defcfun ("pwmSetRange" pwm-set-range) :void
   (range :uint))
 
-;; PWM set clock
 (defcfun ("pwmSetClock" pwm-set-clock) :void
   (divisor :int))
 
-;; PWM write
 (defcfun ("pwmWrite" pwm-write) :void
   (pin :int) (value :int))
 
-;;; Other
-
-;; Delay (millisecond)
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
 
+### 使用した電子部品と回路図
+
+電子部品は次のものを使用しました。
+
+- マイクロサーボ9g SG-90  
+[http://akizukidenshi.com/catalog/g/gM-08761/](http://akizukidenshi.com/catalog/g/gM-08761/)
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/servomotor.jpg" width="320px">
+
 ### プログラム本体作成
+
+プログラム本体を`src`ディレクトリ内に`servomotor.lisp`という名前で作成します。
 
 ```common-lisp
 (defpackage :cl-raspi/src/servomotor
@@ -630,14 +702,13 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
       (pwm-write +pin+ move))))
 ```
 
-### 回路図
+流れとしては、以下の通りです。
 
-電子部品は以下を使用しました。
-
-- マイクロサーボ9g SG-90  
-[http://akizukidenshi.com/catalog/g/gM-08761/](http://akizukidenshi.com/catalog/g/gM-08761/)
-
-<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/servomotor.jpg" width="320px">
+1. `wiringpi-setup-gpio`で初期化
+2. `pin-mode`でGPIO12をPWM出力モードに設定
+3. `pwm-set-range`でPWMジェネレータの範囲レジスタを`1024`に設定
+4. `pwm-set-clock`でPWMクロックの約数を`375`に設定
+5. `pwm-write`でPWMレジスタに標準入力した数値を設定し、サーボモーターを動かします
 
 ### 実行
 
@@ -650,6 +721,8 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 (ql:quickload :cl-raspi)
 (cl-raspi/src/servomotor:main)
 ```
+
+これで、PWMを使ったサーボモーターの制御が出来ました。
 
 ## I2C 温度センサー
 
