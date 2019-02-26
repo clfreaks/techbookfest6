@@ -29,8 +29,7 @@ Homebrewを使えないが、Roswellの開発に興味がある読者は、
 
 これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
 
-
-Debianベースの環境では、インストールの手順は次の通りである。
+Debianベースの環境では、手順は次の通りである。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential automake libcurl4-openssl-dev;fi
@@ -43,8 +42,7 @@ $ sudo make install
 $ ros setup
 ```
 
-詳細は、
- https://github.com/roswell/roswell/wiki/Installation を参照。
+詳細は、https://github.com/roswell/roswell/wiki/Installation で確認できる。
 
 ## 処理系のインストール
 
