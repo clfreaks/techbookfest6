@@ -6,7 +6,7 @@
  
 ## インストール
 
-　まず、RoswellでLemをインストールします。
+　RoswellでLemをインストールします。
 
 ```
 $ ros install cxxxr/lem
