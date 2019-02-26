@@ -726,6 +726,10 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 
 ## I2C 温度センサー
 
+I2Cとは、Inter Integrated Circuit の略で、「I2C」と書いて アイ・スクウェア・シー と呼びます。
+フィリップス社で開発されたシリアルバスで、1980年代初期に提唱されました。
+シリアルデータ (SDA) とシリアルクロック (SCL) の２本の信号線で情報伝達を行います。
+
 ### 使用するWiringPi関数
 
 - wiringPiI2CSetup  
@@ -733,13 +737,36 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマンドを使用できます。  
 戻り値は標準のLinuxファイルハンドルで、エラーがあれば-1を返します。
 
+```common-lisp
+(defcfun ("wiringPiI2CSetup" wiringpi-i2c-setup) :int
+  (fd :int))
+```
+
 - wiringPiI2CWriteReg8  
 8ビットのデータ値を指示されたデバイスレジスタに書き込みます。
 
-- wiringPiI2CReadReg16  
-示されたデバイス・レジスタから16ビットの値を読み出します。
+```common-lisp
+(defcfun ("wiringPiI2CWriteReg8" wiringpi-i2c-write-reg8) :int
+  (fd :int) (reg :int) (data :int))
+```
 
-### ラッパー作成
+- wiringPiI2CReadReg16  
+指示されたデバイス・レジスタから16ビットの値を読み出します。
+
+```common-lisp
+(defcfun ("wiringPiI2CReadReg16" wiringpi-i2c-read-reg16) :int
+  (fd :int) (reg :int))
+```
+
+コードを追加したら、他のパッケージから参照出来るように、`export`に以下を追加して下さい。
+
+```common-lisp
+:wiringpi-i2c-setup
+:wiringpi-i2c-write-reg8
+:wiringpi-i2c-read-reg16
+```
+
+最終的に`lib-wiring-pi.lisp`は以下のようになっているはずです。
 
 ```common-lisp
 (defpackage :cl-raspi/lib-wiring-pi
@@ -773,85 +800,70 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 
 (use-foreign-library libwiringPi)
 
-;;; Constant
-
-;; Pin mode
 (defconstant +input+      0)
 (defconstant +output+     1)
 (defconstant +pwm-output+ 2)
 
-;; PWM
 (defconstant +pwm-mode-ms+  0)
 (defconstant +pwm-mode-bal+ 1)
 
-;; Pull up/down/none
 (defconstant +pud-off+  0)
 (defconstant +pud-down+ 1)
 (defconstant +pud-up+   2)
 
-;;;; API
-
-;;; Core Library
-
-;; Init wiringPi
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
-;; GPIO pin mode setting
 (defcfun ("pinMode" pin-mode) :void
   (pin :int) (mode :int))
 
-;; Read the status of the GPIO pin
 (defcfun ("digitalRead" digital-read) :int
   (pin :int))
 
-;; Output control of GPIO pin
 (defcfun ("digitalWrite" digital-write) :void
   (pin :int) (value :int))
   
-;; Set the state when nothing is connected to the terminal
 (defcfun ("pullUpDnControl" pull-updn-control) :void
   (pin :int) (pud :int))
 
-;;; PWM Library
-
-;; PWM set mode
 (defcfun ("pwmSetMode" pwm-set-mode) :void
   (mode :int))
 
-;; PWM set range (default 1024)
 (defcfun ("pwmSetRange" pwm-set-range) :void
   (range :uint))
 
-;; PWM set clock
 (defcfun ("pwmSetClock" pwm-set-clock) :void
   (divisor :int))
 
-;; PWM write
 (defcfun ("pwmWrite" pwm-write) :void
   (pin :int) (value :int))
 
-;;; I2C Library
-
-;; Initialization of the I2C systems.
 (defcfun ("wiringPiI2CSetup" wiringpi-i2c-setup) :int
   (fd :int))
 
-;; Writes 8-bit data to the instructed device register.
 (defcfun ("wiringPiI2CWriteReg8" wiringpi-i2c-write-reg8) :int
   (fd :int) (reg :int) (data :int))
 
-;; It reads the 16-bit value from the indicated device register.
 (defcfun ("wiringPiI2CReadReg16" wiringpi-i2c-read-reg16) :int
   (fd :int) (reg :int))
 
-;;; Other
-
-;; Delay (millisecond)
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
 
+### 使用した電子部品と回路図
+
+電子部品は次のものを使用しました。
+
+- ADT7410を使用した温度センサーモジュール
+[http://akizukidenshi.com/catalog/g/gM-06675/](http://akizukidenshi.com/catalog/g/gM-06675/)
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/adt7410.jpg" width="320px">
+
 ### プログラム本体作成
+
+プログラム本体を`src`ディレクトリ内に`i2c-temperature-sensor.lisp`という名前で作成します。
 
 ```common-lisp
 (defpackage :cl-raspi/src/i2c-temperature-sensor
@@ -879,9 +891,22 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
     (format t "~d~%" (get-data fd))))
 ```
 
-### 回路図
+流れとしては、以下の通りです。
+
+1. `wiringpi-i2c-setup`で、I2Cシステムの初期化
+2. `wiringpi-i2c-write-reg8`で、8ビットのデータ値をADT7410のレジスタに書き込む
+3. `wiringpi-i2c-read-reg16`で、16ビットの値を読み出す。
 
 ### 実行
+
+`cl-raspi`を`quicklisp`でロードし`cl-raspi/src/i2c-temperature-sensor`パッケージの`main`関数を実行します。
+
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/i2c-temperature-sensor:main)
+```
+
+これで、温度センサーからデータを取得することが出来ました。
 
 ## SPI 3軸加速度センサー
 
