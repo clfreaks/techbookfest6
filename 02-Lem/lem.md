@@ -1,6 +1,6 @@
 # Lem
 
-　Lemは、Common Lisperのエディタです。入力補完やSLIMEなどCommon Lisp開発でよく用いられる機能がデフォルトで組み込まれているので、特別な設定なしにCommon Lispで開発を始めることができます。
+　Lemは、Common Lisperのエディタです。入力補完やSLIMEなどCommon Lisp開発でよく用いられる機能が組み込まれているので、特別な設定なしにCommon Lispで開発を始めることができます。
  
 　本章では、Lemのインストール、エディタの基本操作、統合開発環境SLIMEの使い方、vi-modeについてみていきます。
  
