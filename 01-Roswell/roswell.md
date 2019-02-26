@@ -21,11 +21,14 @@ $ brew install roswell
 
 #### ソースからインストールするには
 
-Homebrewを使えないが、Roswellの開発に興味がある読者は、次の環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
+Homebrewを使えないが、Roswellの開発に興味がある読者は、
 
 * Cのコンパイル環境
 * libcurlと、そのヘッダ
 * automake/autoconf
+
+これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
+
 
 Debianベースの環境では、インストールの手順は次の通りである。
 
