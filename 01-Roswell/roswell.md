@@ -3,31 +3,31 @@
 ## Roswellとは
 　Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あるが、それぞれインストール方法やシェルとの連携方法が異なる。Roswellは、処理系別の違いを統一して扱うための開発ツールである。当初は処理系のインストーラとして開発が始められたが、他にもCommon Lispの開発に便利な機能が追加されてきた。Roswellを用いると、Common Lispアプリケーションの開発、テスト、デプロイをコマンドラインからシンプルに行うことができる。ここでは、Roswellの基本的な使い方を紹介する。
 
-## Roswellで何が嬉しいのか
+### Roswellで何が嬉しいのか
 
-### Roswell以前の Common Lisp
+### Roswell以前のCommon Lisp
+
 asdf 処理系 コマンドライン
 
-## Roswellのインストール
+### Roswellのインストール
 
-### Homebrew を利用したインストール
+#### Homebrewを利用したインストール
 
-LinuxとosxではHomebrewでインストールすることができる。
+LinuxとmacOSではHomebrewでインストールすることができる。
 
 ```shell-session
 $ brew install roswell
 ```
 
-### Roswellをソースからインストールするには。
+#### ソースからインストールするには
 
-Homebrewを使えないかRoswellの開発に興味がある読者は
-* cのコンパイル環境
+Homebrewを使えないが、Roswellの開発に興味がある読者は、次の環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
+
+* Cのコンパイル環境
 * libcurlと、そのヘッダ
 * automake/autoconf
 
-を準備したlinux/freebsd/osx環境でコンパイルしインストールすることができる。
-
-debianベースの環境では
+Debianベースの環境では、インストールの手順は次の通りである。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential automake libcurl4-openssl-dev;fi
@@ -40,9 +40,7 @@ $ sudo make install
 $ ros setup
 ```
 
-がコンパイル手順である。
-
-詳細は
+詳細は、
  https://github.com/roswell/roswell/wiki/Installation を参照。
 
 ## 処理系のインストール
