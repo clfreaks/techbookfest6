@@ -164,6 +164,22 @@ up to date. stop
 $ 
 ``` 
 
+## ライブラリの更新
+
+　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+```
+$ ros update clack
+git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
+find: lib: No such file or directory
+Already up to date.
+[1/3] System 'clack' found. Loading the system..
+[2/3] Processing build-hook..
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+/Users/t-cool/.roswell/bin/clackup
+up to date. stop
+```
+
 ## .roswell/bin
 
 　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
@@ -187,29 +203,6 @@ Listening on localhost:5000.
 ```
 
 ブラウザを開いて[http://localhost:5000]にアクセスしてみると、Clackサーバーが起動したのが確認できる。
-
-## ライブラリ管理
-
-　`ros install <Githubのアカウント名/レポジトリ>`とすると、Githubのレポジトリからライブラリをインストールできる。ここでは、テスト用の住民データを作成する`cl-gimei`をインストールして使ってみよう。ライブラリをロード後、使用するときには`gimei:`のようにシンボルに`パッケージ名:`をつけている点に注意してもらいたい。
-
-```
-$ ros install cxxxr/cl-gimei
-$ ros run 
-* (ql:quickload :cl-gimei)
-* (let ((name (gimei:make-name)))
-    (format nil "~A ~A"
-     (gimei:kanji (gimei:last-name name))
-     (gimei:kanji (gimei:first-name name))))
-
-"久保 孝昌"
-```
-
-　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
-
-```
- $ ros update cl-gimei
-no update function for cl-gimei
-```　
 
 ## Roswell Script
 
