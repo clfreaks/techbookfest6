@@ -1,11 +1,5 @@
 (defpackage #:lem-posts-list
   (:nicknames #:lem-posts-list/main)
-  (:import-from #:jonathan)
-  (:import-from #:dexador)
-  (:import-from #:trivia
-                #:match
-                #:plist)
-  (:import-from #:quri)
   (:import-from #:trivial-open-browser
                 #:open-browser)
   (:use #:cl
@@ -49,10 +43,14 @@
         (write-post point post))
       (buffer-start point))))
 
-(define-command posts-list (subreddit) ("sSubreddit: ")
+(defun make-posts-list-buffer (subreddit)
   (let ((posts (fetch-posts subreddit))
         (buffer (make-buffer (format nil "*Reddit ~A*" subreddit))))
     (write-posts buffer posts)
+    buffer))
+
+(define-command posts-list (subreddit) ("sSubreddit: ")
+  (let ((buffer (make-posts-list-buffer subreddit)))
     (switch-to-buffer buffer)
     (change-buffer-mode buffer 'posts-list-mode)))
 
