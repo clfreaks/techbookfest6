@@ -157,7 +157,11 @@ To load "clack":
 [package bordeaux-threads]........................
 [package clack.util]..............................
 [package clack.handler]...........................
-[package clack
+　(省略)
+Found 1 scripts: clackup
+/Users/noguchihiroki/.roswell/bin/clackup
+up to date. stop
+$ 
 ``` 
 
 ## .roswell/bin
