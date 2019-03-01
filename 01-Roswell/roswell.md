@@ -6,7 +6,31 @@
 
 ### Roswell以前のCommon Lisp
 
-asdf 処理系 コマンドライン
+### ASDF
+
+　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。現在の最新バージョンは3であり、主な処理系ではデフォルトで組み込まれており、`(require :asdf)`とすることで利用することができる。ASDFでは、システム定義ファイルに、依存関係にあるシステムやLispコードを記しておくことで、アプリケーションのビルドを統一した方法で行うことができる。ただし、依存関係にあるライブラリのダウンロードはしない。ライブラリの依存関係の記述から、依存ライブラリをダウンロードする仕組みが登場する。Quicklispの登場である。
+ 
+### Quicklisp
+
+　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。https://www.quicklisp.org で公開されている`quicklisp.lisp`を処理系から読み込むことで、ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
+
+```
+$ sbcl --version
+SBCL 1.4.7
+$ sbcl
+* (ql:quickload :alexandria)
+```
+
+　`ql:quickload`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする関数`shuffle`を使うには次のようにする。
+
+```
+* (alexandria:shuffle '(1 2 3 4 5 6))
+
+(6 3 5 2 4 1)
+* 
+```
+
+　ここでは、SBCL1.4.7でQuicklispでライブラリの読み込みを行った。もしバージョンを切り替えてライブラリを読み込むには、処理系の別バージョンの環境を再構築して、ライブラリが予想通りに動作するか確認する必要があった。後に、処理系やバージョンを切り替えるツールが登場した。Roswellの登場である。では、Roswellのインストールへと進もう。
 
 ### Roswellのインストール
 
@@ -90,7 +114,6 @@ hello, world
 "hello, world"
 * 
 ```
-
 ## REPLの起動
 
 　`ros run`でREPLを起動、`C-d`もしくは`(quit)`で終了することができる。
@@ -103,6 +126,79 @@ $ ros run
 * (quit)
 $
 ```
+
+## ライブラリのインストール
+
+　Roswellの`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
+
+　試しに`ros install`でClackをインストールしてみよう。
+
+```
+$ ros install fukamachi/clack
+Installing from github fukamachi/clack
+To load "clack":
+  Load 1 ASDF system:
+    clack
+; Loading "clack"
+..................................................
+[package lack.component]..........................
+[package nibbles].................................
+[package ironclad]................................
+[package ironclad-vm].............................
+[package lack.util]...............................
+[package lack.builder]............................
+[package lack]....................................
+[package lack.middleware.backtrace]...............
+[package alexandria.0.dev]........................
+[package bordeaux-threads]........................
+[package clack.util]..............................
+[package clack.handler]...........................
+　(省略)
+Found 1 scripts: clackup
+/Users/noguchihiroki/.roswell/bin/clackup
+up to date. stop
+$ 
+``` 
+
+## ライブラリの更新
+
+　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+```
+$ ros update clack
+git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
+find: lib: No such file or directory
+Already up to date.
+[1/3] System 'clack' found. Loading the system..
+[2/3] Processing build-hook..
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+/Users/t-cool/.roswell/bin/clackup
+up to date. stop
+```
+
+## .roswell/bin
+
+　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
+
+```
+export PATH=$PATH:~/.roswell/bin
+```
+
+　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
+
+```
+(lambda (env)
+  (declare (ignore env))
+  '(200 (:content-type "text/plain") ("Hello, Clack!")))
+```
+
+```
+$ clackup app.lisp
+Hunchentoot server is going to start.
+Listening on localhost:5000.
+```
+
+ブラウザを開いて[http://localhost:5000]にアクセスしてみると、Clackサーバーが起動したのが確認できる。
 
 ## Roswell Script
 
@@ -211,114 +307,6 @@ sys	0m0.026s
 ```
 
 build後、高速化したことが分かる。
-
-## .roswell/bin
-
-　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
-
-```
-export PATH=$PATH:~/.roswell/bin
-```
-
-　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
-
-```
-(lambda (env)
-  (declare (ignore env))
-  '(200 (:content-type "text/plain") ("Hello, Clack!")))
-```
-
-```
-$ clackup app.lisp
-Hunchentoot server is going to start.
-Listening on localhost:5000.
-```
-
-ブラウザを開いて[http://localhost:5000]にアクセスしてみると、Clackサーバーが起動したのが確認できる。
-
-## ライブラリ
-
-### ASDFとQuicklisp
-
-　Roswellでは、ライブラリのインストールと読み込みに、ASDFとQuicklispを利用している。
-
-　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。Common Lispではシステムという単位でプロジェクトを管理する。システム定義ファイルに、依存関係にあるシステムやLispコードを記しておくことで、アプリケーションのビルドを統一した方法で行うことができる。
-  
-　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。ライブラリのダウンロード、コンパイル、ロードを自動化できる。Zach Beane氏により登録済みのライブラリーが主な処理系で動作することを確認された上で`http://beta.quicklisp.org`で毎月最新版が公開されている。
-
-　例えばClackでは`clack.asd`で次のようにシステムが定義されており、`:depends-on`に指定されているライブラリ、またそれらが依存しているライブラリがダウンロードされ、システムの定義通りに読み込まれる。
-
-```
-(defsystem clack
-  :version "2.0.0"
-  :author "Eitaro Fukamachi"
-  :license "LLGPL"
-  :depends-on (:lack
-               :lack-middleware-backtrace
-               :lack-util
-               :bordeaux-threads
-               :alexandria
-               :uiop)
-;; 以降、省略
-)          
-```
-
-```
-$ ros install fukamachi/clack
-Installing from github fukamachi/clack
-To load "clack":
-  Load 1 ASDF system:
-    clack
-; Loading "clack"
-..................................................
-[package lack.component]..........................
-[package nibbles].................................
-[package ironclad]................................
-[package ironclad-vm].............................
-[package lack.util]...............................
-[package lack.builder]............................
-[package lack]....................................
-[package lack.middleware.backtrace]...............
-[package alexandria.0.dev]........................
-[package bordeaux-threads]........................
-[package clack.util]..............................
-[package clack.handler]...........................
-[package clack
-```
-
-　Roswellの`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。RoswellのREPLで`(ql:quickload :ライブラリ名`)でライブラリを読み込むとき、デフォルトではこのディレクトリにあるシステムファイルからライブラリが読み込まれる。
-
-### ライブラリのインストール
-
-　Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
-
-```
-$ ros run
-* (ql:quickload :alexandria)
-```
-
-　`ql:quickload`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする関数`shuffle`を使うには次のようにする。
-
-```
-* (alexandria:shuffle '(1 2 3 4 5 6))
-
-(6 3 5 2 4 1)
-* 
-```
-
-　`ros install <Githubのアカウント名/レポジトリ>`とすると、Githubのレポジトリからライブラリをインストールできる。ここでは、テスト用の住民データを作成する`cl-gimei`をインストールして使ってみよう。ライブラリをロード後、使用するときには`gimei:`のようにシンボルに`パッケージ名:`をつけている点に注意してもらいたい。
-
-```
-$ ros install cxxxr/cl-gimei
-$ ros run 
-* (ql:quickload :cl-gimei)
-* (let ((name (gimei:make-name)))
-    (format nil "~A ~A"
-     (gimei:kanji (gimei:last-name name))
-     (gimei:kanji (gimei:first-name name))))
-
-"久保 孝昌"
-```
 
 ## まとめ
 
