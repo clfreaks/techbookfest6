@@ -2,18 +2,14 @@
 
 ### Roswellで何が嬉しいのか
 
-　Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あるが、それぞれインストール方法やシェルとの連携方法が異なる。Roswellは、処理系別の違いを統一して扱うための開発ツールである。当初は処理系のインストーラとして開発が始められたが、他にもCommon Lispの開発に便利な機能が追加されてきた。Roswellを用いると、Common Lispアプリケーションの開発、テスト、デプロイをコマンドラインからシンプルに行うことができる。ここでは、Roswellの基本的な使い方を紹介する。
+　Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あるが、それぞれインストール方法やシェルとの連携方法が異なる。Roswellは、処理系の違いを統一して扱うための開発ツールである。Roswellを用いると、Common Lispの開発環境の構築、アプリケーション開発、テスト、デプロイをコマンドラインからシンプルに行うことができる。
 
 ### Roswell以前のCommon Lisp
 
-### provideとrequire
-
-　ANSI Common Lispに存在する仕組みである。複数のファイルを読み込む際に、再度読み込むことを防ぐための仕組みとして利用されていた。しかし、requreが処理系により動作が異なるため、処理系に依存しないライブラリをprovideとrequireで管理するのは難しかった。そこで、requireとrequireではない複数の処理系で統一されたビルド方法が必要とされることになる。ASDFの登場である。
-
 ### ASDF
 
-　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。現在の最新バージョンは3であり、主な処理系ではデフォルトで組み込まれており、`(require :asdf)`とすることで利用することができる。ASDFでは、システム定義ファイルに、依存関係にあるシステムやLispコードを記しておくことで、アプリケーションのビルドを統一した方法で行うことができる。ただし、依存関係にあるライブラリのダウンロードはしない。ライブラリの依存関係の記述から、依存ライブラリをダウンロードする仕組みが登場する。Quicklispの登場である。
- 
+　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。現在の最新バージョンは3であり、主な処理系に組み込まれており、デフォルトで利用することができる。ASDFでは、システム定義ファイルに、依存関係にあるシステムやLispコードを記しておくことで、アプリケーションのビルドを統一した方法で行うことができる。ただし、依存関係にあるライブラリのダウンロードはしない。
+  
 ### Quicklisp
 
 　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。https://www.quicklisp.org で公開されている`quicklisp.lisp`を処理系から読み込むことで、ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
@@ -25,7 +21,7 @@ $ sbcl
 * (ql:quickload :alexandria)
 ```
 
-　`ql:quickload`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする関数`shuffle`を使うには次のようにする。
+　`(ql:quickload :<ライブラリ名>)`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする`shuffle`関数を使うには次のようにする。
 
 ```
 * (alexandria:shuffle '(1 2 3 4 5 6))
@@ -33,8 +29,6 @@ $ sbcl
 (6 3 5 2 4 1)
 * 
 ```
-
-　ここでは、SBCL1.4.7でQuicklispでライブラリの読み込みを行った。もしバージョンを切り替えてライブラリを読み込むには、処理系の別バージョンの環境を再構築して、ライブラリが予想通りに動作するか確認する必要があった。後に、処理系やバージョンを切り替えるツールが登場した。Roswellの登場である。では、Roswellのインストールへと進もう。
 
 ### Roswellのインストール
 
@@ -164,6 +158,22 @@ up to date. stop
 $ 
 ``` 
 
+## ライブラリの更新
+
+　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+```
+$ ros update clack
+git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
+find: lib: No such file or directory
+Already up to date.
+[1/3] System 'clack' found. Loading the system..
+[2/3] Processing build-hook..
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+/Users/t-cool/.roswell/bin/clackup
+up to date. stop
+```
+
 ## .roswell/bin
 
 　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
@@ -187,29 +197,6 @@ Listening on localhost:5000.
 ```
 
 ブラウザを開いて[http://localhost:5000]にアクセスしてみると、Clackサーバーが起動したのが確認できる。
-
-## ライブラリ管理
-
-　`ros install <Githubのアカウント名/レポジトリ>`とすると、Githubのレポジトリからライブラリをインストールできる。ここでは、テスト用の住民データを作成する`cl-gimei`をインストールして使ってみよう。ライブラリをロード後、使用するときには`gimei:`のようにシンボルに`パッケージ名:`をつけている点に注意してもらいたい。
-
-```
-$ ros install cxxxr/cl-gimei
-$ ros run 
-* (ql:quickload :cl-gimei)
-* (let ((name (gimei:make-name)))
-    (format nil "~A ~A"
-     (gimei:kanji (gimei:last-name name))
-     (gimei:kanji (gimei:first-name name))))
-
-"久保 孝昌"
-```
-
-　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
-
-```
- $ ros update cl-gimei
-no update function for cl-gimei
-```　
 
 ## Roswell Script
 

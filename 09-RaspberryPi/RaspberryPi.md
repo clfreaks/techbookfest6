@@ -158,6 +158,30 @@ source ~/.bashrc
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/lem-pic-003.png" width="320px">
 
+## 無限ループからの脱出方法について
+
+電子工作では、無限ループ内でLEDを点滅させたり、スイッチの押下やセンサーの情報を待ち受けたり等で無限ループを使うことが多いです。  
+LemのREPLを使っていて、無限ループプログラムを終了させたいときは、以下のコマンドを実行してください。
+
+```
+C-c C-c
+```
+
+または
+
+```
+C-c g
+```
+
+以下のような割り込みが発生して、プログラムが停止します。
+
+```
+Interrupt from Emacs
+   [Condition of type SIMPLE-ERROR]
+```
+
+この状態で、`q`キーを押下するとREPLに戻り、無限ループから脱出できます。
+
 ## GPIO制御ライブラリについて
 
 GPIO制御ライブラリとして`Wiring Pi`を使用します。  
@@ -910,9 +934,36 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 
 ## SPI 3軸加速度センサー
 
+
+
 ### 使用するWiringPi関数
 
-### ラッパー作成
+- wiringPiSPISetup  
+チャンネルを初期化する関数。（RaspberryPiには2つのチャンネル、0と1があります。）  
+速度パラメータは500,000〜32,000,000の範囲の整数で、SPIクロック速度をHzで表します。
+
+```common-lisp
+(defcfun ("wiringPiSPISetup" wiringpi-spi-setup) :int
+  (channel :int) (speed :int))
+```
+
+- wiringPiSPIDataRW  
+選択されたSPIバス上で、同時に書込み/読出しトランザクションが実行されます。  
+バッファ内のデータは、SPIバスから返されたデータによって上書きされます。
+
+```common-lisp
+(defcfun ("wiringPiSPIDataRW" wiringpi-spi-data-rw) :int
+  (channel :int) (data :pointer) (len :int))
+```
+
+コードを追加したら、他のパッケージから参照出来るように、exportに以下を追加して下さい。
+
+```common-lisp
+:wiringpi-spi-setup
+:wiringpi-spi-data-rw
+```
+
+最終的にlib-wiring-pi.lispは以下のようになっているはずです。
 
 ```common-lisp
 (defpackage :cl-raspi/lib-wiring-pi
@@ -948,95 +999,75 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 
 (use-foreign-library libwiringPi)
 
-;;; Constant
-
-;; Pin mode
 (defconstant +input+      0)
 (defconstant +output+     1)
 (defconstant +pwm-output+ 2)
 
-;; PWM
 (defconstant +pwm-mode-ms+  0)
 (defconstant +pwm-mode-bal+ 1)
 
-;; Pull up/down/none
 (defconstant +pud-off+  0)
 (defconstant +pud-down+ 1)
 (defconstant +pud-up+   2)
 
-;;;; API
-
-;;; Core Library
-
-;; Init wiringPi
 (defcfun ("wiringPiSetupGpio" wiringpi-setup-gpio) :int)
 
-;; GPIO pin mode setting
 (defcfun ("pinMode" pin-mode) :void
   (pin :int) (mode :int))
 
-;; Read the status of the GPIO pin
 (defcfun ("digitalRead" digital-read) :int
   (pin :int))
 
-;; Output control of GPIO pin
 (defcfun ("digitalWrite" digital-write) :void
   (pin :int) (value :int))
 
-;; Set the state when nothing is connected to the terminal
 (defcfun ("pullUpDnControl" pull-updn-control) :void
   (pin :int) (pud :int))
 
-;;; PWM Library
-
-;; PWM set mode
 (defcfun ("pwmSetMode" pwm-set-mode) :void
   (mode :int))
 
-;; PWM set range (default 1024)
 (defcfun ("pwmSetRange" pwm-set-range) :void
   (range :uint))
 
-;; PWM set clock
 (defcfun ("pwmSetClock" pwm-set-clock) :void
   (divisor :int))
 
-;; PWM write
 (defcfun ("pwmWrite" pwm-write) :void
   (pin :int) (value :int))
 
-;;; I2C Library
-
-;; Initialization of the I2C systems.
 (defcfun ("wiringPiI2CSetup" wiringpi-i2c-setup) :int
   (fd :int))
 
-;; Writes 8-bit data to the instructed device register.
 (defcfun ("wiringPiI2CWriteReg8" wiringpi-i2c-write-reg8) :int
   (fd :int) (reg :int) (data :int))
 
-;; It reads the 16-bit value from the indicated device register.
 (defcfun ("wiringPiI2CReadReg16" wiringpi-i2c-read-reg16) :int
   (fd :int) (reg :int))
 
-;;; SPI Library
-
-;; SPI initialization
 (defcfun ("wiringPiSPISetup" wiringpi-spi-setup) :int
   (channel :int) (speed :int))
 
-;; Execute concurrent write/read transactions on the selected SPI bus
 (defcfun ("wiringPiSPIDataRW" wiringpi-spi-data-rw) :int
   (channel :int) (data :pointer) (len :int))
 
-;;; Other
-
-;; Delay (millisecond)
 (defcfun ("delay" delay) :void
   (howlong :uint))
 ```
 
+使用した電子部品と回路図
+電子部品は次のものを使用しました。
+
+- ３軸加速度センサモジュール LIS3DH  
+[http://akizukidenshi.com/catalog/g/gK-06791/](http://akizukidenshi.com/catalog/g/gK-06791/)
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+![]()
+
 ### プログラム本体作成
+
+プログラム本体をsrcディレクトリ内に3-axis-acceleration-sensor.lispという名前で作成します。
 
 ```common-lisp
 (defpackage :cl-raspi/src/3-axis-acceleration-sensor
@@ -1127,9 +1158,24 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
        (delay 500))))
 ```
 
-### 回路図
+流れとしては、以下の通りです。
+
+1. `wiringpi-spi-setup`でSPIの初期化を行います。
+2. `wiringpi-setup-gpio`でGPIOの初期化を行います。
+3. `pin-mode`
+4. `digital-write`
+5. `spi-data-rw`で、書込み/読出しトランザクションを実行します。
 
 ### 実行
+
+cl-raspiをquicklispでロードしcl-raspi/src/3-axis-acceleration-sensorパッケージのmain関数を実行します。
+
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/3-axis-acceleration-sensor)
+```
+
+これで、3軸加速度センサーからデータを取得することが出来ました。
 
 ## I2C LCD
 
