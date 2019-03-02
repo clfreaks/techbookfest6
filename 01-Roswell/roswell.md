@@ -211,7 +211,7 @@ Hunchentoot server is going to start.
 Listening on localhost:5000.
 ```
 
-ブラウザを開いて[http://localhost:5000]にアクセスしてみると、Clackサーバーが起動したのが確認できる。
+ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
 
 ## Roswell Script
 
