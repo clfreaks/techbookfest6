@@ -8,17 +8,30 @@
 
 ### ASDF
 
-　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。現在の最新バージョンは3であり、主な処理系に組み込まれており、デフォルトで利用することができる。ASDFでは、システム定義ファイルに、依存関係にあるシステムやLispコードを記しておくことで、アプリケーションのビルドを統一した方法で行うことができる。ただし、依存関係にあるライブラリのダウンロードはしない。
+　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。主な処理系に組み込まれており、デフォルトで利用することができる。ASDFでは、システム定義ファイルに読み込むコードや依存ライブラリを書くことで、アプリケーションを統一した方法でビルドすることができる。ただし、依存関係にあるライブラリのダウンロードはしない。
   
 ### Quicklisp
 
-　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。https://www.quicklisp.org で公開されている`quicklisp.lisp`を処理系から読み込むことで、ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
+　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。利用するには、次のように、https://www.quicklisp.org で公開されている`quicklisp.lisp`をダウンロードして処理系から読み込み、初期化する必要がある。
+ 
+```
+$ curl -O https://beta.quicklisp.org/quicklisp.lisp
+$ sbcl --load "quicklisp.lisp"
+* (quicklisp-quickstart:install)
+* (ql:add-to-init-file)
+```
+ 
+Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
 
 ```
-$ sbcl --version
-SBCL 1.4.7
-$ sbcl
 * (ql:quickload :alexandria)
+NIL
+* To load "alexandria":
+  Load 1 ASDF system:
+    alexandria
+; Loading "alexandria"
+
+(:ALEXANDRIA)
 ```
 
 　`(ql:quickload :<ライブラリ名>)`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする`shuffle`関数を使うには次のようにする。
@@ -29,6 +42,8 @@ $ sbcl
 (6 3 5 2 4 1)
 * 
 ```
+
+　では、Roswellのインストールへと進む。RoswellにはQuicklispが組み込まれているため、Quicklispのダウンロードや初期化の手順は必要ない。
 
 ### Roswellのインストール
 
