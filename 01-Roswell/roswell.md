@@ -323,13 +323,13 @@ build後、高速化したことが分かる。
 
 ## まとめ
 
+* ASDFはCommon Lispのビルドツールであり、QuicklispはASDFを元に構築されている。
+
+* RoswellではデフォルトでQuicklispを利用できる。
+
 * Roswellで処理系をインストールするには`ros install <処理系>`とする。
 
 * RoswellでREPLを起動するには`ros run`とする。
-
-* ASDFはCommon Lispのビルドツールである。Common Lispのライブラリ管理システムQuicklispはASDFを元に構築されている。
-
-* RoswellのREPLではデフォルトでQuicklispを利用できる。`(ql:quickload :ライブラリ名)`でライブラリを読み込み、`(ライブラリ名:シンボル名)`でライブラリの関数を利用することができる。
 
 * Roswellで処理系をインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
 
