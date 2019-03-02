@@ -12,7 +12,7 @@
   
 ### Quicklisp
 
-　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。利用するには、次のように、https://www.quicklisp.org で公開されている`quicklisp.lisp`をダウンロードして処理系から読み込み、初期化する必要がある。
+　Quicklispは、ASDFをベースにしたCommon Lispのライブラリ管理システムである。ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。利用するには、次のように`quicklisp.lisp`をダウンロードして処理系から読み込んで初期化する必要がある。
  
 ```
 $ curl -O https://beta.quicklisp.org/quicklisp.lisp
@@ -21,7 +21,7 @@ $ sbcl --load "quicklisp.lisp"
 * (ql:add-to-init-file)
 ```
  
-Quicklispに登録されているライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリのAlexandriaをインストールしてみよう。
+Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリAlexandriaをインストールしてみよう。
 
 ```
 * (ql:quickload :alexandria)
