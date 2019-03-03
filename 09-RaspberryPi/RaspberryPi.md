@@ -15,6 +15,7 @@ Raspberry Piで電子工作と言えば、Pythonで紹介している本や記�
 
 ## Roswellのインストール
 
+Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。
 
 まずは、Roswellをインストールするために必要なものをインストールします。  
 インストールするのは以下の3つです。  
@@ -64,7 +65,7 @@ ros setup
 
 ## Common Lispをインストール
 
-今回はCommon Lisp処理系の1つである`CCL (Clozure Common Lisp)`を使います。
+ARM32の`SBCL(Steel Bank Common Lisp)`がスレッド対応していないため、今回は`CCL (Clozure Common Lisp)`を使用します。
 
 ```
 ros install ccl-bin
