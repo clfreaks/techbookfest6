@@ -3,15 +3,15 @@
 
 Common Lispの言語について説明している本はけっこうあるが、最近の開発フローについて開発した本はあまりない。そこをカバーする本を作りたい。
 
-- Roswell ( @snmsts ?)
+- Roswell ( @snmsts @t-cool )
   - Roswellのインストール
   - SBCLのインストール
   - Quicklisp/ASDFについて
   - Ros scriptの書き方 -> ビルド
 
 - Lem ( @cxxxr ? @gos-k ?)
-  - Lemのインストール
-  - 基本的な使い方
+  - Lemのインストール ( @t-cool )
+  - 基本的な使い方 ( @t-cool )
     - vi-modeについて
     - SLIMEの仕組みと使い方
       - デバッガ、インスペクタ
