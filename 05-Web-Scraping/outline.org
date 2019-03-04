@@ -1,25 +1,26 @@
 * Webスクレイピングと文書分類
 ** この章でやること、意義
 
-インターネット上を流れるトラフィックは量的な意味では動画データが過半数を占めるようになりつつあるが、質的な意味では、依然としてテキストデータによる情報のやりとりが中心となっている。テキストデータは日々ものすごいスピードで増え続けており、一人の人間の目で追い続けるのはもはや不可能である。また、それらのテキストデータは大抵の場合構造化されておらず、そのままでは使えないことが多い。アクセス可能な情報は大量にあり、それらは金鉱のように価値あるものを含んでいるが、目的のものを抽出するための方法論が必要とされている。このことを金鉱採掘になぞらえて、テキストマイニングと呼ぶ。
-本章では、Common Lispの既存のライブラリを用いて、インターネットをクローリングし、必要な情報を収集した上で構造化するための方法を紹介する。
+インターネット上を流れるトラフィックは量的な意味では動画データが過半数を占めるようになりつつあるが、依然としてテキストデータの重要性は変わらない。テキストデータは日々ものすごいスピードで増え続けており、一人の人間の目で追い続けるのはもはや不可能である。また、それらのテキストデータは大抵の場合構造化されておらず、そのままでは使えないことが多い。そこでデータ分析が必要になる。テキストデータをデータ分析し、意味ある構造を取り出す行為をテキストマイニングと呼ぶ。
+
+本章では、Common Lispのライブラリを用いて、インターネットをクローリングし、必要な情報を収集した上で構造化するためのいくつかの方法を紹介する。
 
 ** Webスクレイピング
-Webスクレイピングとはウェブサイトから必要な情報を取り出す行為のことである。scrapingとは「削り取る」というくらいの意味であり、ウェブサイトというかつお節から削り節を削り出し、味噌汁という利用可能な形に加工した上で美味しくいただくというのが我々の目指すところである。
-
 *** Webスクレイピングに必要なライブラリ
-Webスクレイピングでは、(1)HTMLデータを取得し、(2)これを解析し木構造に変換し、その後に(3)必要な情報を探索していくというプロセスを踏む。
-Common Lispにはこの各段階について対応したライブラリがあるので、以下ではそのインストール方法と基本的な使用例を解説する。なおQuicklisp環境は既に用意されているという前提で話を進める。
+Webスクレイピングとはウェブサイトから必要な情報を取り出す行為のことをいう。
+Webスクレイピングでは、(1)Webからデータを取得し、(2)これを解析しDOM木構造を作り、(3)そこから必要な情報を探索するというプロセスを踏む。
+Common Lispにはこの各段階について対応したライブラリがあるので、以下ではそのインストール方法と基本的な使用例を解説する。
 
 *** HTTPクライアント: Dexador
 ウェブサイトからデータを取得するためにはHTTPクライアントのDexadorを使用する。Common Lispには古くからDrakmaというHTTPクライアントがあるが、Dexadorの方が(特に同じホストに複数回アクセスする場合において)速く動作する。
 **** インストール
+インストールはQuicklispから行なえる。
 #+BEGIN_SRC lisp
 (ql:quickload :dexador)
 #+END_SRC
 
 **** 使い方
-最も基本的かつ重要なのはGETメソッドで指定のURLからデータを取得するdex:getである。これは(1)本体データの文字列、(2)ステータスコード、(3)レスポンスヘッダーのハッシュテーブル、(4)URI構造体、(5)読み出し元ソケットのストリームの5つを多値で返す。
+最も基本的かつ重要なのはdex:getで、GETメソッドで指定のURLからデータを取得する関数である。これは(1)本体データの文字列、(2)ステータスコード、(3)レスポンスヘッダーのハッシュテーブル、(4)URI構造体、(5)読み出し元ソケットのストリームの5つを多値で返す。
 #+BEGIN_SRC lisp
 (dex:get "http://lisp.org/")
 
@@ -49,23 +50,93 @@ Common Lispにはこの各段階について対応したライブラリがある
 このうち特に重要なのは最初の2つで、データ本体は次節で扱うHTMLパーサへの入力として用い、ステータスコードはデータの取得に成功したか失敗したか、さらにその理由を調べるのに用いる。
 
 *** XML/HTMLパーサ: Plump
-ここで紹介するPlumpと次節で紹介するCLSSは同じ作者のプロダクトで、同時に使われる。
-PlumpはXML/HTMLデータを文字列として受け取り、CLOSオブジェクトのノードから構成される木構造を生成、そしてその木構造のルートノードのオブジェクトを返す。
+ここで紹介するPlumpと次節で紹介するCLSSは同じ作者のプロダクトで、セットで使われる。
+PlumpはXML/HTMLデータを文字列として受け取り、CLOSオブジェクトのノードから構成されるDOMの木構造を生成し、その木構造のルートノードのオブジェクトを返すパーサである。
 
+例えば以下のようにして、前述のDexadorのgetの結果をパースすると、ルートノードのオブジェクトが返る。
 #+BEGIN_SRC lisp
 (plump:parse (dex:get "http://lisp.org/"))
 
 ;; => #<PLUMP-DOM:ROOT {1008638843}>
 #+END_SRC
-
+各ノードの子ノードのベクタはplump:childrenで、親ノードはplump:parentでそれぞれ得られる。
 #+BEGIN_SRC lisp
 (defparameter root (plump:parse (dex:get "http://lisp.org/")))
 (plump:children root)
 ;; => #(#<PLUMP-DOM:ELEMENT HTML {1008AE94D3}> #<PLUMP-DOM:TEXT-NODE {1008AF2EF3}>)
+
+(plump:parent (aref (plump:children root) 0))
+;; => #<PLUMP-DOM:ROOT {1008AE8F93}>
 #+END_SRC
 
+DOMの木構造を走査し、各ノードに対して関数を適用する高階関数plump:traverseが用意されている。
+例えば、テキストノードから文字列を取り出して連結して返す関数は以下のようになる。
+#+BEGIN_SRC lisp
+(defun concat-node-text (node)
+  (let ((text-list nil))
+    (plump:traverse node
+                    (lambda (node) (push (plump:text node) text-list))
+                    :test #'plump:text-node-p)
+    (apply #'concatenate 'string (nreverse text-list))))
+
+(concat-node-text root)
+
+"
+
+  John McCarthy, 1927-2011
+  
+    BODY {text-align: center}
+  
+
+
+John McCarthy
+
+1927-2011
+
+John McCarthy's Home Page
+Obituary
+
+
+"
+#+END_SRC
+
+同様にして、DOM木構造に対して変更を加えることもできる。例えばテキストノードの文字列を全て大文字に変更するには、
+
+#+BEGIN_SRC lisp
+(plump:traverse root
+                (lambda (node)
+                  (setf (plump:text node)
+                        (string-upcase (plump:text node))))
+                :test #'plump:text-node-p)
+
+(concat-node-text root)
+
+"
+
+  JOHN MCCARTHY, 1927-2011
+  
+    BODY {TEXT-ALIGN: CENTER}
+  
+
+
+JOHN MCCARTHY
+
+1927-2011
+
+JOHN MCCARTHY'S HOME PAGE
+OBITUARY
+
+
+"
+#+END_SRC
+
+このように、DOM木構造から情報を取り出したり変更を加えることができる。
 
 *** CSSセレクタ: CLSS
+
+
+(clss:select "img" root)
+#(#<PLUMP-DOM:ELEMENT img {1008AEE273}>)
 
 *** スクレイピングの実際
 **** ログインを必要とするサイト
@@ -86,3 +157,4 @@ PlumpはXML/HTMLデータを文字列として受け取り、CLOSオブジェク
 **** word2vec
 
 *** スパースなデータの取り扱い
+
