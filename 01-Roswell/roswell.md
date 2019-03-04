@@ -140,79 +140,6 @@ $ ros run
 $
 ```
 
-## ライブラリのインストール
-
-　Roswellの`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
-
-　試しに`ros install`でClackをインストールしてみよう。
-
-```
-$ ros install fukamachi/clack
-Installing from github fukamachi/clack
-To load "clack":
-  Load 1 ASDF system:
-    clack
-; Loading "clack"
-..................................................
-[package lack.component]..........................
-[package nibbles].................................
-[package ironclad]................................
-[package ironclad-vm].............................
-[package lack.util]...............................
-[package lack.builder]............................
-[package lack]....................................
-[package lack.middleware.backtrace]...............
-[package alexandria.0.dev]........................
-[package bordeaux-threads]........................
-[package clack.util]..............................
-[package clack.handler]...........................
-　(省略)
-Found 1 scripts: clackup
-/Users/noguchihiroki/.roswell/bin/clackup
-up to date. stop
-$ 
-``` 
-
-## ライブラリの更新
-
-　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
-
-```
-$ ros update clack
-git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
-find: lib: No such file or directory
-Already up to date.
-[1/3] System 'clack' found. Loading the system..
-[2/3] Processing build-hook..
-[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
-/Users/t-cool/.roswell/bin/clackup
-up to date. stop
-```
-
-## .roswell/bin
-
-　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
-
-```
-export PATH=$PATH:~/.roswell/bin
-```
-
-　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
-
-```
-(lambda (env)
-  (declare (ignore env))
-  '(200 (:content-type "text/plain") ("Hello, Clack!")))
-```
-
-```
-$ clackup app.lisp
-Hunchentoot server is going to start.
-Listening on localhost:5000.
-```
-
-ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
-
 ## Roswell Script
 
 　Roswell Scriptを用いると、シェルコマンドであることを意識せずにCommon Lispでスクリプトを書くことができる。
@@ -321,6 +248,80 @@ sys	0m0.026s
 
 build後、高速化したことが分かる。
 
+## ライブラリのインストール
+
+　Roswellの`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
+
+　試しに`ros install`でClackをインストールしてみよう。
+
+```
+$ ros install fukamachi/clack
+Installing from github fukamachi/clack
+To load "clack":
+  Load 1 ASDF system:
+    clack
+; Loading "clack"
+..................................................
+[package lack.component]..........................
+[package nibbles].................................
+[package ironclad]................................
+[package ironclad-vm].............................
+[package lack.util]...............................
+[package lack.builder]............................
+[package lack]....................................
+[package lack.middleware.backtrace]...............
+[package alexandria.0.dev]........................
+[package bordeaux-threads]........................
+[package clack.util]..............................
+[package clack.handler]...........................
+　(省略)
+Found 1 scripts: clackup
+/Users/noguchihiroki/.roswell/bin/clackup
+up to date. stop
+$ 
+``` 
+
+## ライブラリの更新
+
+　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+```
+$ ros update clack
+git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
+find: lib: No such file or directory
+Already up to date.
+[1/3] System 'clack' found. Loading the system..
+[2/3] Processing build-hook..
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+/Users/t-cool/.roswell/bin/clackup
+up to date. stop
+```
+
+## .roswell/bin
+
+　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
+
+```
+export PATH=$PATH:~/.roswell/bin
+```
+
+　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
+
+```
+(lambda (env)
+  (declare (ignore env))
+  '(200 (:content-type "text/plain") ("Hello, Clack!")))
+```
+
+```
+$ clackup app.lisp
+Hunchentoot server is going to start.
+Listening on localhost:5000.
+```
+
+ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
+
+
 ## まとめ
 
 * ASDFはCommon Lispのビルドツールであり、QuicklispはASDFを元に構築されている。
@@ -331,6 +332,8 @@ build後、高速化したことが分かる。
 
 * RoswellでREPLを起動するには`ros run`とする。
 
-* Roswellで処理系をインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
-
 * Roswell Scriptを用いると、Common Lispでシェルコマンドを書くことができる。
+
+* `ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。
+
+* Roswellで処理系をインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
