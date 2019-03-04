@@ -15,6 +15,7 @@ Raspberry Piで電子工作と言えば、Pythonで紹介している本や記�
 
 ## Roswellのインストール
 
+Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。
 
 まずは、Roswellをインストールするために必要なものをインストールします。  
 インストールするのは以下の3つです。  
@@ -64,7 +65,7 @@ ros setup
 
 ## Common Lispをインストール
 
-今回はCommon Lisp処理系の1つである`CCL (Clozure Common Lisp)`を使います。
+ARM32の`SBCL(Steel Bank Common Lisp)`がスレッド対応していないため、今回は`CCL (Clozure Common Lisp)`を使用します。
 
 ```
 ros install ccl-bin
@@ -881,6 +882,8 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 - ADT7410を使用した温度センサーモジュール
 [http://akizukidenshi.com/catalog/g/gM-06675/](http://akizukidenshi.com/catalog/g/gM-06675/)
 
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/ADT7410.JPG" width="320px">
+
 上記電子部品を以下のようにブレッドボードに配置します。
 
 <img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/adt7410.jpg" width="320px">
@@ -917,9 +920,20 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 
 流れとしては、以下の通りです。
 
-1. `wiringpi-i2c-setup`で、I2Cシステムの初期化
-2. `wiringpi-i2c-write-reg8`で、8ビットのデータ値をADT7410のレジスタに書き込む
-3. `wiringpi-i2c-read-reg16`で、16ビットの値を読み出す。
+1. `(wiringpi-i2c-setup +i2c-addr+)`  
+I2Cシステムの初期化
+2. `(wiringpi-i2c-write-reg8 fd #X03 #X80)`  
+レジスタ`0x03`に`0x80`を書き込むことで、16ビットの高精度で温度を取得
+3. `(wiringpi-i2c-read-reg16 fd #X00)`  
+レジスタ`0x00`から16ビットのデータを取得
+4. バイトスワップ  
+温度データを取得するとビッグエンディアンになってしまっているので、バイトスワップしてリトルエンディアンに変換
+5. 温度計算  (13ビットの場合)  
+4～16ビット目までが有効なデータなので、取得データを8で割って下位3ビットを捨ててから、温度分解能値である0.0625をかけます。  
+計算式：(取得データ / 8) × 0.0625
+6. 温度計算 (16ビットの場合)  
+全てのデータが使えるので、そのまま温度分解能値である0.0078とかけます。  
+計算式：取得データ × 0.0078
 
 ### 実行
 
@@ -1061,9 +1075,11 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
 - ３軸加速度センサモジュール LIS3DH  
 [http://akizukidenshi.com/catalog/g/gK-06791/](http://akizukidenshi.com/catalog/g/gK-06791/)
 
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/LIS3DH.png" width="320px">
+
 上記電子部品を以下のようにブレッドボードに配置します。
 
-![]()
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/CircuitDiagram/lis3dh.jpg" width="320px">
 
 ### プログラム本体作成
 
