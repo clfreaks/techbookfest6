@@ -280,6 +280,29 @@ $
 
 　`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
 
+## .roswell/bin
+
+　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
+
+```
+export PATH=$PATH:~/.roswell/bin
+```
+
+　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
+
+```
+(lambda (env)
+  (declare (ignore env))
+  '(200 (:content-type "text/plain") ("Hello, Clack!")))
+```
+
+```
+$ clackup app.lisp
+Hunchentoot server is going to start.
+Listening on localhost:5000.
+```
+
+ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
 
 ### ライブラリの更新
 
@@ -307,46 +330,6 @@ Fast-forward
  6 files changed, 94 insertions(+), 7 deletions(-)
  create mode 100644 src/dbpedia.lisp
 (以下省略)
-```
-
-## .roswell/bin
-
-　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
-
-```
-export PATH=$PATH:~/.roswell/bin
-```
-
-　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
-
-```
-(lambda (env)
-  (declare (ignore env))
-  '(200 (:content-type "text/plain") ("Hello, Clack!")))
-```
-
-```
-$ clackup app.lisp
-Hunchentoot server is going to start.
-Listening on localhost:5000.
-```
-
-ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
-
-## ライブラリの更新
-
-　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
-
-```
-$ ros update clack
-git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
-find: lib: No such file or directory
-Already up to date.
-[1/3] System 'clack' found. Loading the system..
-[2/3] Processing build-hook..
-[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
-/Users/t-cool/.roswell/bin/clackup
-up to date. stop
 ```
 
 ## Qlot
