@@ -339,7 +339,9 @@ ql log4cl 2014-03-17
 $ qlot install
 ```
 
-　インストール後、quicklispフォルダを開くと、dists以下にライブラリのソースコード、binフォルダにRowell Scriptが入っているのが確認できる。プロジェクト内のquicklispフォルダからライブラリをロードするには`qlot exec`を用いる。`qlot exec ros -S . run`とすれば、REPLが起動する。
+　インストール後、quicklispフォルダを開くと、dists以下にライブラリのソースコード、binフォルダにRowell Scriptを確認できる。
+ 
+　プロジェクト内のquicklispフォルダからライブラリをロードするには`qlot exec`を用いる。`qlot exec ros -S . run`とすれば、REPLが起動する。
 
 ```
 $ qlot exec ros -S . run
