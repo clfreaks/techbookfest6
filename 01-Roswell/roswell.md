@@ -21,7 +21,7 @@ $ sbcl --load "quicklisp.lisp"
 * (ql:add-to-init-file)
 ```
  
-Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリAlexandriaをインストールしてみよう。
+　Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリAlexandriaをインストールしてみよう。
 
 ```
 * (ql:quickload :alexandria)
@@ -49,7 +49,7 @@ NIL
 
 #### Homebrewを利用したインストール
 
-LinuxとmacOSではHomebrewでインストールすることができる。
+　LinuxとmacOSではHomebrewでインストールすることができる。
 
 ```shell-session
 $ brew install roswell
@@ -57,15 +57,15 @@ $ brew install roswell
 
 #### ソースからインストールするには
 
-Homebrewを使えないが、Roswellの開発に興味がある読者は、
+　Homebrewを使えないが、Roswellの開発に興味がある読者は、
 
 * Cのコンパイル環境
 * libcurlと、そのヘッダ
 * automake/autoconf
 
-これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
+　これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
 
-Debianベースの環境では、手順は次の通りである。
+　Debianベースの環境では、手順は次の通りである。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential automake libcurl4-openssl-dev;fi
@@ -78,7 +78,7 @@ $ sudo make install
 $ ros setup
 ```
 
-詳細は、https://github.com/roswell/roswell/wiki/Installation で確認できる。
+　詳細は、https://github.com/roswell/roswell/wiki/Installation で確認できる。
 
 ## 処理系のインストール
 
@@ -182,7 +182,7 @@ exec ros -Q -- $0 "$@"
 
 ### Roswell Scriptの実行
 
-`<ファイル名>.ros 引数`の形式でmain関数に引数が渡されて実行される。
+　`<ファイル名>.ros 引数`の形式でmain関数に引数が渡されて実行される。
 
 ```
 $ time ros fact.ros 10
@@ -302,7 +302,7 @@ Hunchentoot server is going to start.
 Listening on localhost:5000.
 ```
 
-ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
+　ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
 
 ### ライブラリの更新
 
