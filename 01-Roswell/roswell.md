@@ -153,29 +153,7 @@ $ ros init fact.ros
 Successfully generated: fact.ros
 ```
 
-　次のようなファイルが生成される。
-
-```common-lisp
-#!/bin/sh
-#|-*- mode:lisp -*-|#
-#|
-exec ros -Q -- $0 "$@"
-|#
-(progn ;;init forms
-  (ros:ensure-asdf)
-  ;;#+quicklisp(ql:quickload '() :silent t)
-  )
-
-(defpackage :ros.script.hoge.3759651958
-  (:use :cl))
-(in-package :ros.script.hoge.3759651958)
-
-(defun main (&rest argv)
-  (declare (ignorable argv)))
-;;; vim: set ft=lisp lisp:
-```
-
-　では、階乗(factorial)を計算する関数`fact`を定義してみよう。
+　生成された雛形を元に、階乗(factorial)を計算する関数`fact`を定義してみよう。
  
 ```common-lisp
 #!/bin/sh
@@ -207,21 +185,33 @@ exec ros -Q -- $0 "$@"
 `<ファイル名>.ros 引数`の形式でmain関数に引数が渡されて実行される。
 
 ```
-$ fact.ros 3
-Factorial 3 = 6
-
-$ fact.ros 10
+$ time ros fact.ros 10
 Factorial 10 = 3628800
+
+real	0m0.786s
+user	0m0.628s
+sys	0m0.133s
 ```
 
-## ros build
+### ros build (実行ファイルの作成)
 
-`ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。fact関数をビルドして、ビルドの前後で実行時間を比較してみよう。
+　`ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。`ros build <Roswell Script名>`とすると、`.ros`拡張子が消えて、実行ファイルが生成される。
+
+　では、fact関数をビルドしてみよう。
 
 ```
-# build前
-$ ros fact.ros 10
-Factorial 10 = 3628800
+$ ros build fact.ros
+compressed 0 bytes into 8 at level -1
+compressed 32768 bytes into 401 at level -1
+compressed 31719424 bytes into 7068417 at level -1
+compressed 2097152 bytes into 562396 at level -1
+compressed 12910592 bytes into 3890295 at level -1
+```
+
+　ビルド前後の実行時間を比較すると、ビルド後は5倍ほど高速化したことがわかる。
+
+```
+# ビルド前
 $ time ros fact.ros 10
 Factorial 10 = 3628800
 
@@ -229,15 +219,7 @@ real	0m0.786s
 user	0m0.628s
 sys	0m0.133s
 
-# fact.rosをbuildする
-$ ros build fact.ros
-compressed 0 bytes into 8 at level -1
-compressed 32768 bytes into 401 at level -1
-compressed 31719424 bytes into 7068417 at level -1
-compressed 2097152 bytes into 562396 at level -1
-compressed 12910592 bytes into 3890295 at level -1
-
-# build後
+# ビルド後
 $ time fact 10
 Factorial 10 = 3628800
 
@@ -245,8 +227,6 @@ real	0m0.187s
 user	0m0.156s
 sys	0m0.026s
 ```
-
-build後、高速化したことが分かる。
 
 ## ライブラリのインストール
 
