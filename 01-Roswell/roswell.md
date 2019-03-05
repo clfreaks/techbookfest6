@@ -247,7 +247,9 @@ Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
 (以下、省略)
 ```
 
-　`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされる。　試しにClackをインストールしてみよう。
+　`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされる。　
+
+　試しにClackをインストールしてみよう。
 
 ```
 $ ros install fukamachi/clack
@@ -276,7 +278,7 @@ up to date. stop
 $ 
 ``` 
 
-　Roswellの`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
+　`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
 
 
 ### ライブラリの更新
