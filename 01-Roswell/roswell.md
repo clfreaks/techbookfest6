@@ -281,22 +281,6 @@ up to date. stop
 $ 
 ``` 
 
-## ライブラリの更新
-
-　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
-
-```
-$ ros update clack
-git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
-find: lib: No such file or directory
-Already up to date.
-[1/3] System 'clack' found. Loading the system..
-[2/3] Processing build-hook..
-[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
-/Users/t-cool/.roswell/bin/clackup
-up to date. stop
-```
-
 ## .roswell/bin
 
 　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
@@ -321,6 +305,52 @@ Listening on localhost:5000.
 
 ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
 
+## ライブラリの更新
+
+　ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+```
+$ ros update clack
+git pull on /Users/t-cool/.roswell/local-projects/fukamachi/clack/
+find: lib: No such file or directory
+Already up to date.
+[1/3] System 'clack' found. Loading the system..
+[2/3] Processing build-hook..
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+/Users/t-cool/.roswell/bin/clackup
+up to date. stop
+```
+
+## Qlot
+
+　Qlotは、プロジェクトごとにライブラリを管理するためのツールである。Quicklispに登録されているライブラリによっては、開発途中にAPIが変更される可能性がある。Qlotでは、依存ライブラリの情報を`qlfile`に記載することで、プロジェクトフォルダ内の`quicklisp`フォルダ内にライブラリがダウンロードされて、ライブラリのバージョンを固定することができる。
+
+　試しに、qlfileを書いて試してみよう。次のように、Github上のブランチ、Quicklispの月別レポジトリを指定することができる。
+
+```
+git clack https://github.com/fukamachi/clack.git
+github datafly fukamachi/datafly :branch jojo
+ql log4cl 2014-03-17
+```
+
+　qlfileがあるディレクトリ内で`qlot install`とすると、プロジェクト内のquicklispフォルダにソースコードがダウンロードされた後、インストールされる。
+
+```
+$ qlot install
+```
+
+　インストール後、quicklispフォルダを開くと、dists以下にライブラリのソースコード、binフォルダにRowell Scriptが入っているのが確認できる。プロジェクト内のquicklispフォルダからライブラリをロードするには`qlot exec`を用いる。`qlot exec ros -S . run`とすれば、REPLが起動する。
+
+```
+$ qlot exec ros -S . run
+* 
+```
+
+　`qlot exec <Roswell Script>`とすると、プロジェクト内の`quicklisp/bin`からRoswell Scriptのコマンドを実行することができる。
+
+```
+$ qlot exec clackup app.lisp
+```
 
 ## まとめ
 
@@ -328,12 +358,18 @@ Listening on localhost:5000.
 
 * RoswellではデフォルトでQuicklispを利用できる。
 
-* Roswellで処理系をインストールするには`ros install <処理系>`とする。
+* 処理系をインストールするには`ros install <処理系>`とする。
 
-* RoswellでREPLを起動するには`ros run`とする。
+* REPLを起動するには`ros run`とする。
 
 * Roswell Scriptを用いると、Common Lispでシェルコマンドを書くことができる。
 
 * `ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。
 
-* Roswellで処理系をインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
+* ライブラリをインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
+
+* プロジェクト・トップの`roswell`フォルダにRoswell Scriptを入れておくと、Roswell Scriptをターミナルのコマンドとして使うことができる。
+
+* ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。
+
+* Qlotを用いると、プロジェクトごとにライブラリのバージョンを管理することができる。
