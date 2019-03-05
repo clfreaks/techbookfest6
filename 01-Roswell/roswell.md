@@ -273,7 +273,7 @@ To load "clack":
 [package clack.handler]...........................
 　(省略)
 Found 1 scripts: clackup
-/Users/noguchihiroki/.roswell/bin/clackup
+/Users/t-cool/.roswell/bin/clackup
 up to date. stop
 $ 
 ``` 
@@ -310,7 +310,7 @@ Listening on localhost:5000.
  
 ```
 $ ros update cl-ignition
-git pull on /Users/noguchihiroki/.roswell/local-projects/dbym4820/cl-ignition/
+git pull on /Users/t-cool/.roswell/local-projects/dbym4820/cl-ignition/
 find: lib: No such file or directory
 remote: Enumerating objects: 30, done.
 remote: Counting objects: 100% (30/30), done.
