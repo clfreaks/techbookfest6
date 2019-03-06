@@ -182,7 +182,7 @@ exec ros -Q -- $0 "$@"
 
 ### Roswell Scriptの実行
 
-　`<ファイル名>.ros 引数`の形式でmain関数に引数が渡されて実行される。
+　`ros <スクリプト名.ros> 引数`の形式でmain関数に引数が渡されて実行される。
 
 ```
 $ ros fact.ros 10
