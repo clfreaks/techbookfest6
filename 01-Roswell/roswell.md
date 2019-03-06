@@ -185,12 +185,8 @@ exec ros -Q -- $0 "$@"
 　`<ファイル名>.ros 引数`の形式でmain関数に引数が渡されて実行される。
 
 ```
-$ time ros fact.ros 10
+$ ros fact.ros 10
 Factorial 10 = 3628800
-
-real	0m0.786s
-user	0m0.628s
-sys	0m0.133s
 ```
 
 ### ros build (実行ファイルの作成)
