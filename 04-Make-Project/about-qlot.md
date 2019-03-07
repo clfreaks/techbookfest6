@@ -1,36 +1,33 @@
 ## Qlot
 
-　Qlotは、プロジェクトで用いる依存ライブラリのバージョンを固定するツールである。Quicklispでは月別のバージョンを指定できるが、Qlotではより詳細にバージョンを指定することができる。qlotファイルに指定の形式でバージョンを記載することで、プロジェクト内のquicklispフォルダにソースコードをダウンロードできる。
+　Qlotは、プロジェクトごとにライブラリを管理するためのツールである。Quicklispに登録されているライブラリによっては、開発途中にAPIが変更される可能性がある。Qlotでは、依存ライブラリの情報を`qlfile`に記載することで、プロジェクトフォルダ内の`quicklisp`フォルダ内にライブラリがダウンロードされて、ライブラリのバージョンを固定することができる。
 
- RoswellでQlotをインストールしよう。`ros install`でインストールすると、`qlot`コマンドが使えるようになる。
-```
-$ ros install fukamachi/qlot
-Installing from github fukamachi/qlot
-(省略)
-Found 1 scripts: qlot
-/Users/noguchihiroki/.roswell/bin/qlot
-up to date. stop
-```
-
-では、qlotファイルでライブラリのバージョンを指定して、`qlot`コマンドでライブラリをインストールしてみよう。
+　試しに、qlfileを書いて試してみよう。次のように、Github上のブランチ、Quicklispの月別レポジトリを指定することができる。
 
 ```
 git clack https://github.com/fukamachi/clack.git
-github datafly fukamachi/datafly :branch v0.7.x
+github datafly fukamachi/datafly :branch jojo
 ql log4cl 2014-03-17
 ```
+
+　qlfileがあるディレクトリ内で`qlot install`とすると、プロジェクト内のquicklispフォルダにソースコードがダウンロードされた後、インストールされる。
 
 ```
 $ qlot install
 ```
 
-　RoswellのREPLからプロジェクトを起動すると`~/.roswell/local-projects`から依存ライブラリを読み込むが、`qlot exec ros -S . run`とすることで、プロジェクト内のquicklispからライブラリが読み込まれてREPLが起動する。
+　インストール後、quicklispフォルダを開くと、dists以下にライブラリのソースコード、binフォルダにRowell Scriptを確認できる。
+ 
+　プロジェクト内のquicklispフォルダからライブラリをロードするには`qlot exec`を用いる。`qlot exec ros -S . run`とすれば、REPLが起動する。
 
 ```
 $ qlot exec ros -S . run
-*
+* 
 ```
 
-## まとめ
+　`qlot exec <Roswell Script>`とすると、プロジェクト内の`quicklisp/bin`からRoswell Scriptのコマンドを実行することができる。
 
-* Qlotを使うとプロジェクトごとに依存ライブラリを固定できる。プロジェクト・ローカルのライブラリを読み込んでプロジェクトを起動するには、`qlot exec ros -S . run`でREPLを起動する。
+```
+$ qlot exec clackup app.lisp
+```
+
