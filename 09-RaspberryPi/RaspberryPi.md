@@ -55,8 +55,7 @@ Roswellのバージョンを確認
 ros --version
 ```
 
-執筆時での最新バージョンは`19.1.10.96`でした。
-
+執筆時での最新バージョンは`19.1.10.96`でした。  
 インストールが終わったら以下のコマンドで初期設定を行います。
 
 ```
@@ -403,6 +402,18 @@ GPIOピンの出力制御を行います。
 
 ### 実行
 
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/blink`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"))
+```
+
 `cl-raspi`を`quicklisp`でロードし`cl-raspi/src/blink`パッケージの`main`関数を実行します。
 
 ```common-lisp
@@ -548,6 +559,19 @@ GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加し
 5. タクトスイッチが押下されるとピンの状態がLOW(0)になり、離すとHIGH(1)になる
 
 ### 実行
+
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/gpio-input`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"
+                 "cl-raspi/src/gpio-input"))
+```
 
 `cl-raspi`を`quicklisp`でロードし`cl-raspi/src/gpio-input`パッケージの`main`関数を実行します。
 
@@ -720,11 +744,14 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
   (pwm-set-clock 375))
 
 (defun main ()
-  (init)
-  (let ((move 0))
-    (loop
-      (setf move (read))
-      (pwm-write +pin+ move))))
+  (init) 
+  (let ((set-degree 0) 
+        (move-deg 0)) 
+    (loop 
+      (setf set-degree (read)) 
+      (when (and (<= set-degree 90) (>= set-degree -90))
+        (setf move-deg (floor (+ 74 (* (/ 48 90) set-degree))))
+        (pwm-write +pin+ move-deg))))) 
 ```
 
 流れとしては、以下の通りです。
@@ -735,7 +762,48 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 4. `pwm-set-clock`でPWMクロックの約数を`375`に設定
 5. `pwm-write`でPWMレジスタに標準入力した数値を設定し、サーボモーターを動かします
 
+
+#### サーボモーターの角度計算について
+
+今回使用した`SG-90`のパルス幅と角度の関係は以下の通りです。
+
+| パルス幅(ミリ秒) | 角度 |
+|:---:|:---:|
+| 0.5 | -90 |
+| 2.4 |  90 |
+
+0.5〜2.4ミリ秒の間でパルス幅を調整すれば、目的の角度まで動かすことができます。
+ハードウェアPWMの制御では1周期20ミリ秒を1024段階に分割した値でパルス幅を指定します。
+
+- 0.5ミリ秒のパルス幅なら `1024 / 20 * 0.5 = 25.6 ≒ 26`
+- 2.4ミリ秒のパルス幅なら `1024 / 20 * 2.4 = 122.880005 ≒ 122`
+
+`26〜122`の間でPWMを出力すれば好きな角度まで動かせます。  
+この出力値は、角度から計算して求められます。  
+90度で値が`48`増えるため、1度あたり`48 / 90`となります。  
+0度は74なので計算式は次の通りです。
+
+```
+74 + 48 / 90 * 動かしたい角度
+```
+
+例：45度まで動かす場合は`98`です。
+
 ### 実行
+
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/servomotor`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"
+                 "cl-raspi/src/gpio-input"
+                 "cl-raspi/src/servomotor"))
+```
 
 ハードウェアPWMはrootユーザーの権限でコマンドを実行する必要があります。  
 なので、Lemを起動する時は`sudo lem`としてください。
@@ -936,6 +1004,21 @@ I2Cシステムの初期化
 計算式：取得データ × 0.0078
 
 ### 実行
+
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/i2c-temperature-sensor`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"
+                 "cl-raspi/src/gpio-input"
+                 "cl-raspi/src/servomotor"
+                 "cl-raspi/src/i2c-temperature-sensor"))
+```
 
 `cl-raspi`を`quicklisp`でロードし`cl-raspi/src/i2c-temperature-sensor`パッケージの`main`関数を実行します。
 
@@ -1184,7 +1267,23 @@ I2Cシステムの初期化
 
 ### 実行
 
-cl-raspiをquicklispでロードしcl-raspi/src/3-axis-acceleration-sensorパッケージのmain関数を実行します。
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/3-axis-acceleration-sensor`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"
+                 "cl-raspi/src/gpio-input"
+                 "cl-raspi/src/servomotor"
+                 "cl-raspi/src/i2c-temperature-sensor"
+                 "cl-raspi/src/3-axis-acceleration-sensor"))
+```
+
+cl-raspiをquicklispでロードし`cl-raspi/src/3-axis-acceleration-sensor`パッケージのmain関数を実行します。
 
 ```common-lisp
 (ql:quickload :cl-raspi)
@@ -1195,24 +1294,198 @@ cl-raspiをquicklispでロードしcl-raspi/src/3-axis-acceleration-sensorパッ
 
 ## I2C LCD
 
+GUIアプリケーションからI2C LCDを制御するプログラムを作ってみます。  
+GUIライブラリは`ltk`を使用します。  
+`Ltk`は内部的には`Tcl/Tk`を呼び出しているため、以下のコマンドでTcl/Tkをインストールします。
+
+```
+sudo apt-get install tcl tk
+```
+
+GUIは以下のような感じになります。
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/MI2CLCD-01-Ltk.png" width="320px">
+
 ### 使用するWiringPi関数
 
-### ラッパー作成
+新規に追加する関数はありません。  
+`wiringPiI2CSetup`と`wiringPiI2CWriteReg8`を使用します。
+
+### 使用した電子部品と回路図
+
+電子部品は次のものを使用しました。
+
+- 液晶モジュール【MI2CLCD-01】
+[https://www.marutsu.co.jp/pc/i/137795/](https://www.marutsu.co.jp/pc/i/137795/)
+
+<img src="https://github.com/clfreaks/techbookfest6/blob/master/09-RaspberryPi/pic/MI2CLCD-01.png" width="320px">
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+
 
 ### プログラム本体作成
 
-### 回路図
+```common-lisp
+(defpackage :cl-raspi/src/i2c-lcd-ltk
+  (:use :cl
+        :ltk
+        :cl-raspi/lib-wiring-pi)
+  (:export :main))
+(in-package :cl-raspi/src/i2c-lcd-ltk)
+
+;; I2C device address (0x3e)
+(defconstant +i2c-addr+ #X3E)
+
+;; LCD contrast (0x00-0x0F)
+(defconstant +contrast+ #X0A)
+
+;; LCD column (16)
+(defconstant +column+ 16)
+
+(defun init (fd)
+  (let ((fcnt (logior (logand +contrast+ #X0F) #X70)))
+    (wiringpi-i2c-write-reg8 fd #X00 #X38) ; Function set : 8bit, 2 line
+    (wiringpi-i2c-write-reg8 fd #X00 #X39) ; Function set : 8bit, 2 line, IS=1
+    (wiringpi-i2c-write-reg8 fd #X00 #X14) ; Internal OSC freq
+    (wiringpi-i2c-write-reg8 fd #X00 fcnt) ; Contrast set
+    (wiringpi-i2c-write-reg8 fd #X00 #X5F) ; Power/ICON/Constract
+    (wiringpi-i2c-write-reg8 fd #X00 #X6A) ; Follower control
+    (delay 300)                            ; Wait time (300 ms)
+    (wiringpi-i2c-write-reg8 fd #X00 #X39) ; Function set : 8 bit, 2 line, IS=1
+    (wiringpi-i2c-write-reg8 fd #X00 #X06) ; Entry mode set
+    (wiringpi-i2c-write-reg8 fd #X00 #X0C) ; Display on/off
+    (wiringpi-i2c-write-reg8 fd #X00 #X01) ; Clear display
+    (delay 30)                             ; Wait time (0.3 ms)
+    (wiringpi-i2c-write-reg8 fd #X00 #X02) ; Return home
+    (delay 30)))                           ; Wait time (0.3 ms)))
+
+(defun display-text (fd line entry)
+  (wiringpi-i2c-write-reg8 fd #X00 line)    ; Set cursor first line
+  (dotimes (count +column+)                 ; Clear first line
+    (wiringpi-i2c-write-reg8 fd #X40 #X20))
+  (wiringpi-i2c-write-reg8 fd #X00 line)    ; Reset cursor first line
+  (loop :for char :across (text entry)      ; Display string
+     :do (wiringpi-i2c-write-reg8 fd #X40 (char-code char))))
+
+(defun ltk-control-text (fd)
+  (let ((lbl1   (make-instance 'label :text "First line" :width 60))
+        (entry1 (make-instance 'entry))
+        (btn1   (make-instance 'button :text "Button1"))
+        (lbl2   (make-instance 'label :text "Second line" :width 60))
+        (entry2 (make-instance 'entry))
+        (btn2   (make-instance 'button :text "Button2")))
+    (setf (command btn1) (lambda () (display-text fd #X80 entry1)))
+    (setf (command btn2) (lambda () (display-text fd #XC0 entry2)))
+    (focus entry1)
+    (pack (list lbl1 entry1 btn1 lbl2 entry2 btn2) :fill :x)))
+
+(defun display-icon (fd arg1 arg2)
+  (wiringpi-i2c-write-reg8 fd #X00 arg1)
+  (wiringpi-i2c-write-reg8 fd #X40 arg2))
+
+(defun clear-icon (fd)
+  (display-icon fd #X40 #X00)   ; Antenna clear
+  (display-icon fd #X42 #X00)   ; Phone clear
+  (display-icon fd #X44 #X00)   ; Sound clear
+  (display-icon fd #X46 #X00)   ; Input clear
+  (display-icon fd #X47 #X00)   ; Up Down clear
+  (display-icon fd #X49 #X00)   ; KeyLock clear
+  (display-icon fd #X4B #X00)   ; Mute clear
+  (display-icon fd #X4D #X00)   ; Battery clear
+  (display-icon fd #X4F #X00))  ; Other clear
+
+(defun ltk-control-icon (fd)
+  (let* ((frm-icon     (make-instance 'frame))
+         (lbl-icon     (make-instance 'label  :text "Icon Control Button"))
+         (btn-antenna  (make-instance 'button :text "Antenna"))
+         (btn-phone    (make-instance 'button :text "Phone"))
+         (btn-sound    (make-instance 'button :text "Sound"))
+         (btn-input    (make-instance 'button :text "Input"))
+         (btn-up       (make-instance 'button :text "Up"))
+         (btn-down     (make-instance 'button :text "Down"))
+         (btn-keylock  (make-instance 'button :text "KeyLock"))
+         (btn-mute     (make-instance 'button :text "Mute"))
+         (btn-battery1 (make-instance 'button :text "Battery1"))
+         (btn-battery2 (make-instance 'button :text "Battery2"))
+         (btn-battery3 (make-instance 'button :text "Battery3"))
+         (btn-battery4 (make-instance 'button :text "Battery4"))
+         (btn-other    (make-instance 'button :text "Other"))
+         (btn-clear    (make-instance 'button :text "Clear")))
+    (setf (command btn-antenna)  (lambda () (display-icon fd #X40 #X10)))
+    (setf (command btn-phone)    (lambda () (display-icon fd #X42 #X10)))
+    (setf (command btn-sound)    (lambda () (display-icon fd #X44 #X10)))
+    (setf (command btn-input)    (lambda () (display-icon fd #X46 #X10)))
+    (setf (command btn-up)       (lambda () (display-icon fd #X47 #X10)))
+    (setf (command btn-down)     (lambda () (display-icon fd #X47 #X08)))
+    (setf (command btn-keylock)  (lambda () (display-icon fd #X49 #X10)))
+    (setf (command btn-mute)     (lambda () (display-icon fd #X4B #X10)))
+    (setf (command btn-battery1) (lambda () (display-icon fd #X4D #X10)))
+    (setf (command btn-battery2) (lambda () (display-icon fd #X4D #X08)))
+    (setf (command btn-battery3) (lambda () (display-icon fd #X4D #X04)))
+    (setf (command btn-battery4) (lambda () (display-icon fd #X4D #X02)))
+    (setf (command btn-other)    (lambda () (display-icon fd #X4F #X10)))
+    (setf (command btn-clear)    (lambda () (clear-icon fd)))
+    (pack lbl-icon)
+    (pack (list btn-antenna
+                btn-phone
+                btn-sound
+                btn-input
+                btn-up
+                btn-down
+                btn-keylock
+                btn-mute
+                btn-battery1
+                btn-battery2
+                btn-battery3
+                btn-battery4) :side :left)
+    (pack btn-clear :fill :x)
+    (configure frm-icon :borderwidth 3)
+    (configure frm-icon :relief :sunken)))
+
+(defun main ()
+  (let  ((fd (wiringpi-i2c-setup +i2c-addr+)))
+    (init fd)
+    (with-ltk ()
+      (wm-title *tk* "MI2CLCD-01 Control Application")
+      (bind *tk* "<Alt-q>" (lambda (event)
+                             (setq *exit-mainloop* t)))
+      (ltk-control-text fd)
+      (ltk-control-icon fd))))
+```
 
 ### 実行
+
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/i2c-lcd-ltk`を追加します。
+
+```common-lisp
+(defsystem "cl-raspi"
+    :class :package-inferred-system
+    :version "0.1.0"
+    :license "MIT"
+    :depends-on ("cffi"
+                 "ltk"
+                 "cl-raspi/lib-wiring-pi"
+                 "cl-raspi/src/cl-raspi/src/blink"
+                 "cl-raspi/src/gpio-input"
+                 "cl-raspi/src/servomotor"
+                 "cl-raspi/src/i2c-temperature-sensor"
+                 "cl-raspi/src/i2c-lcd-ltk"))
+```
+
+`cl-raspi`を`quicklisp`でロードし`cl-raspi/src/i2c-lcd-ltk`パッケージの`main`関数を実行します。
+
+```common-lisp
+(ql:quickload :cl-raspi)
+(cl-raspi/src/cl-raspi/src/i2c-lcd-ltk:main)
+```
 
 ## OLED
 
 ### 使用するWiringPi関数
 
-### ラッパー作成
+### 使用した電子部品と回路図
 
 ### プログラム本体作成
-
-### 回路図
 
 ### 実行
