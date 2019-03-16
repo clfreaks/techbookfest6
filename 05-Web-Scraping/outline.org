@@ -195,6 +195,20 @@ Slots with :INSTANCE allocation:
 #+END_SRC
 
 **** CSSクラス、IDによる検索
+次に、CSSのクラスやIDでDOMツリーからノードを検索する例を紹介する。まず例として、Clojureの公式サイトを取得する。
+
+#+BEGIN_SRC lisp
+(defparameter *clojure-root-node*
+  (plump:parse (dex:get "https://clojure.org/")))
+#+END_SRC
+
+このサイトをブラウザのインスペクタで調べると、内容のまとまりで w-section というクラスが付いていることが分かる。このクラスでDOMツリーを検索することができる。
+なお、クラスの場合はクラス名の前に . を付け、IDの場合はID名の前に # を付ける。また、
+
+#+BEGIN_SRC lisp
+(clss:select ".w-section" *clojure-root-node*)
+#+END_SRC
+
 
 
 *** スクレイピングの実際

@@ -96,3 +96,60 @@
 (map 'list (lambda (a-node)
              (plump:attribute a-node "href"))
      (clss:select "a" *root-node*))
+
+;;; Select by CSS class/id
+
+(defparameter *clojure-root-node*
+  (plump:parse (dex:get "https://clojure.org/")))
+
+(clss:select ".w-section" *clojure-root-node*)
+;; #(#<PLUMP-DOM:ELEMENT div {1017135813}> #<PLUMP-DOM:ELEMENT div {1017141093}>
+;;   #<PLUMP-DOM:ELEMENT div {101714B7E3}> #<PLUMP-DOM:ELEMENT div {101716C8F3}>
+;;   #<PLUMP-DOM:ELEMENT div {1017186913}> #<PLUMP-DOM:ELEMENT div {10171A9623}>
+;;   #<PLUMP-DOM:ELEMENT div {10171CFF53}> #<PLUMP-DOM:ELEMENT div {10171DFC83}>)
+
+(clss:select "div.clj-intro-message" *clojure-root-node*)
+;; #(#<PLUMP-DOM:ELEMENT div {101A9D53F3}>)
+
+(concat-node-text *clj-intro-message*)
+
+(clss:select "p" *clj-intro-message*)
+;; #(#<PLUMP-DOM:ELEMENT p {1017150793}> #<PLUMP-DOM:ELEMENT p {1017152A43}>
+;;   #<PLUMP-DOM:ELEMENT p {1017154823}> #<PLUMP-DOM:ELEMENT p {10171558B3}>)
+
+(concat-node-text (aref (clss:select "h2" *clj-intro-message*) 0))
+;; "The Clojure Programming Language"
+
+(clss:select "#wf-form-Search-Form" *clojure-root-node*)
+;; #(#<PLUMP-DOM:ELEMENT form {1017138953}>)
+
+;;; define-psude-selector
+
+(clss:define-pseudo-selector outside-link (node)
+  (let ((href (plump:attribute node "href")))
+    (and href (cl-ppcre:scan "^(http|https)://" href))))
+
+;; it is a predicate
+(clss:define-pseudo-selector outside-link (node)
+  (let ((href (plump:attribute node "href")))
+    (and href (if (cl-ppcre:scan "^(http|https)://" href) t nil))))
+
+(clss:select "a:outside-link" *clojure-root-node*)
+(clss:select ":outside-link" *clojure-root-node*)
+
+(concat-node-text
+ (aref
+  (clss:select
+  "#file-05-web-scraping-md-readme > article > p:nth-child(49) > code:nth-child(1)"
+  (plump:parse (dex:get "https://gist.github.com/masatoi/d37978c8cd21317b14d0cba258a74813")))
+  0))
+
+(clss:select
+ ".hb2Smf"
+ (plump:parse (dex:get "https://www.google.com/")))
+
+"#tsf > div:nth-child(2) > div > div.RNNXgb > div > div.dRYYxd > div > span"
+
+
+copy selector
+"#file-05-web-scraping-md-readme > article > p:nth-child(49) > code:nth-child(1)"
