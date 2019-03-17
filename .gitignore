@@ -8,3 +8,4 @@ yarn.lock
 .texmf-var
 book-pdf/
 book.pdf
+*.re
