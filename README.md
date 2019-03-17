@@ -58,4 +58,10 @@ docker run --rm -v `pwd`/src:/work vvakame/review:3.1 /bin/sh -c "cd /work && re
 ```
 ```
 sudo docker run -v /home/wiz/techbookfest6:/src -it vvakame/review:3.1 /bin/bash
+
+apt-get install ruby-dev
+apt-get install make
+
+docker pull nuitsjp/mdview:2.5
+docker run -v /home/wiz/techbookfest6:/src -it nuitsjp/mdview:2.5 /bin/bash
 ```

@@ -4,7 +4,7 @@ The document is a brief guide for Re:VIEW markup syntax.
 
 Re:VIEW is based on EWB of ASCII (now KADOKAWA), influenced RD and other Wiki system's syntax.
 
-This document explains about the format of Re:VIEW 3.0.
+This document explains about the format of Re:VIEW 2.0.
 
 
 ## Paragraph
@@ -416,14 +416,8 @@ plot sin(x)
 //}
 ```
 
-You can use `graphviz`, `gnuplot`, `blockdiag`, `aafigure`, and `plantuml` as the command name.
-Before using these tools, you should installed them and configured path appropriately.
-
-* Graphviz ( https://www.graphviz.org/ ) : set path to `dot` command
-* Gnuplot ( http://www.gnuplot.info/ ) : set path to `gnuplot` command
-* Blockdiag ( http://blockdiag.com/ ) : set path to `blockdiag` command. Install ReportLab also to make a PDF
-* aafigure ( https://launchpad.net/aafigure ) : set path to `aafigure` command
-* PlantUML ( http://plantuml.com/ ) : set path to `java` command. place `plantuml.jar` on working folder
+You can use `graphviz`, `gnuplot`, `blockdiag`, `aafigure` as the command name.
+Before using these tools, you should installed them.
 
 ## Tables
 
@@ -497,6 +491,7 @@ to use image "complexmatrix".
 The rule of finding images is same as image command.
 //}
 ```
+
 
 ## Quoting Text
 
@@ -617,114 +612,6 @@ Usage:
 //}
 ```
 
-If you'd like to assign a number like 'Equation 1.1`, specify the identifier and caption.
-
-```
-//texequationl[emc][The Equivalence of Mass and Energy]{
-\sum_{i=1}^nf_n(x)
-//}
-```
-
-To reference this, use the inline command `@<eq>`.
-
-There is `@<m>{ ... }` for inline (see "Fence notation for inline commands" section also).
-
-Whether LaTeX formula is correctly displayed or not depends on the processing system. PDFMaker uses LaTeX internally, so there is no problem.
-
-EPUBMaker and WEBMaker use either MathML transformation or imaging.
-
-### MathML case
-Install MathML library (`gem install math_ml`).
-
-Specify in config.yml as follows:
-
-```
-mathml: true
-```
-
-Whether it is displayed properly in MathML depends on your viewer or browser.
-
-### imaging case
-
-This way calls LaTeX internally and images it with an external tool. Image files will be placed in `images/_review_math` folder.
-
-You need TeXLive or other LaTeX environment. Modify the parameters of `texcommand`,` texoptions`, `dvicommand`,` dvioptions` in config.yml as necessary.
-
-In addition, external tools for image conversion are also needed. Currently, it supports the following two methods.
-
-- `pdfcrop`: cut out  the formula using `pdfcrop` command (included in TeXLive) and image it. By default, `pdftocairo` command is used (included in Poppler library). You can change it to another tool if available on the command line.
-- `dvipng`: it uses [dvipng](https://ctan.org/pkg/dvipng) to cut out and to image. You can install with OS package or `tlmgr install dvipng`.
-
-By setting in config.yml,
-
-```
-imgmath: true
-```
-
-it is set as follows:
-
-```
-imgmath_options:
-  # format. png|svg
-  format: png
-  # conversion method. pdfcrop|dvipng
-  converter: pdfcrop
-  # custom preamble file (default: for upLaTeX+jsarticle.cls, see lib/review/makerhelper.rb#default_imgmath_preamble）
-  preamble_file: null
-  # default font size
-  fontsize: 10
-  # default line height
-  lineheight: 12
-  # pdfcrop command.
-  # %i: filename for input %o: filename for output
-  pdfcrop_cmd: "pdfcrop --hires %i %o"
-  # imaging command.
-  # %i: filename for input %o: filename for output %O: filename for output without the extension
-  # %p: page number
-  pdfcrop_pixelize_cmd: "pdftocairo -png -r 90 -f %p -l %p -singlefile %i %O"
-  # whether to generate a single PDF page for pdfcrop_pixelize_cmd.
-  extract_singlepage: null
-  # command line to generate a single PDF page file.
-  pdfextract_cmd: "pdfjam -q --outfile %o %i %p"
-  # dvipng command.
-  dvipng_cmd: "dvipng -T tight -z 9 -p %p -l %p -o %o %i"
-```
-
-For example, to make SVG:
-
-```
-imgmath: true
-imgmath_options:
-  format: svg
-  pdfcrop_pixelize_cmd: "pdftocairo -svg -r 90 -f %p -l %p -singlefile %i %o"
-```
-
-By default, the command specified in `pdfcrop_pixelize_cmd` takes the filename of multi-page PDF consisting of one formula per page.
-
-If you want to use the `sips` command or the` magick` command, they can only process a single page, so you need to set `extract_singlepage: true` to extract the specified page from the input PDF. `pdfjam` command (in TeXLive) is used to extract pages.
-
-```
-imgmath: true
-imgmath_options:
-  extract_singlepage: true
-  # use pdftk instead of default pdfjam (for Windows)
-  pdfextract_cmd: "pdftk A=%i cat A%p output %o"
-  # use ImageMagick
-  pdfcrop_pixelize_cmd: "magick -density 200x200 %i %o"
-  # use sips
-  pdfcrop_pixelize_cmd: "sips -s format png --out %o %i"
-```
-
-To set the same setting as Re:VIEW 2:
-
-```
-imgmath: true
-imgmath_options:
-  converter: dvipng
-  fontsize: 12
-  lineheight: 14.3
-```
-
 ## Spacing
 
 `//noindent` is a tag for spacing.
@@ -824,33 +711,6 @@ Usage:
 @<href>{chap1.html#point1, point1 in document}
 //label[point1]
 ```
-
-## Words file
-
-By creating a word file with key / value pair, `@<w>{key}` or `@<wb>{key}` will be expanded the key to the corresponding value. `@<wb>` means bold style.
-
-This word file is a CSV file with extension .csv. This first columns is the key, the second row is the value.
-
-```
-"LGPL","Lesser General Public License"
-"i18n","""i""nternationalizatio""n"""
-```
-
-Specify the word file path in `words_file` parameter of `config.yml`.
-
-Usage:
-
-```review
-@<w>{LGPL}, @<wb>{i18n}
-```
-
-(In HTML:)
-
-```
-Lesser General Public License, ★"i"nternationalizatio"n"☆
-```
-
-Values are escaped by the builder. It is not possible to include inline commands in the value.
 
 ## Comments
 
@@ -971,7 +831,6 @@ this is a special line.
 @<list>{program}:: `List 1.5`
 @<img>{unixhistory}:: `Figure 1.3`
 @<table>{ascii}:: `Table 1.2`
-@<eq>{emc2}:: `Equation 1.1`
 @<hd>{advanced|Other Topics}:: `7-3. Other Topics`
 @<column>{another-column}:: reference of column.
 ```
@@ -985,13 +844,10 @@ this is a special line.
 @<href>{http://www.google.com/, google}:: hyper link(URL)
 @<icon>{samplephoto}:: inline image
 @<m>{a + \alpha}:: TeX inline equation
-@<w>{key}:: expand the value corresponding to the key.
-@<wb>{key}:: expand the value corresponding to the key with bold style.
 @<raw>{|html|<span>ABC</span>}:: inline raw data inline. `\}` is `}`, `\\` is `\`, and `\n` is newline.
 @<embed>{|html|<span>ABC</span>}:: inline raw data inline. `\}` is `}` and `\\` is `\`.
 @<idx>{string}:: output a string and register it as an index. See makeindex.md.
 @<hidx>{string}:: register a string as an index. A leveled index is expressed like `parent<<>>child`
-@<balloon>{abc}:: inline balloon in code block. For example, `@<balloon>{ABC}` produces `←ABC`. This may seem too simple. To decorate it, modify the style sheet file or override a function by `review-ext.rb`
 ```
 
 ## Commands for Authors (pre-processor commands)
@@ -1111,3 +967,4 @@ Sample layout file(layout.html.erb):
   </body>
 </html>
 ```
+

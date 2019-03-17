@@ -2,7 +2,7 @@
 
 Re:VIEW フォーマットの文法について解説します。Re:VIEW フォーマットはアスキー社（現カドカワ）の EWB を基本としながら、一部に RD や各種 Wiki の文法を取り入れて簡素化しています。
 
-このドキュメントは、Re:VIEW 3.0 に基づいています。
+このドキュメントは、Re:VIEW 2.0 に基づいています。
 
 ## 段落
 
@@ -372,18 +372,12 @@ V1 --> V6 --|
 例: gnuplotの使用
 
 ```
-//graph[sin_x][gnuplot][Gnuplotの使用]{
+//graph[sin_x][gnuplot]{
 plot sin(x)
 //}
 ```
 
-コマンド名には、「`graphviz`」「`gnuplot`」「`blockdiag`」「`aafigure`」「`plantuml`」のいずれかを指定できます。ツールはそれぞれ別途インストールし、インストール先のフォルダ名を指定することなく実行できる (パスを通す) 必要があります。
-
-* Graphviz ( https://www.graphviz.org/ ) : `dot` コマンドへのパスを OS に設定すること
-* Gnuplot ( http://www.gnuplot.info/ ) : `gnuplot` コマンドへのパスを OS に設定すること
-* Blockdiag ( http://blockdiag.com/ ) : `blockdiag` コマンドへのパスを OS に設定すること。PDF を生成する場合は ReportLab もインストールすること
-* aafigure ( https://launchpad.net/aafigure ) : `aafigure` コマンドへのパスを OS に設定すること
-* PlantUML ( http://plantuml.com/ ) : `java` コマンドへのパスを OS に設定し、`plantuml.jar` が作業フォルダにあること
+コマンド名には、「`graphviz`」「`gnuplot`」「`blockdiag`」「`aafigure`」のいずれかを指定できます。ツールはそれぞれ別途インストールする必要があります。
 
 ## 表
 
@@ -573,113 +567,9 @@ LaTeX の式を挿入するには、`//texequation{ 〜 //}` を使います。
 //}
 ```
 
-「式1.1」のように連番を付けたいときには、識別子とキャプションを指定します。
+インライン命令では `@<m>{〜}` を使います。インライン命令の式中に「}」を含む場合、`\}` とエスケープする必要があることに注意してください（`{` はエスケープ不要）。
 
-```
-//texequationl[emc][質量とエネルギーの等価性]{
-\sum_{i=1}^nf_n(x)
-//}
-```
-
-参照するにはインライン命令 `@<eq>` を使います（たとえば `@<eq>{emc}`）。
-
-インライン命令では `@<m>{〜}` を使います。インライン命令の式中に「}」を含む場合、`\}` とエスケープする必要があることに注意してください（`{` はエスケープ不要）。「インライン命令のフェンス記法」も参照してください。
-
-LaTeX の数式が正常に整形されるかどうかは処理系に依存します。LaTeX を利用する PDFMaker では問題なく利用できます。
-
-EPUBMaker および WEBMaker では、MathML に変換する方法と、画像化する方法のどちらかを選べます。
-
-### MathML の場合
-MathML ライブラリをインストールしておきます（`gem install math_ml`）。
-
-さらに config.yml に以下のように指定します。
-
-```
-mathml: true
-```
-
-なお、MathML で正常に表現されるかどうかは、ビューアやブラウザに依存します。
-
-### 画像化の場合
-
-LaTeX を内部で呼び出し、外部ツールを使って画像化する方法です。画像化された数式は、`images/_review_math` フォルダに配置されます。
-
-TeXLive などの LaTeX 環境が必要です。必要に応じて config.yml の `texcommand`、`texoptions`、`dvicommand`、`dvioptions` のパラメータを調整します。
-
-さらに、画像化するための外部ツールも用意します。現在、以下の2つのやり方をサポートしています。
-
-- `pdfcrop`：TeXLive に収録されている `pdfcrop` コマンドを使用して数式部分を切り出し、さらに PDF から画像化します。デフォルトでは画像化には Poppler ライブラリに収録されている `pdftocairo` コマンドを使用します（コマンドラインで利用可能であれば、別のツールに変更することもできます）。
-- `dvipng`：[dvipng](https://ctan.org/pkg/dvipng) を使用します。OS のパッケージまたは `tlmgr install dvipng` でインストールできます。数式中に日本語は使えません。
-
-config.yml で以下のように設定すると、
-
-```
-imgmath: true
-```
-
-デフォルト値として以下が使われます。
-
-```
-imgmath_options:
-  # 使用する画像拡張子。通常は「png」か「svg」（svgの場合は、pdfcrop_pixelize_cmdの-pngも-svgにする）
-  format: png
-  # 変換手法。pdfcrop または dvipng
-  converter: pdfcrop
-  # プリアンブルの内容を上書きするファイルを指定する（デフォルトはupLaTeX+jsarticle.clsを前提とした、lib/review/makerhelper.rbのdefault_imgmath_preambleメソッドの内容）
-  preamble_file: null
-  # 基準のフォントサイズ
-  fontsize: 10
-  # 基準の行間
-  lineheight: 12
-  # pdfcropコマンドのコマンドライン。プレースホルダは
-  # %i: 入力ファイル、%o: 出力ファイル
-  pdfcrop_cmd: "pdfcrop --hires %i %o"
-  # PDFから画像化するコマンドのコマンドライン。プレースホルダは
-  # %i: 入力ファイル、%o: 出力ファイル、%O: 出力ファイルから拡張子を除いたもの
-  # %p: 対象ページ番号
-  pdfcrop_pixelize_cmd: "pdftocairo -png -r 90 -f %p -l %p -singlefile %i %O"
-  # pdfcrop_pixelize_cmdが複数ページの処理に対応していない場合に単ページ化するか
-  extract_singlepage: null
-  # 単ページ化するコマンドのコマンドライン
-  pdfextract_cmd: "pdfjam -q --outfile %o %i %p"
-  # dvipngコマンドのコマンドライン
-  dvipng_cmd: "dvipng -T tight -z 9 -p %p -l %p -o %o %i"
-```
-
-たとえば SVG を利用するには、次のようにします。
-
-```
-imgmath: true
-imgmath_options:
-  format: svg
-  pdfcrop_pixelize_cmd: "pdftocairo -svg -r 90 -f %p -l %p -singlefile %i %o"
-```
-
-デフォルトでは、pdfcrop_pixelize_cmd に指定するコマンドは、1ページあたり1数式からなる複数ページの PDF のファイル名を `%i` プレースホルダで受け取り、`%p` プレースホルダのページ数に基づいて `%o`（拡張子あり）または `%O`（拡張子なし）の画像ファイルに書き出す、という仕組みになっています。
-
-単一のページの処理を前提とする `sips` コマンドや `magick` コマンドを使う場合、入力 PDF から指定のページを抽出するように `extract_singlepage: true` として挙動を変更します。単一ページの抽出はデフォルトで TeXLive の `pdfjam` コマンドが使われます。
-
-```
-imgmath: true
-imgmath_options:
-  extract_singlepage: true
-  # pdfjamの代わりに外部ツールのpdftkを使う場合（Windowsなど）
-  pdfextract_cmd: "pdftk A=%i cat A%p output %o"
-  # ImageMagickを利用する例
-  pdfcrop_pixelize_cmd: "magick -density 200x200 %i %o"
-  # sipsを利用する例
-  pdfcrop_pixelize_cmd: "sips -s format png --out %o %i"
-```
-
-Re:VIEW 2 以前の dvipng の設定に合わせるには、次のようにします。
-
-```
-imgmath: true
-imgmath_options:
-  converter: dvipng
-  fontsize: 12
-  lineheight: 14.3
-```
+LaTeX の数式が正常に整形されるかどうかは処理系に依存します。たとえば TeX PDF であれば問題なく利用できるでしょうが、EPUB では MathML 変換を有効にしても妥当な結果にならないことがあります。確実を期すならば、画像で表現するほうが適切です。
 
 ## 字下げの制御
 
@@ -766,33 +656,6 @@ Web ハイパーリンクを記述するには、リンクに `@<href>`、アン
 @<href>{chap1.html#point1, ドキュメント内ポイント}
 //label[point1]
 ```
-
-## 単語ファイルの展開
-
-キーと値のペアを持つ単語ファイルを用意しておき、キーが指定されたら対応するその値を展開するようにできます。`@<w>{キー}` あるいは `@<wb>{キー}` インライン命令を使います。後者は太字にします。
-
-現在、単語ファイルは CSV（コンマ区切り）形式で拡張子 .csv のものに限定されます。1列目にキー、2列目に値を指定して列挙します。
-
-```
-"LGPL","Lesser General Public License"
-"i18n","""i""nternationalizatio""n"""
-```
-
-単語ファイルのファイルパスは、`config.yml` に `words_file: ファイルパス` で指定します。
-
-例:
-
-```review
-@<w>{LGPL}, @<wb>{i18n}
-```
-
-テキストビルダを使用している場合:
-
-```
-Lesser General Public License, ★"i"nternationalizatio"n"☆
-```
-
-展開されるときには、ビルダごとに決められたエスケープが行われます。インライン命令を含めるといったことはできません。
 
 ## コメント
 
@@ -918,7 +781,6 @@ LaTeXビルダを使用している場合:
 * `@<list>{識別子}` : リストを参照します。
 * `@<img>{識別子}` : 図を参照します。
 * `@<table>{識別子}` : 表を参照します。
-* `@<eq>{識別子}` : 式を参照します。
 * `@<hd>{ラベルまたは見出し}` : 節や項を参照します。
 * `@<column>{ラベルまたは見出し}` : コラムを参照します。
 
@@ -929,13 +791,10 @@ LaTeXビルダを使用している場合:
 * `@<href>{URL}`, `@<href>{URL, 文字表現}` : ハイパーリンクを作成します（後述）。
 * `@<icon>{識別子}` : インラインの画像を出力します。
 * `@<m>{数式}` : インラインの数式を出力します。
-* `@<w>{キー}` : キー文字列に対応する、単語ファイル内の値文字列を展開します。
-* `@<wb>{キー}` : キー文字列に対応する、単語ファイル内の値文字列を展開し、太字にします。
 * `@<raw>{|ビルダ|〜}` : 生の文字列を出力します。`\}`は`}`に、`\\`は`\`に、`\n`は改行に置き換えられます。
 * `@<embed>{|ビルダ|〜}` : 生の文字列を埋め込みます。`\}`は`}`に、`\\`は`\`に置き換えられます（`\n`はそのままです）。
 * `@<idx>{文字列}` : 文字列を出力するとともに、索引として登録します。索引の使い方については、makeindex.ja.md を参照してください。
 * `@<hidx>{文字列}` : 索引として登録します (idx と異なり、紙面内に出力はしません)。`親索引文字列<<>>子索引文字列` のように親子関係にある索引も定義できます。
-* `@<balloon>{〜}` : コードブロック (emlist など) 内などでのいわゆる吹き出しを作成します。たとえば「`@<balloon>{ABC}`」とすると、「`←ABC`」となります。デフォルトの挙動および表現は簡素なので、より装飾されたものにするにはスタイルシートを改変するか、`review-ext.rb` を使って挙動を書き換える必要があります。
 
 ## 著者用タグ（プリプロセッサ命令）
 
@@ -983,8 +842,8 @@ list: 実行例
 * `%pr` : ローマ数字（小文字）i, ii, iii, ...
 * `%pRW` : ローマ数字（大文字・単一文字表記）Ⅰ, Ⅱ, Ⅲ, ...
 * `%pJ` : 漢数字 一, 二, 三, ...
-* `%pdW` : アラビア数字（0〜9まではいわゆる全角、10以降半角）１, ２, ... 10, ...
-* `%pDW` : アラビア数字（すべて全角）１, ２, ... １０, ...
+* `%pdW' : アラビア数字（0〜9まではいわゆる全角、10以降半角）１, ２, ... 10, ...
+* `%pDW' : アラビア数字（すべて全角）１, ２, ... １０, ...
 
 例:
 

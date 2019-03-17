@@ -3,23 +3,16 @@ version: 2
 jobs:
   build:
     docker:
-      - image: nuitsjp/md2review:1.12.0
-    steps:
-     # Ensure your image has git, otherwise the checkout step will fail
-      - run: apt-get -qq update; apt-get -y install git
-      - checkout
-      - run:
-          name: markdown -> review
-          command: sh ./md2review.sh
-          working_directory: ./
-    docker:
-      - image: vvakame/review:3.1
+      - image: nuitsjp/mdview:2.5
     steps:
       - checkout
       - run:
           name: Build PDF
-          command: review-pdfmaker config.yml
-          working_directory: ./src
+          command: |
+            sh ./md2review.sh
+            cd src
+            review-pdfmaker config.yml
+          working_directory: ./
       - store_artifacts:
           path: ./src/book.pdf
           destination: book.pdf

@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'review', '3.1.0'
+gem 'review', '2.5.0'

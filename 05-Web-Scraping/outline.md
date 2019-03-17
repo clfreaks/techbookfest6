@@ -20,10 +20,12 @@ Common Lispにはこの各段階について対応したライブラリがある
 
 ####  使い方
 Dexadorの最も基本的かつ重要な関数は`dex:get`で、GETメソッドで指定のURLからデータを取得する。
-```lisp
+
+```
 (defparameter *html-source* (dex:get "http://lisp.org/"))
 ```
 get関数は(1) 本体データの文字列、(2) ステータスコード、(3) レスポンスヘッダーのハッシュテーブル、(4) URI構造体、(5) 読み出し元ソケットのストリームの5つを多値で返す。
+
 ```
 "<HTML>
 <HEAD>
@@ -52,7 +54,7 @@ get関数は(1) 本体データの文字列、(2) ステータスコード、(3)
 ### XML/HTMLパーサ: Plump
 ここで紹介するPlumpと次節で紹介するCLSSは同じ作者のプロダクトで、セットで使われる。これらはDexadorと同様にQuicklispからインストールできる。
 
-```lisp
+```
 (ql:quickload '(:plump :clss))
 ```
 
@@ -60,14 +62,17 @@ PlumpはXML/HTMLパーサであり、XML/HTMLデータを文字列として受�
 
 例えば以下のようにして、前述のDexadorの`get`の結果をパースすると、ルートノードのオブジェクトが返る。
 
-```lisp
+
+```
 (defparameter *root-node* (plump:parse *html-source*))
 
 ;; *root-node* => #<PLUMP-DOM:ROOT {1008638843}>
 ```
+
 各ノードの子ノードのベクタは`plump:children`で、親ノードは`plump:parent`でそれぞれ得られる。
 
-```lisp
+
+```
 (plump:children *root-node*)
 
 ;; => #(#<PLUMP-DOM:ELEMENT HTML {1008AE94D3}> #<PLUMP-DOM:TEXT-NODE {1008AF2EF3}>)
@@ -81,7 +86,7 @@ PlumpはXML/HTMLパーサであり、XML/HTMLデータを文字列として受�
 例えば、テキストノードから文字列を取り出して連結して返す関数は以下のようになる。
 ここでは`traverse`に各ノードについて適用される関数を渡している。キーワードパラメータ`:test`で述語関数を渡すと、それを満足するノードに対してのみ第二引数の関数が適用される。
 
-```lisp
+```
 (defun concat-node-text (node)
   (let ((text-list nil))
     (plump:traverse node
@@ -104,7 +109,7 @@ Obituary"
 
 同様にして、取得したDOMツリーに対して変更を加えることもできる。例えばテキストノードの文字列を全て大文字に変更するには、`traverse`でDOMツリーを走査しながら、`text-node-p`を満足するノードオブジェクトのスロットに`setf`で新しい値を設定すればよい。
 
-```lisp
+```
 (plump:traverse root
                 (lambda (node)
                   (setf (plump:text node)
@@ -132,7 +137,7 @@ OBITUARY"
 
 例えばIMGタグでルートノード以下を検索すると、Plumpのノードのベクタが得られる。その最初の要素を変数`*img-node*`に持っておく。
 
-```lisp
+```
 (defparameter *img-nodes* (clss:select "img" *root-node*))
 
 ;; *img-nodes* => #(#<PLUMP-DOM:ELEMENT img {1008AEE273}>)
@@ -153,7 +158,7 @@ Slots with :INSTANCE allocation:
 
 なお、`plump:attributes`でノードオブジェクトから属性のハッシュテーブルを取得でき、各属性値には`plump:attribute`でアクセスできる。このハッシュテーブルの中身を表示してみると、属性値としてsrcとaltを持っていることが分かる。
 
-```lisp
+```
 (defun print-node-attributes (node)
   (maphash (lambda (key value)
              (format t "key: ~A, value: ~A~%" key value))
@@ -175,7 +180,8 @@ Slots with :INSTANCE allocation:
 
 ここまでに説明したことを使えば、例えば全てのAタグを検索し、リンク先を列挙するようなこともできる。
 
-```lisp
+
+```
 (loop for a-node across (clss:select "a" *root-node*)
       collect (plump:attribute a-node "href"))
 
@@ -186,14 +192,14 @@ Slots with :INSTANCE allocation:
 #### CSSクラス、IDによる検索
 次に、CSSのクラスやIDをキーとして、DOMツリーからノードを検索する例を紹介する。まず例として、Clojureの公式サイトを取得する。
 
-```lisp
+```
 (defparameter *clojure-root-node*
   (plump:parse (dex:get "https://clojure.org/")))
 ```
 
 このサイトをブラウザのインスペクタで調べると、内容のまとまりで`w-section`というクラスが付いていることが分かる。例えば、このクラス名でDOMツリーを検索することができる。なお、CSSと同様に、クラスの場合はクラス名の前に`.`を付け、IDの場合はID名の前に`#`を付ける。また、タグとの組み合わせで指定することもできる。
 
-```lisp
+```
 (clss:select ".w-section" *clojure-root-node*)
 
 ;; #(#<PLUMP-DOM:ELEMENT div {1017135813}> #<PLUMP-DOM:ELEMENT div {1017141093}>
