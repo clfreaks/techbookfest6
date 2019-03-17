@@ -1,0 +1,29 @@
+# Dockerを使う
+machine:
+  services:
+    - docker
+
+# Dockerイメージを毎回プルしなくても良いようにキャッシュする
+# See: https://circleci.com/docs/docker#caching-docker-layers
+dependencies:
+  cache_directories:
+    - "~/docker"
+  override:
+    - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
+    - docker pull vvakame/review
+    - mkdir -p ~/docker; docker save vvakame/review > ~/docker/image.tar
+
+# 執筆環境で使うコマンドとは以下の2点が異なる
+# 1. --rm オプションがエラーになるので使わない
+#    See: https://github.com/docker/docker/issues/4897
+# 2. .texmf-varフォルダをマウントしない
+#    キャッシュするためにはdependenciesでキャッシュを作らないといけない
+test:
+  override:
+    - cd src; docker run -v $(pwd):/work vvakame/review:latest /bin/sh -c "cd /work && review-pdfmaker config.yml"
+
+# 生成したPDFを成果物として保存する
+general:
+  artifacts:
+    - "src/*.pdf"
