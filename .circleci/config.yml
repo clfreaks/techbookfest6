@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Build PDF
           command: |
-            sh ./md2review.sh
+            sh ./make-review.sh
             cd src
             review-pdfmaker config.yml
           working_directory: ./
