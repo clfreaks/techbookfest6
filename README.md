@@ -51,17 +51,8 @@ Common Lispの言語について説明している本はけっこうあるが、
 
 ## ビルド
 ```
-docker pull vvakame/review:3.1
-docker pull nuitsjp/md2review:1.12.0
-docker run --rm -v `pwd`/.:/work nuitsjp/md2review:1.12.0 /bin/sh -c "cd /work && sh ./md2reviews.sh"
-docker run --rm -v `pwd`/src:/work vvakame/review:3.1 /bin/sh -c "cd /work && review-pdfmaker config.yml"
-```
-```
-sudo docker run -v /home/wiz/techbookfest6:/src -it vvakame/review:3.1 /bin/bash
-
-apt-get install ruby-dev
-apt-get install make
-
 docker pull nuitsjp/mdview:2.5
-docker run -v /home/wiz/techbookfest6:/src -it nuitsjp/mdview:2.5 /bin/bash
+docker run -v `pwd`:/work nuitsjp/mdview:2.5 /bin/sh -c "cd /work && sh ./make-review.sh && cd /src && review-pdfmaker config.yml"
+
+docker run -v /home/wiz/techbookfest6:/work -it nuitsjp/mdview:2.5 /bin/bash
 ```
