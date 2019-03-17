@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  convert:
+  build:
     docker:
       - image: nuitsjp/md2review:1.12.0
     steps:
@@ -12,7 +12,6 @@ jobs:
           name: markdown -> review
           command: sh ./md2review.sh
           working_directory: ./
-  build:
     docker:
       - image: vvakame/review:3.1
     steps:
@@ -24,10 +23,3 @@ jobs:
       - store_artifacts:
           path: ./src/book.pdf
           destination: book.pdf
-
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - convert
-      - build
