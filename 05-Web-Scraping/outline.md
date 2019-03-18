@@ -7,24 +7,25 @@
 ## Webスクレイピング
 ### Webスクレイピングに必要なライブラリ
 Webスクレイピングとはウェブサイトから必要な情報を取り出す行為のことをいう。
-Webスクレイピングでは、(1) Webからデータを取得し、(2) これを解析しDOM木構造を作り、(3) そこから必要な情報を探索するというプロセスを踏む。
-Common Lispにはこの各段階について対応したライブラリがあるので、以下ではそのインストール方法と基本的な使用例を解説する。
+Webスクレイピングでは、(1) Webからデータを取得し、(2) これを解析し扱いやすいデータ構造を作り、(3) そこから必要な情報を探索するというプロセスを踏む。
+Common Lispにはこの各段階について対応したライブラリがある。以下ではそのインストール方法と基本的な使用例を解説する。
 
 ### HTTPクライアント: Dexador
 ウェブサイトからデータを取得するためにはHTTPクライアントのDexador(デキサドル)を使用する。Common Lispには古くからDrakmaというHTTPクライアントがあるが、Dexadorの方が(特に同じホストに複数回アクセスする場合において)速く動作する。
 #### インストール
-インストールはQuicklispから行なえる。
-```lisp
+インストールはQuicklispから行う。
+
+```
 (ql:quickload :dexador)
 ```
 
 ####  使い方
-Dexadorの最も基本的かつ重要な関数は`dex:get`で、GETメソッドで指定のURLからデータを取得する。
+Dexadorの最も基本的かつ重要な関数は`dex:get`で、GETメソッドで指定のURLからデータを取得する。次のコードは`http://lisp.org/`にアクセスし、そこから取得したHTMLデータを文字列として`*html-source*`に設定している。
 
 ```
 (defparameter *html-source* (dex:get "http://lisp.org/"))
 ```
-get関数は(1) 本体データの文字列、(2) ステータスコード、(3) レスポンスヘッダーのハッシュテーブル、(4) URI構造体、(5) 読み出し元ソケットのストリームの5つを多値で返す。
+`get`関数は(1) 本体データの文字列、(2) HTTPステータスコード、(3) レスポンスヘッダーのハッシュテーブル、(4) URI構造体、(5) 読み出し元ソケットのストリームの5つを多値で返す。次は上で実行した`get`関数の全ての返り値を列挙したものである。
 
 ```
 "<HTML>
@@ -40,19 +41,19 @@ get関数は(1) 本体データの文字列、(2) ステータスコード、(3)
 <h3>1927-2011</h3>
 <br><br>
 <a href=\"http://www-formal.stanford.edu/jmc/\">John McCarthy's Home Page</a><br>
-<a href=\"http://news.stanford.edu/news/2011/october/john-mccarthy-obit-102511.html\">Obituary</a>
+<a href=\"http://news.stanford.edu/news/....html\">Obituary</a>
 </BODY>
 </HTML>
 "
 200
-#<HASH-TABLE :TEST EQUAL :COUNT 10 {1003B35F73}>
+#<HASH-TABLE :TEST EQUAL :COUNT 10>
 #<QURI.URI.HTTP:URI-HTTPS https://lisp.org/>
-#<CL+SSL::SSL-STREAM for #<FD-STREAM for "socket 192.168.11.253:47632, peer: 144.76.156.38:443" {100361BC23}>>
+#<CL+SSL::SSL-STREAM for #<FD-STREAM>>
 ```
-このうち特に重要なのは最初の2つで、データ本体は次節で扱うHTMLパーサへの入力として用い、ステータスコードはデータの取得に成功したか失敗したか、さらにその理由を調べるのに用いる。
+このうち特に重要なのは最初の2つで、データ本体は次節で扱うHTMLパーサへの入力として用い、HTTPステータスコードはデータの取得に成功したか失敗したか、さらにはその理由を調べるのに役に立つ。
 
 ### XML/HTMLパーサ: Plump
-ここで紹介するPlumpと次節で紹介するCLSSは同じ作者のプロダクトで、セットで使われる。これらはDexadorと同様にQuicklispからインストールできる。
+ここで紹介するPlumpと次節で紹介するCLSSは同じ作者のプロダクトで、セットで使われる。これらはDexadorと同様にQuicklispからインストールできる。以下のように、`ql:quickload`には複数のパッケージ名をリストとして与えることもできる。
 
 ```
 (ql:quickload '(:plump :clss))
@@ -66,7 +67,7 @@ PlumpはXML/HTMLパーサであり、XML/HTMLデータを文字列として受�
 ```
 (defparameter *root-node* (plump:parse *html-source*))
 
-;; *root-node* => #<PLUMP-DOM:ROOT {1008638843}>
+;; *root-node* => #<PLUMP-DOM:ROOT>
 ```
 
 各ノードの子ノードのベクタは`plump:children`で、親ノードは`plump:parent`でそれぞれ得られる。
@@ -75,11 +76,11 @@ PlumpはXML/HTMLパーサであり、XML/HTMLデータを文字列として受�
 ```
 (plump:children *root-node*)
 
-;; => #(#<PLUMP-DOM:ELEMENT HTML {1008AE94D3}> #<PLUMP-DOM:TEXT-NODE {1008AF2EF3}>)
+;; => #(#<PLUMP-DOM:ELEMENT HTML> #<PLUMP-DOM:TEXT-NODE>)
 
 (plump:parent (aref (plump:children *root-node*) 0))
 
-;; => #<PLUMP-DOM:ROOT {1008AE8F93}>
+;; => #<PLUMP-DOM:ROOT>
 ```
 
 また、DOMツリーを走査し、各ノードに対して関数を適用する高階関数`plump:traverse`が用意されている。

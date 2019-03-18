@@ -10,3 +10,6 @@ echo "converting 05-Web-Scraping/outline.md"
 md2review ./05-Web-Scraping/outline.md    > ./src/05-Web-Scraping.re
 echo "converting 09-RaspberryPi/RaspberryPi.md"
 md2review ./09-RaspberryPi/RaspberryPi.md > ./src/09-RaspberryPi.re
+
+cd ./src
+review-pdfmaker config.yml

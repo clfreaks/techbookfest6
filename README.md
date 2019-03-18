@@ -51,8 +51,10 @@ Common Lispの言語について説明している本はけっこうあるが、
 
 ## ビルド
 ```
-docker pull nuitsjp/mdview:2.5
-docker run -v `pwd`:/work nuitsjp/mdview:2.5 /bin/sh -c "cd /work && sh ./make-review.sh && cd /src && review-pdfmaker config.yml"
-
-docker run -v /home/wiz/techbookfest6:/work -it nuitsjp/mdview:2.5 /bin/bash
+$ docker pull nuitsjp/mdview:2.5
+$ cd ~/techbookfest6
+$ docker run -v `pwd`:/work -it nuitsjp/mdview:2.5 /bin/bash
+# cd /work
+# ./make-review.sh
 ```
+これで `techbookfest6/src/book.pdf` ができます。この状態でDockerのシェルを起動させっぱなしにして、mdファイルを編集しては `./make-review.sh` を実行するというサイクルを回すのがいいかと思います。
