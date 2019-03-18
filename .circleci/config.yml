@@ -9,9 +9,7 @@ jobs:
       - run:
           name: Build PDF
           command: |
-            sh ./make-review.sh
-            cd src
-            review-pdfmaker config.yml
+            ./make-review.sh
           working_directory: ./
       - store_artifacts:
           path: ./src/book.pdf
