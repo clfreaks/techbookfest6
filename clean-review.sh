@@ -1,3 +1,5 @@
+#!/bin/sh
+
 rm ./src/00-Preface.re
 rm ./src/01-Roswell.re
 rm ./src/02-Lem.re

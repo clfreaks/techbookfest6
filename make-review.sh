@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo "converting 00-Preface/preface.md"
 md2review ./00-Preface/preface.md         > ./src/00-Preface.re
 echo "converting 01-Roswell/roswell.md"
