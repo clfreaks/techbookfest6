@@ -1,0 +1,18 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: nuitsjp/mdview:2.5
+    steps:
+      - checkout
+      - run:
+          name: Build PDF
+          command: |
+            sh ./make-review.sh
+            cd src
+            review-pdfmaker config.yml
+          working_directory: ./
+      - store_artifacts:
+          path: ./src/book.pdf
+          destination: book.pdf

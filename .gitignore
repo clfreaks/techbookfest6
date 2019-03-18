@@ -1,0 +1,11 @@
+*~
+*.pdf
+node_modules
+package.json
+yarn-error.log
+yarn.lock
+
+.texmf-var
+book-pdf/
+book.pdf
+*.re
