@@ -2,17 +2,17 @@
 
 ### Roswellで何が嬉しいのか
 
-　Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あるが、それぞれインストール方法やシェルとの連携方法が異なる。Roswellは、処理系の違いを統一して扱うための開発ツールである。Roswellを用いると、Common Lispの開発環境の構築、アプリケーション開発、テスト、デプロイをコマンドラインからシンプルに行うことができる。
+Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あるが、それぞれインストール方法やシェルとの連携方法が異なる。Roswellは、処理系の違いを統一して扱うための開発ツールである。Roswellを用いると、Common Lispの開発環境の構築、アプリケーション開発、テスト、デプロイをコマンドラインからシンプルに行うことができる。
 
 ### Roswell以前のCommon Lisp
 
 ### ASDF
 
-　ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。主な処理系に組み込まれており、デフォルトで利用することができる。ASDFでは、システム定義ファイルに読み込むコードや依存ライブラリを書くことで、アプリケーションを統一した方法でビルドすることができる。ただし、依存関係にあるライブラリのダウンロードはしない。
+ASDF（Another System Definition Facility）は、Common Lispのビルドツールである。主な処理系に組み込まれており、デフォルトで利用することができる。ASDFでは、システム定義ファイルに読み込むコードや依存ライブラリを書くことで、アプリケーションを統一した方法でビルドすることができる。ただし、依存関係にあるライブラリのダウンロードはしない。
   
 ### Quicklisp
 
-　Quicklispは、ASDFをベースにしたライブラリ管理システムである。ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。利用するには、次のように`quicklisp.lisp`をダウンロードして処理系から読み込んで初期化する必要がある。
+Quicklispは、ASDFをベースにしたライブラリ管理システムである。ライブラリのダウンロード、コンパイル、読み込みを自動化することができる。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されている。利用するには、次のように`quicklisp.lisp`をダウンロードして処理系から読み込んで初期化する必要がある。
  
 ```
 $ curl -O https://beta.quicklisp.org/quicklisp.lisp
@@ -21,7 +21,7 @@ $ sbcl --load "quicklisp.lisp"
 * (ql:add-to-init-file)
 ```
  
-　Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリAlexandriaをインストールしてみよう。
+Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とする。試しに、ユーティリティライブラリAlexandriaをインストールしてみよう。
 
 ```
 * (ql:quickload :alexandria)
@@ -34,7 +34,7 @@ NIL
 (:ALEXANDRIA)
 ```
 
-　`(ql:quickload :<ライブラリ名>)`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする`shuffle`関数を使うには次のようにする。
+`(ql:quickload :<ライブラリ名>)`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができる。要素をシャッフルする`shuffle`関数を使うには次のようにする。
 
 ```
 * (alexandria:shuffle '(1 2 3 4 5 6))
@@ -43,13 +43,13 @@ NIL
 * 
 ```
 
-　では、Roswellのインストールへと進む。RoswellにはQuicklispが組み込まれているため、Quicklispのダウンロードや初期化の手順は必要ない。
+では、Roswellのインストールへと進む。RoswellにはQuicklispが組み込まれているため、Quicklispのダウンロードや初期化の手順は必要ない。
 
 ### Roswellのインストール
 
 #### Homebrewを利用したインストール
 
-　LinuxとmacOSではHomebrewでインストールすることができる。
+LinuxとmacOSではHomebrewでインストールすることができる。
 
 ```shell-session
 $ brew install roswell
@@ -57,15 +57,15 @@ $ brew install roswell
 
 #### ソースからインストールするには
 
-　Homebrewを使えないが、Roswellの開発に興味がある読者は、
+Homebrewを使えないが、Roswellの開発に興味がある読者は、
 
 * Cのコンパイル環境
 * libcurlと、そのヘッダ
 * automake/autoconf
 
-　これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
+これらの環境を準備したLinux/FreeBSD/macOSでコンパイルの上、インストールすることができる。
 
-　Debianベースの環境では、手順は次の通りである。
+Debianベースの環境では、手順は次の通りである。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential automake libcurl4-openssl-dev;fi
@@ -78,13 +78,13 @@ $ sudo make install
 $ ros setup
 ```
 
-　詳細は、https://github.com/roswell/roswell/wiki/Installation で確認できる。
+詳細は、https://github.com/roswell/roswell/wiki/Installation で確認できる。
 
 ## 処理系のインストール
 
-　Roswellは、複数の処理系から特定のバージョンをインストールできる。ここでは、SBCL(Steel Bank Common Lisp)をインストールする。
+Roswellは、複数の処理系から特定のバージョンをインストールできる。ここでは、SBCL(Steel Bank Common Lisp)をインストールする。
 
-　最新版のSBCLをインストールするには`sbcl-bin`、ソースコードからビルドするには`-bin`をとる。
+最新版のSBCLをインストールするには`sbcl-bin`、ソースコードからビルドするには`-bin`をとる。
 
 ```
 # SBCL(最新版)をインストールする
@@ -94,7 +94,7 @@ $ ros install sbcl-bin
 $ ros install sbcl
 ```
 
-　バージョンを指定してインストールするには、スラッシュの後にバージョンを指定する。
+バージョンを指定してインストールするには、スラッシュの後にバージョンを指定する。
 
 ```
 # SBCL(1.4.1)をインストールする
@@ -118,7 +118,7 @@ sbcl-bin/1.4.16
 $ ros use sbcl-bin/1.4.1
 ```
 
-　`ros run`でREPLを起動することができる。
+`ros run`でREPLを起動することができる。
 
 ```
 $ ros run
@@ -129,7 +129,7 @@ hello, world
 ```
 ## REPLの起動
 
-　`ros run`でREPLを起動、`C-d`もしくは`(quit)`で終了することができる。
+`ros run`でREPLを起動、`C-d`もしくは`(quit)`で終了することができる。
 
 ```
 $ ros run
@@ -142,18 +142,18 @@ $
 
 ## Roswell Script
 
-　Roswell Scriptを用いると、シェルコマンドであることを意識せずにCommon Lispでスクリプトを書くことができる。
+Roswell Scriptを用いると、シェルコマンドであることを意識せずにCommon Lispでスクリプトを書くことができる。
 
 ### ひな形を作成する
 
-　ターミナルで`ros init <スクリプト名.ros>`とすると、Roswell Scriptの雛形が生成される。
+ターミナルで`ros init <スクリプト名.ros>`とすると、Roswell Scriptの雛形が生成される。
 
 ```
 $ ros init fact.ros
 Successfully generated: fact.ros
 ```
 
-　生成された雛形を元に、階乗(factorial)を計算する関数`fact`を定義してみよう。
+生成された雛形を元に、階乗(factorial)を計算する関数`fact`を定義してみよう。
  
 ```common-lisp
 #!/bin/sh
@@ -182,7 +182,7 @@ exec ros -Q -- $0 "$@"
 
 ### Roswell Scriptの実行
 
-　`ros <スクリプト名.ros> 引数`の形式でmain関数に引数が渡されて実行される。
+`ros <スクリプト名.ros> 引数`の形式でmain関数に引数が渡されて実行される。
 
 ```
 $ ros fact.ros 10
@@ -191,9 +191,9 @@ Factorial 10 = 3628800
 
 ### ros build (実行ファイルの作成)
 
-　`ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。`ros build <Roswell Script名>`とすると、`.ros`拡張子が消えて、実行ファイルが生成される。
+`ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。`ros build <Roswell Script名>`とすると、`.ros`拡張子が消えて、実行ファイルが生成される。
 
-　では、fact関数をビルドしてみよう。
+では、fact関数をビルドしてみよう。
 
 ```
 $ ros build fact.ros
@@ -204,7 +204,7 @@ compressed 2097152 bytes into 562396 at level -1
 compressed 12910592 bytes into 3890295 at level -1
 ```
 
-　ビルド前後の実行時間を比較すると、ビルド後は5倍ほど高速化したことがわかる。
+ビルド前後の実行時間を比較すると、ビルド後は5倍ほど高速化したことがわかる。
 
 ```
 # ビルド前
@@ -226,9 +226,9 @@ sys	0m0.026s
 
 ## ライブラリのインストール
 
-　`ros install`でライブラリのインストールを行う。
+`ros install`でライブラリのインストールを行う。
 
-　`ros install <ライブラリ名>`とすると、Quicklispのアーカイブからダウンロードされる。
+`ros install <ライブラリ名>`とすると、Quicklispのアーカイブからダウンロードされる。
 
 ```
 $ ros install vecto
@@ -243,9 +243,9 @@ Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
 (以下、省略)
 ```
 
-　`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされる。　
+`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされる。　
 
-　試しにClackをインストールしてみよう。
+試しにClackをインストールしてみよう。
 
 ```
 $ ros install fukamachi/clack
@@ -274,17 +274,17 @@ up to date. stop
 $ 
 ``` 
 
-　`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
+`ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされる。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれる。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とする。
 
 ## .roswell/bin
 
-　`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
+`ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされる。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができる。
 
 ```
 export PATH=$PATH:~/.roswell/bin
 ```
 
-　Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
+Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っている。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされる。インストール後は`clackup`コマンドが使えるようになる。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみよう
 
 ```
 (lambda (env)
@@ -298,11 +298,11 @@ Hunchentoot server is going to start.
 Listening on localhost:5000.
 ```
 
-　ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
+ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できる。
 
 ### ライブラリの更新
 
-　`ros update <ライブラリ名>`とすることで、ライブラリをGithub上の最新版に更新することができる。
+`ros update <ライブラリ名>`とすることで、ライブラリをGithub上の最新版に更新することができる。
  
 ```
 $ ros update cl-ignition
