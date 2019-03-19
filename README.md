@@ -9,23 +9,23 @@ Common Lispの言語について説明している本はけっこうあるが、
   - Quicklisp/ASDFについて
   - Ros scriptの書き方 -> ビルド
 
-- Lem ( @cxxxr ? @gos-k ?)
+- Lem ( @cxxxr @t-cool )
   - Lemのインストール ( @t-cool )
   - 基本的な使い方 ( @t-cool )
-    - vi-modeについて
-    - SLIMEの仕組みと使い方
-      - デバッガ、インスペクタ
-  - 拡張の書き方
+  - vi-modeについて
+  - SLIMEの仕組みと使い方
+    - デバッガ、インスペクタ
+  - 拡張の書き方( @cxxxr )
 
-- ライブラリの調べ方 ( @masatoi ?)
-  - CLiki
-  - Quickdocs.org / Github
+- ライブラリの調べ方 ( @t-cool )
+  - CLiki ( @t-cool )
+  - Quickdocs.org ( @t-cool )
+  - Github ( @t-cool )
 
-- プロジェクトの作り方 ( @fukamachi ?)
-  - package-inferred-systemについて
-  - cl-project
-  - qlot
-    - qlotのインストール
+- プロジェクトの作り方 ( @t-cool )
+  - package-inferred-systemについて ( @t-cool )
+  - cl-project ( @t-cool )
+  - qlot( @t-cool )
 
 - プロジェクト例1: Webスクレイピングとか ( @masatoi ?)
   - プロジェクト生成 -> asdファイルを書く
@@ -34,8 +34,9 @@ Common Lispの言語について説明している本はけっこうあるが、
 - プロジェクト例2: チャットボット ( @carrotflakes ?)
   - CFFIなど
 
-- テスト ( @taniryo ?)
-
+- テスト ( @fukamachi )
+  - Rove ( @fukamachi )
+  
 - 配布
   - githubからのインストール
   - Quicklispへの登録申請
