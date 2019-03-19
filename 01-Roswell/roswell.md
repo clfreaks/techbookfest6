@@ -104,7 +104,7 @@ $ ros install sbcl-bin/1.4.1
 $ ros install sbcl/1.4.1
 ```
 
-　`ros list installed`でインストール済みの処理系を確認できる。また、`ros use <処理系/バージョン>`で、処理系を切り替えることができる。
+`ros list installed`でインストール済みの処理系を確認できる。また、`ros use <処理系/バージョン>`で、処理系を切り替えることができる。
 
 
 ```
