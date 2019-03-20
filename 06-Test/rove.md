@@ -67,7 +67,45 @@
 
 Roveを使ったテストではこの `ok` や `ng` を基本単位としてテストプログラムを構成します。この最小単位を「アサーション」と呼びます。
 
-TODO: 他のアサーション signals, outputs, expands の紹介
+異常系のテストではエラーが発生することをテストしたいこともあるでしょう。 `signals` は与えられたフォーム内でエラーが発生すると真を返すマクロです。
+
+```
+(defun add (x y) (+ x y))
+
+;; 第二引数に捕捉するコンディションクラスを指定する
+(ok (signals (add 1 "2") 'type-error))
+;-> ✓ Expect (ADD 1 "2") to signal TYPE-ERROR.
+
+;; 第二引数が指定されないときは ERROR をすべて捕捉する
+(ok (signals (add 1 "2")))
+;-> ✓ Expect (ADD 1 "2") to signal ERROR.
+```
+
+出力をテストするには `outputs` を使います。
+
+```
+(defun say-hello (&optional (name "Guest")) (format t "Hi, ~A" name))
+
+(ok (outputs (say-hello "Eitaro") "Hi, Eitaro"))
+;-> ✓ Expect (SAY-HELLO "Eitaro") to output "Hi, Eitaro".
+
+(ok (outputs (say-hello) "Hi, Guest"))
+;-> ✓ Expect (SAY-HELLO) to output "Hi, Guest".
+```
+
+マクロのテストをするには `expands` を使います。マクロのテストで厄介なのは、展開されるフォームに gensym が含まれることです。gensymが含まれると単純な `equal` で比較することができません。一方で `expands` はパッケージにインターンされていないシンボル、 `#:` で始まるシンボルをgensymとして緩いマッチングを行います。
+
+```
+(defmacro defun-addn (n)
+  (let ((m (gensym "m")))
+    `(defun ,(intern (format nil "ADD~A" n)) (,m)
+       (+ ,m ,n))))
+
+(ok (expands '(defun-addn 10)
+             `(defun add10 (#:m)
+                (+ #:m 10))))
+;-> ✓ Expect '(DEFUN-ADDN 10) to be expanded to `(DEFUN ADD10 (#:M) (+ #:M 10)).
+```
 
 ### テストの定義
 
@@ -134,3 +172,127 @@ TODO: 他のアサーション signals, outputs, expands の紹介
 ;   ✓ 1 test completed
 ;=> NIL
 ```
+
+### テストスイート
+
+一般的な規模のプロジェクトでは、関数は一つではありません。複数のファイル・パッケージに分割された関数があり、それぞれの関数に正常系・異常系の単体テストを書く必要があります。テストも複数の `deftest` に分割して定義する必要があります。
+
+それらの複数のテストをまとめたものを「テストスイート」と呼びます。
+
+Roveではパッケージごとに暗黙的にテストスイートが作られるため、テストをそれぞれのパッケージに分割して記述するだけでテストをひとまとめに扱えます。
+
+```
+;; tests/file1.lisp
+(defpackage #:my-project/tests/file1
+  (:use #:cl
+        #:rove
+        #:my-project/file1))
+(in-package #:my-project/tests/file1)
+
+(deftest func1
+  (ok (equal (func1 "A") "a")))
+
+;; tests/file2.lisp
+(defpackage #:my-project/tests/file2
+  (:use #:cl
+        #:rove
+        #:my-project/file2))
+(in-package #:my-project/tests/file2)
+
+(deftest func2
+  (ok (equal (func2 1) "1")))
+```
+
+テストスイート内のすべてのテストを実行するには `rove:run-suite` を使います。
+
+```
+(run-suite :my-project/tests/file1)
+;-> func1
+;     ✓ Expect (EQUAL (FUNC1 "A") "a") to be true.
+;
+;   ✓ 1 test completed
+```
+
+加えてテストスイートにはテスト実行前と終了前をフックする機能があります。
+
+たとえば、テスト実行前に特定のディレクトリが作られていることを保証したい場合は `setup` を使って以下のように定義できます。
+
+```
+(setup
+  (ensure-direcctories-exist #P"/tmp/my-project/"))
+```
+
+さらにテスト終了時にディレクトリを削除したいときには `teardown` が使えます。
+
+```
+(teardown
+  (uiop:delete-directory-tree #P"/tmp/my-project/" :validate t))
+```
+
+これらの定義はパッケージ内であれば先頭でも末尾でも構いません。通常は最初の `deftest` の前に記述することが多いです。
+
+`setup` と `teardown` はテストスイートの実行前と後のそれぞれ一回ずつしか実行されませんが、それぞれのテストの前後で実行させる機能もあります。これは `defhook` で定義します。
+
+```
+;; 毎テスト実行前に走らせるコード
+(defhook :before
+  (format t "~&Going to run a test...~%"))
+
+;; 毎テスト実行後に走らせるコード
+(defhook :after
+  (format t "~&Done.~%"))
+```
+
+## テストシステムの作成
+
+### ASDFの設定
+
+ASDFシステムにRoveを組み込むにはASDファイルにテストシステムを定義します。
+
+以下では src に本体コード、 tests にテストコードがあるときのASDFシステム定義例です。本体のシステム名は `"my-project"`、テストシステム名は `"my-project/tests"` です。
+
+```
+;; my-project.asd
+(defsystem "my-project"
+  :class :package-inferred-system
+  :version "0.1.0"
+  :author "Eitaro Fukamachi"
+  :description "My sample project for Rove"
+  :license "BSD 2-Clause"
+  :pathname "src"
+  :components ((:file "file1")
+               (:file "file2"))
+  :in-order-to ((test-op (test-op "my-project/tests"))))
+
+(defsystem "my-project/tests"
+  :depends-on ("my-project"
+               "rove")
+  :pathname "tests"
+  :components ((:file "file1")
+               (:file "file2"))
+  :perform (test-op (o c) (symbol-call :rove '#:run c)))
+```
+
+本体システムに追加している `:in-order-to` は `asdf:test-system` したときにテストシステムを走らせるための設定です。テストシステムにある `:perform` はそのときにRoveのテストを走らせるための記述です。
+
+### テストの実行
+
+テストシステムをREPLで走らせるには `asdf:test-system` を使います。
+
+```
+(asdf:test-system :my-project)
+```
+
+コマンドラインから実行するには「rove」コマンドを使います。roveコマンドはRoswellでRoveをインストールすると ~/.roswell/bin/rove にコピーされます。
+
+```
+$ ros install rove
+```
+
+roveコマンドの引数にASDファイルを渡すとそのシステムの `asdf:test-system` を呼び出し、テストが実行されます。
+
+```
+$ rove my-project.asd
+```
+
+TODO: レポートスタイルの説明
