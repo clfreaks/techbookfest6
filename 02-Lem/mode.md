@@ -46,7 +46,7 @@ $ lem <ディレクトリ名>
 ```
 
 ```
-/home/t-cool/.roswell/
+/home/user/.roswell/
 
       7k 2019/02/15 13:59:19 Fri ..
      352 2019/02/11 21:45:49 Mon archives/
