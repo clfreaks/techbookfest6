@@ -126,12 +126,16 @@ $ lem <ディレクトリ名>
 |F2              |検索でマッチしてハイライトしている箇所を置換                |
 |M-%             |対話置換                                                    |
 
+コマンド一覧は`M-x describe-bindings`で表示されます。
+このときに出るポップアップウィンドウはMoreとよく似た操作方法でSpaceで1ページ分スクロール、閉じるには最後のページまでスクロールされた状態でSpaceを押すか、`q`を入力します。
+
 デフォルトではemacsの操作にある程度合わせています。
 viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
 元に戻すには`M-x emacs-mode`です。
-
-コマンド一覧は`M-x describe-bindings`とすると表示されます。
-このときに出るポップアップウィンドウはMoreとよく似た操作方法でSpaceで1ページ分スクロール、閉じるには最後のページまでスクロールされた状態でSpaceを押すか、`q`を入力します。
+起動時に自動でvi-modeにするには`~/.lem.d/init.lisp`に次の一行を加えます。
+```
+(lem-vi-mode:vi-mode)
+```
 
 ## SLIME
 SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範の機能を提供します。
@@ -502,21 +506,6 @@ Backtrace:
   0: (SB-KERNEL::INTEGER-/-INTEGER 1 0)
   1: (FIB 2)
 ```
-
-## vi-mode
-
-### 初期設定
-
-Lemにはviシュミレータのvi-modeが組み込まれています。vi-modeを有効にするには、`~/.lem/init.lisp`に次の1行を加えるか、エディタの起動後に`M-x vi-mode`とします。
-
- ```
-(lem-vi-mode:vi-mode)
-```
-
-### モードの切り替え
-
-vi-modeでは、viと同様、コマンドモードへは`esc`キー、インサートモードへは`i`、ビジュアルモードには`v`で切り替えます。カーソル移動やテキスト編集等、操作はviと同じです。
-
 
 ## 拡張機能の書き方
 
