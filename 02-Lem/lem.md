@@ -399,24 +399,66 @@ SLIMEではエディタからaproposを使えるインターフェースを用�
 
 この検索結果のシンボルの位置でReturnを押すと定義箇所へのジャンプが出来ます。
 
-## まとめ
+### SLDB(デバッガ)
+SLIMEでのデバッガはSLDBと呼ばれています。
+評価した式でエラーが起こった場合はSLDBが起動し、専用のsldbバッファが表示されます。
 
-* LemはCommon Lisperのエディタ。特別な設定なしにCommon Lispで開発を始めることができる。
+次の画像はREPLでエラーが出る式を評価してSLDBが出た例です。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-sldb-1.png)
 
-* RoswellでLemをインストールすると`lem <ファイル名>`でLemを起動することができるようになる。
+alexandria:lastcarは引数にリストを期待していますが文字列を渡しているので型エラーが出ています。
 
-* LemのREPLでシステムを読み込むと、`M-.`でシンボルの定義にジャンプ、`M-,`で元の場所に戻ることができる。
+色々書いてますが一つずつ内容を見ていきます。
 
-* `C-c C-m`で1段階のマクロ展開(macroexpand-1)、`C-c M-m`で全段階のマクロ展開をすることができる。
+まず一番上の
+```
+The value
+  "foo"
+is not of type
+  LIST
+   [Condition of type TYPE-ERROR]
+```
+ですが、これはエラーメッセージとコンディションの型です。
 
-* LemにはSLIMEが組み込まれている。SLIMEはCommon Lispの統合開発環境であり、効率的にデバッグやインスペクトができる。
+次に
+```
+Restarts:
+ 0: [RETRY] Retry SLIME REPL evaluation request.
+ 1: [*ABORT] Return to SLIME's top level.
+ 2: [ABORT] abort thread (#<THREAD "repl-thread" RUNNING {1005708413}>)
+```
+これはエラー後にどういう対応をするかをユーザーに尋ねています。
+Common Lispにはリスタートという機構があり、プログラムの例外時などにユーザーに次に何をするかの判断を委ねることが出来ます。
+この場合は0と1と2という選択があります。
+SLDBではそのバッファで数字を押すかカーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
 
-* SLIMEのインスペクタを用いると、シンボルの内部構造を調べたり、シンボル内部の値を変更することができる。
+最後に
+```
+Backtrace:
+  0: (ALEXANDRIA.0.DEV:LASTCAR "foo")
+  1: (SB-INT:SIMPLE-EVAL-IN-LEXENV (ALEXANDRIA.0.DEV:LASTCAR "foo") #<NULL-LEXENV>)
+  2: (EVAL (ALEXANDRIA.0.DEV:LASTCAR "foo"))
+ --more--
+```
+がありますが、これは他の言語にもよくあるバックトラックを表示しています。
+--more--と表示されている位置でEnterを押すと更に前の省略されているフレームも表示されます。
+フレームの位置にカーソルを移動してEnterを押すとローカル変数などの詳細が表示されます。
 
-* SLIMEにはSLDB(SLIME debugger)というデバッガが搭載されている。
+`Tab`で次の選択できる要素に移動します。
 
-* コード内でブレークポイントを設定するには`(break)`を挿入する。
+`n (M-x sldb-down)`
+カーソルを次のフレームに移動します。
 
-* キーバインドはEmacs同等のものかvi-modeを選択できる。
+`p (M-x sldb-up)`
+カーソルを前のフレームに移動します。
 
-* 拡張機能を書くには、拡張機能のためのテンプレートを`ros init lem <拡張機能の名前>`で生成できる。
+`M-n (M-x sldb-details-down`
+次のフレームの詳細を表示します。
+
+`M-p (sldb-details-up)`
+前のフレームの詳細を表示します。
+
+`q (M-x sldb-quit)`
+デバッガを終了します。
+
+`a (M-x sldb-abort)`
