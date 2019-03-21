@@ -5,9 +5,11 @@ md2review ./00-Preface/preface.md         > ./src/00-Preface.re
 echo "converting 01-Roswell/roswell.md"
 md2review ./01-Roswell/roswell.md         > ./src/01-Roswell.re
 echo "converting 02-Lem/mode.md"
-md2review ./02-Lem/mode.md                > ./src/02-Lem.re
-echo "converting 04-Make-Project/about-qlot.md"
-md2review ./04-Make-Project/about-qlot.md > ./src/04-Make-Project.re
+md2review ./02-Lem/lem.md                > ./src/02-Lem.re
+echo "converting 03-Library-Investigation/library-investigation.md"
+md2review ./03-Library-Investigation/library-investigation.md > ./src/03-library-investigation.re
+echo "converting 04-Make-Project/make-project.md"
+md2review ./04-Make-Project/make-project.md > ./src/04-Make-Project.re
 echo "converting 05-Web-Scraping/outline.md"
 md2review ./05-Web-Scraping/outline.md    > ./src/05-Web-Scraping.re
 echo "converting 06-Test/rove.md"
