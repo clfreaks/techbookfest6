@@ -6,7 +6,7 @@ Lemは、Common Lispでの開発に必要な機能が一通り組み込まれて
  
 ## Lemのインストール
 
-LemのインストールにはRoswellが必要です。`ros`コマンドを使って以下のようにインストールします。
+LemをインストールするにはRoswellを使うのが簡単です。次のコマンドでインストールできます。
 
 ```
 $ ros install cxxxr/lem
