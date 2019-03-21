@@ -241,7 +241,10 @@ CL-USER> (foo 0)
 コンパイルするとコンパイル時の警告部分が赤線で引かれます。
 ![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-compile.png)
 
-警告箇所を修正して再度`C-c C-c`すると赤線が消えます。
+コンパイル時に出てきたウィンドウにの指定箇所にカーソルを合わせてEnterを押すことで特定箇所にジャンプすることが出来ます。
+`C-x C-n` `C-x C-p`を使って順番に特定箇所にジャンプすることも可能です。
+
+赤線を消すには警告箇所を修正して再度`C-c C-c`します。
 `C-c M-c`をしてもバッファ内の全ての赤線を消すことが出来ます。
 
 ファイル自体を読み込むには`C-c C-l`をします。
@@ -263,46 +266,59 @@ CL-USER> (foo 0)
 カーソルの前の式をLemプロセス内で評価する場合は`C-c C-e`の代わりに`C-x C-e`、
 ミニバッファで入力した式をLemプロセス内で評価する場合は`C-c M-:`の代わりに`M-:`を使います。
 
-### コードジャンプ
-`M-.`でシンボルの定義にジャンプ、`M-,`で戻ることができます。
-  
-Lemのソースコード中でコードジャンプをするには、まずREPLでLemのシステムを読み込む必要があります。
- 
- ```
-CL-USER> (ql:quickload :lem)
-To load "lem":
-  Load 1 ASDF system:
-   lem
- ; Loading "lem"
-.......
-(:LEM)
- ```
- 
-システムの読み込みが完了すると、Lemのソースコード内で定義場所にジャンプできるようになります。 例えば、Lemのxml-mode(`lem/modes/xml-mode/xml-mode.lisp`)で使われている`define-major-mode`の定義場所を探ってみます。
+### 定義へのジャンプ
+関数や変数、クラスなどの定義位置を参照する機能があります。
+`M-. (M-x find-definitions)`を使うことでソースコードの適当箇所にジャンプすることができます。
+カーソル位置にシンボルがある場合はその定義位置へジャンプし、無ければミニバッファからシンボル名を入力します。
+元の位置に戻るには`M-, (M-x pop-definition-stack)`を使います。
+
+この機能はSWANKサーバ側でシンボルを参照するので、事前にそのシンボルが定義されているようにシステムを読み込んでおかなければなりません。
 
 ```
-(define-major-mode xml-mode language-mode
-     (:name "xml"
-      :keymap *xml-mode-keymap*
-      :syntax-table *xml-syntax-table*
-      :mode-hook *xml-mode-hook*)
-   (setf (variable-value 'enable-syntax-highlight) t
-         (variable-value 'tab-width) 2
-         (variable-value 'calc-indent-function) 'xml-calc-indent))
+CL-USER> (ql:quickload システム名)
 ```
 
-`define-major-mode`の上で`M-.`とすると、マクロの定義場所にジャンプすることができます。`C-x C-f`でファイルの場所を調べると、`lem/lib/core/mode.lisp`で定義されているのが分かります。
-  
-```
-(defmacro define-major-mode (major-mode
-                             parent-mode
-                             (&key name keymap syntax-table mode-hook)
-                             &body body)
-; 以下、省略                             
-)                              
+適当する定義が複数ある場合は定義箇所にジャンプする前に一覧が別ウィンドウに表示されます。
+次の画像はcl-ppcre:scanを対象にした例です。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-jump-to-definitions.png)
+
+この場合は`C-x C-n` `C-x C-p`で定義箇所に順番にジャンプできます。
+一覧が表示されたウィンドウに移動して見たい定義にカーソルを合わせてEnterを押すことでも定義位置にジャンプできます。
+この操作方法はコンパイラの警告の一覧と同じす。この機能は他にもgrepなどで使われています。
+
+### Apropos
+Common Lispで存在するシンボルを検索するにはaproposという関数を使います。
+
+```lisp
+CL-USER> (apropos "MULTIPLE-VALUE")
+SB-C::IR1-CONVERT-MULTIPLE-VALUE-CALL (fbound)
+SB-C::IR1-CONVERT-MULTIPLE-VALUE-PROG1 (fbound)
+SB-EVAL::EVAL-MULTIPLE-VALUE-CALL (fbound)
+SB-EVAL::EVAL-MULTIPLE-VALUE-PROG1 (fbound)
+SB-WALKER::WALK-MULTIPLE-VALUE-BIND (fbound)
+SB-WALKER::WALK-MULTIPLE-VALUE-SETQ (fbound)
+SWANK::MULTIPLE-VALUE-OR (fbound)
+MULTIPLE-VALUE-BIND (fbound)
+MULTIPLE-VALUE-CALL (fbound)
+MULTIPLE-VALUE-LIST (fbound)
+MULTIPLE-VALUE-PROG1 (fbound)
+MULTIPLE-VALUE-SETQ (fbound)
+MULTIPLE-VALUES-LIMIT (bound)
 ```
 
-定義の確認後、`M-,`で元の場所に戻ることができます。 
+SLIMEではエディタからaproposを使えるインターフェースを用意しています。
+
+* `C-c C-d a (M-x lisp-apropos)`でexportされたシンボルの大文字小文字を区別しない検索
+* `C-u C-c C-d a (C-u M-x lisp-apropos)`でミニバッファからexportされているか、大文字小文字を区別するかを選んで検索
+* `C-c C-d z (M-x lisp-apropos-all)`で全てのパッケージの全てのシンボルを大文字小文字区別せずに検索
+* `C-c C-d p (M-x lisp-apropos-package)`で指定したパッケージの全てのシンボルを表示
+
+があります。
+
+次の画像はcl-ppcreのscanを検索した例です。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-apropos.png)
+
+この検索結果のシンボルの位置でReturnを押すと定義箇所へのジャンプが出来ます。
 
 ### マクロ展開
 
