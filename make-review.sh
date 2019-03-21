@@ -7,7 +7,7 @@ md2review ./01-Roswell/roswell.md         > ./src/01-Roswell.re
 echo "converting 02-Lem/mode.md"
 md2review ./02-Lem/lem.md                > ./src/02-Lem.re
 echo "converting 03-Library-Investigation/library-investigation.md"
-md2review ./03-Library-Investigation/library-investigation.md > ./src/03-Library-Investigation/library-investigation.re
+md2review ./03-Library-Investigation/library-investigation.md > ./src/03-library-investigation.re
 echo "converting 04-Make-Project/make-project.md"
 md2review ./04-Make-Project/make-project.md > ./src/04-Make-Project.re
 echo "converting 05-Web-Scraping/outline.md"
