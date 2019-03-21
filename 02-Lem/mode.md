@@ -433,7 +433,7 @@ lemでの拡張機能の書き方を紹介します。プロジェクト名はpo
 
 完成は、次のようになります。
 
-![完成図](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/screenshot.png)
+![完成図](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
 
 上のスクリーンショットでは/r/lispの投稿のリストを取得して表示しています。選択するとリンク先をブラウザで開く機能などがついています。
 
