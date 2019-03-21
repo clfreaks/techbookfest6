@@ -130,6 +130,9 @@ $ lem <ディレクトリ名>
 viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
 元に戻すには`M-x emacs-mode`です。
 
+コマンド一覧は`M-x describe-bindings`とすると表示されます。
+このときに出るポップアップウィンドウはMoreとよく似た操作方法でSpaceで1ページ分スクロール、閉じるには最後のページまでスクロールされた状態でSpaceを押すか、`q`を入力します。
+
 ## SLIME
 SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範の機能を提供します。
 SLIMEはEmacsだけでなくvimやatom上での実装もあり、Lemでも同様の機能がCommon Lispで実装されています。
