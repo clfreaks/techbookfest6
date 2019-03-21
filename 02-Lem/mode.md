@@ -104,6 +104,7 @@ CL-USER> (cons 'a '(b c))
 
 Lemでは、入力補完がデフォルトで組み込まれています。`lisp-mode`のバッファやREPLでTabキーを押すと、シンボル名の候補が表示されます。例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
 
+![補完](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
 ```lisp
 (defst 
     defstruct                      -- -f---m-- 
