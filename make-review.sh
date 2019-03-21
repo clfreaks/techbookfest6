@@ -8,7 +8,7 @@ echo "converting 02-Lem/mode.md"
 md2review ./02-Lem/lem.md                > ./src/02-Lem.re
 echo "converting 03-Library-Investigation/library-investigation.md"
 md2review ./03-Library-Investigation/library-investigation.md > ./src/03-Library-Investigation/library-investigation.re
-echo "converting 04-Make-Project/about-qlot.md"
+echo "converting 04-Make-Project/make-project.md"
 md2review ./04-Make-Project/make-project.md > ./src/04-Make-Project.re
 echo "converting 05-Web-Scraping/outline.md"
 md2review ./05-Web-Scraping/outline.md    > ./src/05-Web-Scraping.re
