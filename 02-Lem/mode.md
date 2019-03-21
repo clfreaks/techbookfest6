@@ -63,26 +63,27 @@ $ lem <ディレクトリ名>
 ## SLIME
 
 SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範の機能を提供します。
-Lemでは同様の機能がCommon Lispで実装されており、名前もそのままSLIMEです。SLIMEを使うことで、SWANKサーバを介してCommon Lisp処理系と対話しながらLispアプリケーションを構築していくことができます。
- 
+SLIMEはemacsだけでなくvimやatom上での実装もあり、Lemでも同様の機能がCommon Lispで実装されています。
+SLIMEを使うことで、SWANKサーバを介してCommon Lisp処理系と対話しながらLispアプリケーションを構築していくことができます。
+
+またLem自身がCommon Lispで書かれているので、Lem上でSWANKを起動し、Lem自身のランタイムの変更を行うことができます。
+
 では、SLIMEの基本的な使い方をみていきましょう。
 
-### SLIMEの起動
+### SWANKサーバへの接続
 
-まず、バッファをlisp-modeにします。Lemでは、バッファをlisp-modeにするとSWANKサーバが起動します。SWANKサーバが起動すると、下のミニバッファに`Swank server running on sbcl 1.4.14`と表示されます。
+Lemではlispファイルを開くかRPELを起動したときにSWANKサーバと接続されていないと同じランタイムでSWANKサーバが自動で起動し接続が行なわれます。
+REPLを開くには`start-lisp-repl`コマンドを使います。
 
 ```
-M-x lisp-mode
+M-x start-lisp-repl
 ```
 
-次に、`M-x slime`でSLIMEを起動すると、SLIMEのREPLが別バッファで起動します。
+別のプロセスでSLIMEを起動するにはslimeコマンドを使います。
+このコマンドはREPLも同時に開きます。
 
 ```
 M-x slime
-```
-
-```
-CL-USER>  
 ```
 
 ### REPL
@@ -96,11 +97,7 @@ CL-USER> (mapcar #'1+ '(1 2 3))
 (2 3 4)
 ```
 
-`M-p`でREPLの履歴を確認できます。
-
-```
-CL-USER> (cons 'a '(b c))
-```
+`M-p` `M-n`でREPLの履歴を辿れます。
 
 ### 入力補完
 
