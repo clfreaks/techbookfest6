@@ -1,4 +1,4 @@
-# Rove
+# Common Lispのテストフレームワーク「Rove」
 
 ## セットアップ
 
@@ -67,7 +67,11 @@
 
 Roveを使ったテストではこの `ok` や `ng` を基本単位としてテストプログラムを構成します。この最小単位を「アサーション」と呼びます。
 
-異常系のテストではエラーが発生することをテストしたいこともあるでしょう。 `signals` は与えられたフォーム内でエラーが発生すると真を返すマクロです。
+### テストに便利なマクロ群
+
+Roveではよくテストで使われる手法を簡便にするためのマクロがいくつか用意されています。
+
+異常系のテストではエラーが発生することをテストしたいときには `signals` が使えます。 `signals` は与えられたフォーム内でエラーが発生すると真を返すマクロです。
 
 ```
 (defun add (x y) (+ x y))
@@ -81,7 +85,7 @@ Roveを使ったテストではこの `ok` や `ng` を基本単位としてテ�
 ;-> ✓ Expect (ADD 1 "2") to signal ERROR.
 ```
 
-出力をテストするには `outputs` を使います。
+ストリームへの出力をテストするには `outputs` を使います。
 
 ```
 (defun say-hello (&optional (name "Guest")) (format t "Hi, ~A" name))
@@ -93,7 +97,9 @@ Roveを使ったテストではこの `ok` や `ng` を基本単位としてテ�
 ;-> ✓ Expect (SAY-HELLO) to output "Hi, Guest".
 ```
 
-マクロのテストをするには `expands` を使います。マクロのテストで厄介なのは、展開されるフォームに gensym が含まれることです。gensymが含まれると単純な `equal` で比較することができません。一方で `expands` はパッケージにインターンされていないシンボル、 `#:` で始まるシンボルをgensymとして緩いマッチングを行います。
+マクロのテストをするには `expands` を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
+
+単純に `macroexpand-1` して `equalp` で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な `equal` で比較することができません。一方で `expands` はパッケージにインターンされていないシンボル、 `#:` で始まるシンボルをgensymとして緩いマッチングを行います。
 
 ```
 (defmacro defun-addn (n)
@@ -281,7 +287,11 @@ ASDFシステムにRoveを組み込むにはASDファイルにテストシステ
 
 ```
 (asdf:test-system :my-project)
+
+;; テストシステムに rove:run を使っても同じ
+(rove:run :my-project/tests)
 ```
+
 
 コマンドラインから実行するには「rove」コマンドを使います。roveコマンドはRoswellでRoveをインストールすると ~/.roswell/bin/rove にコピーされます。
 
@@ -295,4 +305,48 @@ roveコマンドの引数にASDファイルを渡すとそのシステムの `as
 $ rove my-project.asd
 ```
 
-TODO: レポートスタイルの説明
+### Emacs/SLIMEでの色付け設定
+
+Roveはコマンドラインでは、成功したテストを緑、失敗したテストを赤で色付けして出力します。一方でEmacsで実行している人はSLIMEで実行するとバッファに色がつかないことに気づくかもしれません。これは、EmacsのSLIMEバッファではANSIエスケープシーケンスを認識せずそのままメタ文字が表示されてしまうため、RoveではEmacsでの実行では色付けをデフォルトでオフにしているためです。
+
+Emacs/SLIMEのREPLバッファでもテスト結果の色付けを行うためには多少の設定が必要です。
+
+SLIMEの拡張ライブラリ「slime-repl-ansi-color」 (https://github.com/enriquefernandez/slime-repl-ansi-color) をからslime-repl-ansi-color.elをダウンロードし、SLIMEのcontribディレクトリに置きます。RoswellでSLIMEをセットアップした場合には ~/.roswell/lisp/slime/*/contrib です。
+
+そしてEmacsの設定ファイル (~/.emacs.d/init.el) に以下のコードを追加します。
+
+```
+;; ~/.emacs.d/init.el
+;; slime-repl-ansi-colorを追加
+(setq slime-contribs
+      '(slime-fancy slime-banner slime-indentation slime-repl-ansi-color))
+(slime-setup slime-contribs)
+```
+
+さらにLispの初期化ファイル (~/.roswell/init.lisp) に以下のコードを追記します。
+
+```
+;; CL-USERパッケージ
+(defvar *rove-enable-colors* t)
+```
+
+これで再度Emacsを再起動し、SLIMEを起動すればRoveの色付けが有効になります。
+
+### レポートスタイルの変更
+
+Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「レポートスタイル」と呼びます。
+
+レポートスタイルを変更するには `rove:run` に `:style` でスタイル名を指定します。
+
+```
+;; デフォルトのレポートスタイル
+(rove:run :my-project/tests :style :spec)
+
+;; よりミニマルな表示。アサーションの結果を一つのドットで表現する
+(rove:run :my-project/tests :style :dot)
+
+;; 何も出力せず返り値のみ
+(rove:run :my-project/tests :style :none)
+```
+
+デフォルトのレポートスタイルは `:spec` です。これを変更するには `rove:*default-reporter*` に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は `cl-user:*rove-default-reporter*` に設定します。

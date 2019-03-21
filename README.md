@@ -1,4 +1,7 @@
 # techbookfest6
+
+[![CircleCI](https://circleci.com/gh/clfreaks/techbookfest6.svg?style=svg)](https://circleci.com/gh/clfreaks/techbookfest6)
+
 技術書店6で出版するCommon Lisp本
 
 Common Lispの言語について説明している本はけっこうあるが、最近の開発フローについて開発した本はあまりない。そこをカバーする本を作りたい。
