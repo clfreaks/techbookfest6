@@ -105,13 +105,6 @@ CL-USER> (cons 'a '(b c))
 Lemでは、入力補完がデフォルトで組み込まれています。`lisp-mode`のバッファやREPLでTabキーを押すと、シンボル名の候補が表示されます。例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
 
 ![補完](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
-```lisp
-(defst 
-    defstruct                      -- -f---m-- 
-    define-source-context          -- -f---m-- 
-    defsetf                        -- -f---m-- 
-    define-setf-expander           -- -f---m-- 
-```    
 
 また、SLIME上でライブラリを読み込むことで、そのライブラリで定義されている関数やマクロを探ることができます。exportされているシンボルは、1つコロンをつけると参照することができます。
  
@@ -124,21 +117,21 @@ To load "cl-ppcre":
 .
 (:CL-PPCRE)
 CL-USER> (cl-ppcre: 
-                cl-ppcre:*allow-named-registers*        -- b-------
-                cl-ppcre:*allow-quoting*                -- b-------
-                cl-ppcre:*look-ahead-for-suffix*        -- b-------
-                cl-ppcre:*optimize-char-classes*        -- b-------
+                cl-ppcre:*allow-named-registers*        b-------
+                cl-ppcre:*allow-quoting*                b-------
+                cl-ppcre:*look-ahead-for-suffix*        b-------
+                cl-ppcre:*optimize-char-classes*        b-------
 ```
 
 exportされていないシンボルも、2つコロンをつけると参照できます。
 
 ```
 CL-USER> (cl-ppcre:: 
-cl-ppcre::                              -- -------p
-cl-ppcre-asd::                          -- -------p
-cl-ppcre::%add-to-charset               -- -f------
-cl-ppcre::%add-to-charset/expand        -- -f------
-cl-ppcre::%temp                         -- --------
+cl-ppcre::                              -------p
+cl-ppcre-asd::                          -------p
+cl-ppcre::%add-to-charset               -f------
+cl-ppcre::%add-to-charset/expand        -f------
+cl-ppcre::%temp                         --------
 ```
 
 ### 評価とコンパイル
