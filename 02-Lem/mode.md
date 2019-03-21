@@ -241,7 +241,7 @@ CL-USER> (foo 0)
 コンパイルするとコンパイル時の警告部分が赤線で引かれます。
 ![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-compile.png)
 
-警告修正して再度`C-c C-c`すると赤線が消えます。
+警告箇所を修正して再度`C-c C-c`すると赤線が消えます。
 `C-c M-c`をしてもバッファ内の全ての赤線を消すことが出来ます。
 
 ファイル自体を読み込むには`C-c C-l`をします。
