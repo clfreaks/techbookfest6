@@ -60,7 +60,7 @@ $ lem <ディレクトリ名>
 
 ## SLIME
 
-SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範を機能を提供します。
+SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範の機能を提供します。
 Lemでは同様の機能がCommon Lispで実装されており、名前もそのままSLIMEです。SLIMEを使うことで、SWANKサーバを介してCommon Lisp処理系と対話しながらLispアプリケーションを構築していくことができます。
  
 では、SLIMEの基本的な使い方をみていきましょう。
