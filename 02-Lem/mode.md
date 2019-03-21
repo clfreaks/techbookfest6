@@ -132,7 +132,7 @@ $ lem <ディレクトリ名>
 デフォルトではemacsの操作にある程度合わせています。
 viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
 元に戻すには`M-x emacs-mode`です。
-起動時に自動でvi-modeにするには`~/.lem.d/init.lisp`に次の一行を加えます。
+起動時に自動でvi-modeにするには`~/.lem.d/init.lisp`に次の式を加えます。
 ```
 (lem-vi-mode:vi-mode)
 ```
@@ -191,6 +191,53 @@ CL-USER>
 
 中断すると割り込みエラーでデバッガが表示されます。
 デバッガの使い方については後述します
+
+### インデント
+カーソルの行を字下げするにはTabを入力します。
+一つの式をまとめてインデントするには`C-M-q`です。
+
+```lisp
+(defun fact (n)
+(if (= n 0)
+1
+(* n (fact (1- n)))))
+```
+
+ここで`(defun`の先頭にカーソルを合わせて`C-M-q`とすると次のようにインデントされます。
+
+```lisp
+(defun fact (n)
+  (if (= n 0)
+      1
+      (* n (fact (1- n)))))
+```
+
+あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロをSWANKサーバ側で定義さていると出来ます。
+例えばcl-ppcreにregister-groups-bindというマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
+cl-ppcreを読み込むと正しくインデントできます。
+
+```
+CL-USER> (ql:quickload :cl-ppcre)
+```
+
+実際に試してみると次のようにインデントされます。
+
+```
+(ppcre:register-groups-bind (key value)
+    ("(\\w+):(\\w+)" "foo:bar")
+  (cons key value))
+```
+
+静的にインデントを設定したい場合は`lem-lisp-syntax:set-indentation`を使います。
+`~/.lem.d/init.lisp`に次の式を追加してみます。
+
+```
+(lem-lisp-syntax:set-indentation
+ "with-mock-functions"
+ (lem-lisp-syntax.indent:get-indentation "flet"))
+```
+
+これで起動時にwith-mock-functionsというフォームはfletと同じ形にインデントされるようになります。
 
 ### 入力補完
 
