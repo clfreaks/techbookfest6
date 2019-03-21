@@ -60,30 +60,105 @@ $ lem <ディレクトリ名>
 
 ファイルの保存は`C-x C-s`で行い、`C-x C-c`でLemを終了することができます。ファイルを保存せずに終了しようとすると確認を求められます。
 
-## SLIME
+## 基本的な使い方
+以下の表は主に使うコマンド一覧です。
 
+### カーソル移動
+|キー                                  |説明                                  |
+|--------------------------------------|--------------------------------------|
+|C-p,C-n,C-b,C-f または カーソルキー   |カーソルを上下左右に移動              |
+|C-a,C-e または HOME, END              |カーソルを行頭、行末に移動            |
+|M-b,M-f                               |カーソルを単語単位で左右に移動        |
+|C-v,M-v または PageUp,PageDown        |カーソルを一画面分上下に移動          |
+|M-<,M->                               |バッファの先頭、末尾にカーソルを移動  |
+|C-M-p,C-M-n,C-M-b,C-M-f               |カーソルを式単位で上下左右に移動      |
+|M-{, M-}                              |次の空行までカーソルを移動            |
+
+### 編集操作
+|キー                                  |説明                                                       |
+|--------------------------------------|-----------------------------------------------------------|
+|C-d または Delete                     |カーソル位置の右を一文字削除                               |
+|C-h または Backspace                  |カーソル位置の左を一文字削除                               |
+|C-k                                   |カーソル位置から行末までを削除                             |
+|C-M-h または M-Backspace              |単語単位で前方の文字列を削除                               |
+|M-d                                   |単語単位で後方の文字列を削除                               |
+|C-o                                   |カーソル位置に改行を挿入                                   |
+|C-x C-o                               |カーソル位置の複数の空白行を削除                           |
+|C-Space, C-@                          |カーソル位置をマーク                                       |
+|C-w                                   |マークした位置からカーソル位置までを削除                   |
+|M-w                                   |マークした位置からカーソル位置までをコピー                 |
+|C-M-k                                 |式単位で後方の文字列を削除                                 |
+|C-M-t                                 |前方の式と後方の式を交換                                   |
+|C-y                                   |コピー範囲や一度に複数の文字を削除したテキストを貼り付け   |
+|C-\, M-_                              |Undo, Redo                                                 |
+
+### ファイル、バッファ操作
+|キー                                  |説明                                  |
+|--------------------------------------|--------------------------------------|
+|C-x C-f                               |ファイルを開く                        |
+|C-x C-r                               |ファイルを読み込み専用で開く          |
+|C-x C-s                               |ファイルを保存                        |
+|C-x C-w                               |名前を付けてファイルを保存            |
+|C-x s                                 |開いているファイルを全て保存          |
+|C-x b                                 |バッファ切り替え、存在しなければ作成  |
+|C-x k                                 |バッファを削除                        |
+
+### ウィンドウ操作
+|キー                                  |説明                                  |
+|--------------------------------------|--------------------------------------|
+|C-x 2                                 |ウィンドウを上下に分割                |
+|C-x 3                                 |ウィンドウを左右に分割                |
+|C-x 1                                 |ウィンドウを一つにする                |
+|C-x 0                                 |現在のウィンドウを閉じる              |
+|C-x o, M-o                            |ウィンドウを移動                      |
+
+### 検索と置換
+|キー            |説明|
+|----------------|------------------------------------------------------------|
+|C-s             |次を検索                                                    |
+|C-r             |前を検索                                                    |
+|C-M-s           |正規表現で次を検索                                          |
+|C-M-r           |正規表現で前を検索                                          |
+|M-s _           |シンボル単位で次を検索                                      |
+|M-s M-_         |シンボル単位で前を検索                                      |
+|M-s .           |カーソル位置にあるシンボル名で検索                          |
+|検索中にEnter   |検索にマッチした箇所のハイライトを保つ                      |
+|F2              |検索でマッチしてハイライトシテイル箇所を置換                |
+|M-%             |対話置換                                                    |
+
+デフォルトではemacsの操作にある程度合わせています。
+viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
+元に戻すには`M-x emacs-mode`です。
+
+## SLIME
 SLIMEは`Superior Lisp Interaction Mode for Emacs`の略であり、Emacs上でCommon Lispでの開発を行うためのEmacs Lispプラグインの名前です。Common Lisp処理系でSWANKと呼ばれるサーバを起動し、SLIMEはエディタ側でSWANKサーバと通信することで、式の評価やコンパイル、シンボルの補完や正確なインデント、デバッガやインスペクタなど、広範の機能を提供します。
-SLIMEはemacsだけでなくvimやatom上での実装もあり、Lemでも同様の機能がCommon Lispで実装されています。
+SLIMEはEmacsだけでなくvimやatom上での実装もあり、Lemでも同様の機能がCommon Lispで実装されています。
 SLIMEを使うことで、SWANKサーバを介してCommon Lisp処理系と対話しながらLispアプリケーションを構築していくことができます。
 
-またLem自身がCommon Lispで書かれているので、Lem上でSWANKを起動し、Lem自身のランタイムの変更を行うことができます。
-
-では、SLIMEの基本的な使い方をみていきましょう。
+### lisp-mode
+LemではCommon Lispの開発に便利な機能をlisp-modeとして提供し、内部でSLIMEを使っています。
+lispファイルを開くか、明示的に`M-x lisp-mode`とするとlisp-modeが有効化されます。
 
 ### SWANKサーバへの接続
+lisp-modeが有効化されたときにSWANKサーバに接続していない場合は、自動でLemランタイム上でサーバを起動し、接続します。
+LemはCommon Lispで書いているのでLemとSWANKサーバを同じランタイム上で動かせ、それをすることでLem自身の状態の変更をSLIMEの機能を介して行うことが出来ます。
 
-Lemではlispファイルを開くかRPELを起動したときにSWANKサーバと接続されていないと同じランタイムでSWANKサーバが自動で起動し接続が行なわれます。
 REPLを開くには`start-lisp-repl`コマンドを使います。
 
 ```
 M-x start-lisp-repl
 ```
 
-別のプロセスでSLIMEを起動するにはslimeコマンドを使います。
+lemとは別のプロセスを起動してSLIMEで接続するにはslimeコマンドを使います。
 このコマンドはREPLも同時に開きます。
 
 ```
 M-x slime
+```
+
+`C-u`を前に入力してslimeコマンドを使うと起動する処理系を選べます。
+```
+C-u M-x slime
 ```
 
 ### REPL
@@ -99,15 +174,28 @@ CL-USER> (mapcar #'1+ '(1 2 3))
 
 `M-p` `M-n`でREPLの履歴を辿れます。
 
+実行を中断したい場合はC-c C-cで出来ます。
+
+```
+CL-USER> (loop)
+;; C-c C-cで中断 デバッガがqを入力してreplに戻る
+CL-USER>
+```
+
+中断すると割り込みエラーでデバッガが表示されます。
+デバッガの使い方については後述します
+
 ### 入力補完
 
-Lemでは、入力補完がデフォルトで組み込まれています。`lisp-mode`のバッファやREPLでTabキーを押すと、シンボル名の候補が表示されます。例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
+Lemでは入力中にTabを押すことで補完が出来ます。
+例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
 
 ![補完](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
 
-また、SLIME上でライブラリを読み込むことで、そのライブラリで定義されている関数やマクロを探ることができます。exportされているシンボルは、1つコロンをつけると参照することができます。
- 
- ```
+SWANKサーバのランタイム上に存在するシンボルから補完候補を出すので、補完したいライブラリのシンボルは、そのライブラリを読み込むことで出来ます。
+
+ここではcl-ppcreのシンボルを補完をしたいのでREPLでcl-ppcreをquickloadしてみます。
+```
 CL-USER> (ql:quickload :cl-ppcre) 
 To load "cl-ppcre":
   Load 1 ASDF system:
@@ -115,44 +203,46 @@ To load "cl-ppcre":
 ; Loading "cl-ppcre"
 .
 (:CL-PPCRE)
-CL-USER> (cl-ppcre: 
-                cl-ppcre:*allow-named-registers*        b-------
-                cl-ppcre:*allow-quoting*                b-------
-                cl-ppcre:*look-ahead-for-suffix*        b-------
-                cl-ppcre:*optimize-char-classes*        b-------
 ```
 
-exportされていないシンボルも、2つコロンをつけると参照できます。
+exportされたシンボルはコロンを一つ付けることで補完候補に出ます。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-1.png)
 
-```
-CL-USER> (cl-ppcre:: 
-cl-ppcre::                              -------p
-cl-ppcre-asd::                          -------p
-cl-ppcre::%add-to-charset               -f------
-cl-ppcre::%add-to-charset/expand        -f------
-cl-ppcre::%temp                         --------
-```
+exportされていないシンボルは、2つコロンをつけると補完候補に出ます。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-2.png)
 
-### 評価とコンパイル
+補完は曖昧検索を使っているので並びさえあっていれば補完候補に出ます。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-3.png)
 
-コードのバッファに移動して、関数を定義してみます。`M-o`でウィンドウ間を移動できます。
+### 式の評価とコンパイル
+
+lispファイル上の式を評価してみます。
+例としてfoo.lispというファイルを開きます。
 
 ```lisp
-(defun print-test() 
-  (print 1))
+;;; foo.lisp
+
+(defun foo (x)
+  (1+ x))
 ```
 
-閉じ括弧の右側にカーソルを合わせて`C-c C-c`とすると、SLIMEがSWANKサーバにS式を送り、評価とコンパイルを行います。
+関数fooの中で`C-M-x`とすると、そのdefunが評価され、定義されます。
 
-SLIMEのREPLに移動後、`print-test`を実行すると、次のような結果になります。
-
+REPLで定義した関数を呼びだしてみます。
 ```lisp
-CL-USER> (print-test) 
-
+CL-USER> (foo 0)
 1
-1
-CL-USER> 
 ```
+
+`C-M-x`の代わりに`C-c C-c`を使うと評価ではなくコンパイルされロードされます。
+コンパイルするとコンパイル時の警告部分が赤線で引かれます。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-compile.png)
+
+警告修正して再度`C-c C-c`すると赤線が消えます。
+`C-c M-c`をしてもバッファ内の全ての赤線を消すことが出来ます。
+
+ファイル自体を読み込むには`C-c C-l`をします。
+コンパイルし、その結果を読み込むには`C-c C-k`をします。
 
 ### コードジャンプ
 
