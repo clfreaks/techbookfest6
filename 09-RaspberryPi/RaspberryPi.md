@@ -12,16 +12,16 @@ Common Lisp で電子工作するメリットは、C言語ほどではないで�
 
 ハードは`Raspberry Pi 3`、OSは`Raspbian Stretch`を使用します。
 `Raspbian Stretch`は以下のミラーサイトを使うと公式サイトよりも早くダウンロード出来ます。
-今回は執筆時での最新版`raspbian-2018-11-15`を使用しています。
 
+```
 ミラーサイトURL：http://ftp.jaist.ac.jp/pub/raspberrypi/raspbian/images/
+```
+
+今回は執筆時での最新版`raspbian-2018-11-15`を使用しています。
 
 ## Roswellのインストール
 
-Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。
-
-まずは、Roswellをインストールするために必要なものをインストールします。
-インストールするのは以下の3つです。
+Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。まずは、Roswellをインストールするために必要なものをインストールします。インストールするのは以下の3つです。
 
 - autoconf
 - automake
@@ -187,12 +187,13 @@ Interrupt from Emacs
 
 ## GPIO制御ライブラリについて
 
-GPIO制御ライブラリとして`Wiring Pi`を使用します。  
-`Raspbian Stretch`には最初からインストールされています。  
-
-公式サイト：http://wiringpi.com/
-
+GPIO制御ライブラリとして`Wiring Pi`を使用します。
+`Raspbian Stretch`には最初からインストールされています。
 ラッパーを作成しCommon Lispから呼び出して使用します。
+
+```
+公式サイト：http://wiringpi.com/
+```
 
 ## プロジェクトの作成
 
@@ -232,8 +233,7 @@ cl-raspi
                  "cl-raspi/src/..."))
 ```
 
-`lib-wiring-pi.lisp`はラッパーです。  
-ここにWiringPiの関数を追加していきます。
+`lib-wiring-pi.lisp`はラッパーです。ここにWiringPiの関数を追加していきます。
 
 ```
 (defpackage :cl-raspi/lib-wiring-pi
@@ -247,6 +247,9 @@ cl-raspi
     (:unix "libwiringPi.so"))
 
 (use-foreign-library libwiringPi)
+
+;; ここから下に WiringPi の関数を追加していきます。
+
 ```
 
 CFFIとは、Common Lispから外部機能を利用するためのインターフェースです。
@@ -257,8 +260,12 @@ CFFIとは、Common Lispから外部機能を利用するためのインター�
   (引数1 :データ型) (引数2 :データ型) ...)
 ```
 
+CFFIについての参考文献
+
+```
 - 公式サイト：https://common-lisp.net/project/cffi/
 - ユーザーマニュアル：https://common-lisp.net/project/cffi/manual/index.html
+```
 
 最後に、REPLで以下のコマンドを実行するとプロジェクトが登録されます。
 
