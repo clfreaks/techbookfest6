@@ -95,7 +95,6 @@ packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`
 ```
 ;; specials.lisp
 (in-package :cl-who)
-
 (defmacro defconstant (name value &optional doc)
   "Make sure VALUE is evaluated only once \(to appease SBCL)."
   `(cl:defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
@@ -103,7 +102,6 @@ packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`
 
 ;; util.lisp
 (in-package :cl-who)
-
 (defmacro n-spaces (n)
   "A string with N spaces - used by indentation."
   `(make-array ,n
@@ -113,19 +111,15 @@ packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`
 
 ;; who.lisp
 (in-package :cl-who)
-
 (defun html-mode ()
-  "Returns the current HTML mode. :SGML for \(SGML-)HTML, :XML for
-XHTML and :HTML5 for HTML5 (HTML syntax)."
-  *html-mode*)
-(以下省略)
+  *html-mode*)  ; 以下省略
 ```
 
-CL-WHOではファイル数が少ないためこの手法が十分機能しますが、ライブラリの規模が大きくなり、管理するパッケージやファイルが多くなるにつれて、この手法でのパッケージ管理は複雑化します。より効率的にパッケージを管理するために、`one package per file`(1ファイルにつき1パッケージ)という手法が提唱されました。
+CL-WHOではファイル数が少ないためこの手法が十分機能しますが、ライブラリの規模が大きくなり、管理するパッケージが多くなるにつれて、この手法でのパッケージ管理は複雑化します。
 
 ### package-inferred-system
 
-この手法では、全てのファイルはdefpackageで始まります。複数のパッケージ間の依存関係が明示的で、全てのファイルが固有のパッケージ名をもつので、ファイル間の依存関係は推測(inferred)されます。
+後に、効率的にパッケージを管理するために、`one package per file`(1ファイルにつき1パッケージ)という手法が提唱されました。この手法では、全てのファイルはdefpackageで始まります。複数のパッケージ間の依存関係が明示的で、全てのファイルが固有のパッケージ名をもつので、ファイル間の依存関係は推測(inferred)されます。
 
 WebフレームワークのUtopianでは、この手法でシステムが構築されています。`utopian.asd`の`depends-on`に注目してください。"utopian/package"と指定されているのは、utpianフォルダー内のpackage.lispを示します。このように、パッケージ名をファイルのパスと対応させて管理するのも特徴の1つです。
 
