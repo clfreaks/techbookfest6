@@ -44,7 +44,7 @@ Common Lispにおいて、パッケージは名前空間の役割を果たしま
 ```
 $ ros run
 ;; パッケージJPNを定義する
-;; 他のパッケージから参照できるようにgreetをexportしておく
+;; 他のパッケージからgreetを利用できるようにgreetをexportする
 * (defpackage :JPN
     (:use :cl)
     (:export :greet))
@@ -56,16 +56,16 @@ $ ros run
 * (defun greet()(format nil "こんにちは"))
 GREET
 
-;; カレントパッケージをCOMMON-LISP-USERに移動して、変数aを1に定義する
+;; カレントパッケージをCOMMON-LISP-USERに移動して、greet関数を定義する
 * (in-package :cl-user)
 #<PACKAGE "COMMON-LISP-USER">
 * (defun greet()(format nil "Hello"))
 
-;; カレントパッケージのgreetを実行する。
+;; カレントパッケージでgreet関数を実行する。
 * (greet)
 "Hello"
 
-;; パッケージJPNのgreetを実行する。
+;; パッケージJPNのgreet関数を実行する。
 * (jpn:greet)
 "こんにちは"
 ```
