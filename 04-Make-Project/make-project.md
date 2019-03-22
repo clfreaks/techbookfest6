@@ -59,7 +59,7 @@ GREET
 
 ### packages.lisp
 
-広く使われているパッケージの管理方法として、packages.lispを最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。次のようにdefsystem内で`:serial t`とすることで、components内のファイルを順に読み込んでいきます。
+広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。次のようにdefsystem内で`:serial t`とすることで、components内のファイルを上から順に読み込んでいきます。
 
 ```
 (asdf:defsystem :cl-who
