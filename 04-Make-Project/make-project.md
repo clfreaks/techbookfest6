@@ -8,7 +8,7 @@ Common Lispでプロジェクトというとき、多くの場合はライブラ
 
 ### シンボル
 
-Common Lispにおいてシンボルは、名前、パッケージ、変数の値、関数、属性リストを含む一意のデータです。例として、`something`という名前でシンボルを作成して、変数の値、関数、属性リストを設定します。
+Common Lispにおいてシンボルは、名前、パッケージ、変数の値、関数、属性リストを含む一意のデータです。例として`something`という名前でシンボルを作成して、変数の値、関数、属性リストに値を設定して印字してみます。
 
 ```
 * (defvar something 1)  ; 変数の値
@@ -26,12 +26,10 @@ something
 "blue"
 * (symbol-plist 'something)
 (COLOR "blue" OLD "10years")
-
-* (symbol-package 'something) ; パッケージ
-#<PACKAGE "COMMON-LISP-USER">
 ```
 
 このように、シンボルは見た目以上に多くの内容を含みます。
+
 
 ### パッケージ
 
