@@ -12,11 +12,11 @@ Common Lispの言語について説明している本はけっこうあるが、
   - Quicklisp/ASDFについて
   - Ros scriptの書き方 -> ビルド
 
-- Lem ( @cxxxr @t-cool )
-  - Lemのインストール ( @t-cool )
-  - 基本的な使い方 ( @t-cool )
+- Lem ( @cxxxr )
+  - Lemのインストール ( @cxxxr )
+  - 基本的な使い方 ( @cxxxr )
   - vi-modeについて
-  - SLIMEの仕組みと使い方
+  - SLIMEの仕組みと使い方 ( @cxxxr )
     - デバッガ、インスペクタ
   - 拡張の書き方( @cxxxr )
 
