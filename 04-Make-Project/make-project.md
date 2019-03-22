@@ -33,26 +33,22 @@ something
 
 ### パッケージ
 
-Common Lispにおいてパッケージは、名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、同じ名前のシンボルを共存させることができます。次の例では、デフォルトのCOMMON-LISP-USERパッケージの`greet関数`では"Hello"、JPNパッケージの`greet関数`では"こんにちは"と印字するように、greetという名前のシンボルを複数のパッケージで共存させます。
+Common Lispにおいてパッケージは、名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、同じ名前のシンボルを共存させることができます。次の例では、greetという名前のシンボルを複数のパッケージで共存させます。
 
 ```
 $ ros run
-* (defpackage :JPN         ; パッケージJPNを定義する
-    (:use :cl)             ; COMMON-LISPパッケージのシンボル定義を使う
-    (:export :greet))      ; 他のパッケージから利用できるようにgreetをexportする
+* (defpackage :JPN (:use :cl)(:export :greet)) ; パッケージJPNを定義する
 #<PACKAGE "JPN">
-* (in-package :JPN)        ; パッケージをJPNに移動する
+* (in-package :JPN)                            ; パッケージをJPNに移動する
 #<PACKAGE "JPN">
-* (defun greet()
-    (format nil "こんにちは"))　; JPNパッケージ内で関数を定義する
+* (defun greet()(format nil "こんにちは"))　; JPNパッケージ内で関数を定義する
 GREET
-* (in-package :cl-user)       ; パッケージをCOMMON-LISP-USERに移動する
+* (in-package :cl-user)                   ; パッケージをCOMMON-LISP-USERに移動する
 #<PACKAGE "COMMON-LISP-USER">
-* (defun greet()
-    (format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
-* (greet)                     ; カレントパッケージでgreet関数を実行する。
+* (defun greet()(format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
+* (greet)                                 ; カレントパッケージでgreet関数を実行する。
 "Hello"
-* (jpn:greet)                 ; パッケージJPNのgreet関数を実行する。
+* (jpn:greet)                             ; パッケージJPNのgreet関数を実行する。
 "こんにちは"
 ```
 
