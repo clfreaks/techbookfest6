@@ -39,11 +39,42 @@ something
 
 ## パッケージ管理
 
-Common Lispにおいて、パッケージは名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、同じ名前のシンボルをプロジェクト内で共存させることができます。プロジェクトを作るには、シンボルがどのパッケージに属しているかを管理する必要があります。パッケージの管理方法には、いくつか方法があります。
+Common Lispにおいて、パッケージは名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、プロジェクト内で同じ名前のシンボルを共存させることができます。次の例では、パッケージJPNの`greet関数`では"こんにちは"、パッケージCOMMON-LISP-USERのgreetでは"Hello"と印字するように、greetという名前のシンボルを複数のパッケージで共存させます。
+
+```
+$ ros run
+;; パッケージJPNを定義する
+;; 他のパッケージから参照できるようにgreetをexportしておく
+* (defpackage :JPN
+    (:use :cl)
+    (:export :greet))
+#<PACKAGE "JPN">
+
+;; カレントパッケージをJPNに移動して、関数を定義する
+* (in-package :JPN)
+#<PACKAGE "JPN">
+* (defun greet()(format nil "こんにちは"))
+GREET
+
+;; カレントパッケージをCOMMON-LISP-USERに移動して、変数aを1に定義する
+* (in-package :cl-user)
+#<PACKAGE "COMMON-LISP-USER">
+* (defun greet()(format nil "Hello"))
+
+;; カレントパッケージのgreetを実行する。
+* (greet)
+"Hello"
+
+;; パッケージJPNのgreetを実行する。
+* (jpn:greet)
+"こんにちは"
+```
+
+このように、プロジェクトではシンボルが実行時にどのパッケージを参照するかを管理する必要があります。
 
 ### packages.lisp
 
-広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。defsystem内で`:serial t`と指定することで、components内のファイルを上から順に読み込んでいきます。
+パッケージの管理方法にはいくつか方法がありますが、広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。defsystem内で`:serial t`と指定することで、components内のファイルを上から順に読み込んでいきます。
 
 CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれていきます。
 
