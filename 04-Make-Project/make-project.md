@@ -59,9 +59,7 @@ GREET
 
 ### packages.lisp
 
-パッケージの管理方法にはいくつか方法がありますが、広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。defsystem内で`:serial t`と指定することで、components内のファイルを上から順に読み込んでいきます。
-
-CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれていきます。
+広く使われているパッケージの管理方法として、packages.lispを最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。次のようにdefsystem内で`:serial t`とすることで、components内のファイルを順に読み込んでいきます。
 
 ```
 (asdf:defsystem :cl-who
@@ -75,7 +73,7 @@ CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp
                (:file "who"))
 ```
 
-`packages.lisp`では、次のように、パッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートされるシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、もし処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するという指定です。CL-WHOの`defconstant`は specials.lisp で定義されています。
+CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれていきます。`packages.lisp`では、次のように、パッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートされるシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、もし処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するという指定です。CL-WHOの`defconstant`は specials.lisp で定義されています。
 
 ```
 (in-package :cl-user)
