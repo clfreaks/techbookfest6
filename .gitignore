@@ -9,3 +9,4 @@ yarn.lock
 book-pdf/
 book.pdf
 *.re
+.DS_Store
