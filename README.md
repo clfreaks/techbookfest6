@@ -1,7 +1,10 @@
 # techbookfest6
+
+[![CircleCI](https://circleci.com/gh/clfreaks/techbookfest6.svg?style=svg)](https://circleci.com/gh/clfreaks/techbookfest6)
+
 技術書店6で出版するCommon Lisp本
 
-Common Lispの言語について説明している本はけっこうあるが、最近の開発フローについて開発した本はあまりない。そこをカバーする本を作りたい。
+Common Lispの言語について説明している本はけっこうあるが、最近の開発フローについて解説した本はあまりない。そこをカバーする本を作りたい。
 
 - Roswell ( @snmsts @t-cool )
   - Roswellのインストール
@@ -9,11 +12,11 @@ Common Lispの言語について説明している本はけっこうあるが、
   - Quicklisp/ASDFについて
   - Ros scriptの書き方 -> ビルド
 
-- Lem ( @cxxxr @t-cool )
-  - Lemのインストール ( @t-cool )
-  - 基本的な使い方 ( @t-cool )
+- Lem ( @cxxxr )
+  - Lemのインストール ( @cxxxr )
+  - 基本的な使い方 ( @cxxxr )
   - vi-modeについて
-  - SLIMEの仕組みと使い方
+  - SLIMEの仕組みと使い方 ( @cxxxr )
     - デバッガ、インスペクタ
   - 拡張の書き方( @cxxxr )
 

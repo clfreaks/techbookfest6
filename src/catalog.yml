@@ -4,10 +4,12 @@ PREDEF:
 CHAPS:
   - 01-Roswell.re
   - 02-Lem.re
+  - 03-library-investigation.re  
   - 04-Make-Project.re
   - 05-Web-Scraping.re
   - 06-Test.re
   - 09-RaspberryPi.re
+  - 10-atsuage.re
 
 APPENDIX:
 

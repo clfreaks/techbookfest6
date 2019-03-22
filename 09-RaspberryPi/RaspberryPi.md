@@ -2,23 +2,26 @@
 
 ## はじめに
 
-Raspberry Piで電子工作と言えば、Pythonで紹介している本や記事がとても多いです。  
-しかし、自分はLisperなのでCommon Lispを使ってこれをやっていきます。  
+Raspberry Pi は、電子工作もできる小型PCです。
+主に教育現場や安価に入手できる IOT 機器として趣味や業務に使われています。
+Raspberry Pi で電子工作と言えば、 Python を使って紹介している記事や本がとても多いですが、 Common Lisp でも同じようにすることができます。
+Common Lisp で電子工作するメリットは、C言語ほどではないですがそこそこ実行速度が早いことや、 REPL で簡単に動作を確認できることなどがあります。
+今回は、開発環境の構築方法と簡単な電子工作の例をいくつか挙げて Common Lisp を使った Raspberry Pi 電子工作について紹介したいと思います。
 
 ## 環境構築
 
-ハードは`Raspberry Pi 3`、OSは`Raspbian Stretch`を使用します。  
-`Raspbian Stretch`は以下のミラーサイトを使うと公式サイトよりも早くダウンロード出来ます。  
-今回は執筆時での最新版`raspbian-2018-11-15`を使用しています。  
+ハードは`Raspberry Pi 3`、OSは`Raspbian Stretch`を使用します。
+`Raspbian Stretch`は以下のミラーサイトを使うと公式サイトよりも早くダウンロード出来ます。
 
+```
 ミラーサイトURL：http://ftp.jaist.ac.jp/pub/raspberrypi/raspbian/images/
+```
+
+今回は執筆時での最新版`raspbian-2018-11-15`を使用しています。
 
 ## Roswellのインストール
 
-Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。
-
-まずは、Roswellをインストールするために必要なものをインストールします。  
-インストールするのは以下の3つです。  
+Roswellは基本的に`homebrew (Linuxではlinuxbrew)`でインストールしますが、`homebrew`がRaspberry PiのCPUであるARM32をサポートしていないため、以下に示す手順でソースコードをビルドしてインストールします。まずは、Roswellをインストールするために必要なものをインストールします。インストールするのは以下の3つです。
 
 - autoconf
 - automake
@@ -184,12 +187,13 @@ Interrupt from Emacs
 
 ## GPIO制御ライブラリについて
 
-GPIO制御ライブラリとして`Wiring Pi`を使用します。  
-`Raspbian Stretch`には最初からインストールされています。  
-
-公式サイト：http://wiringpi.com/
-
+GPIO制御ライブラリとして`Wiring Pi`を使用します。
+`Raspbian Stretch`には最初からインストールされています。
 ラッパーを作成しCommon Lispから呼び出して使用します。
+
+```
+公式サイト：http://wiringpi.com/
+```
 
 ## プロジェクトの作成
 
@@ -229,8 +233,7 @@ cl-raspi
                  "cl-raspi/src/..."))
 ```
 
-`lib-wiring-pi.lisp`はラッパーです。  
-ここにWiringPiの関数を追加していきます。
+`lib-wiring-pi.lisp`はラッパーです。ここにWiringPiの関数を追加していきます。
 
 ```
 (defpackage :cl-raspi/lib-wiring-pi
@@ -244,32 +247,39 @@ cl-raspi
     (:unix "libwiringPi.so"))
 
 (use-foreign-library libwiringPi)
+
+;; ここから下に WiringPi の関数を追加していきます。
+
 ```
 
 CFFIとは、Common Lispから外部機能を利用するためのインターフェースです。
 以下のような形式で記述していきます。
 
 ```
-(defcfun ("WiringPiの機能" CommonLispで使うときの名前) :返り値
-  (引数1 :データ型) (引数2 :データ型))
+(defcfun ("WiringPiの機能" CommonLispで使うときの名前) :返り値のデータ型
+  (引数1 :データ型) (引数2 :データ型) ...)
 ```
 
+CFFIについての参考文献
+
+```
 - 公式サイト：https://common-lisp.net/project/cffi/
 - ユーザーマニュアル：https://common-lisp.net/project/cffi/manual/index.html
+```
 
-最後に、REPLで以下のコマンドを実行するとプロジェクトが登録されます。  
+最後に、REPLで以下のコマンドを実行するとプロジェクトが登録されます。
 
 ```
 (ql:register-local-projects)
 ```
 
-## Lチカ
+## LED
 
-電子工作の基本と言えば、LEDを点滅させるLチカです。
+最初は電子工作の基本、LEDを点滅させるLチカをやってみます。
 
 ### 使用するWiringPi関数
 
-Lチカで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
+最初に、必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
 
 - wiringPiSetupGpio  
 wiringPiの初期化に使用。  
@@ -352,17 +362,22 @@ GPIOピンの出力制御を行います。
   (pin-mode +pin+ +output+)
 
   (loop
-     (digital-write +pin+ 1)   ; Turn on LED
-     (delay 500)               ; Delay 500(ms)
-     (digital-write +pin+ 0)   ; Turn off LED
-     (delay 500)))             ; Delay 500(ms)
+     (digital-write +pin+ 1)
+     (delay 500)
+     (digital-write +pin+ 0)
+     (delay 500)))
 ```
 
+最初に`cl-raspi/src/blink`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+LEDをつないだGPIOピン番号を`defconstant`で定数定義します(今回はGPIO11を使用)。
+プログラム本体は`main`関数として書いていきます。
 流れとしては、以下の通りです。
 
-1. `wiringpi-setup-gpio`で初期化
+1. `wiringpi-setup-gpio`でGPIOを初期化
 2. `pin-mode`でGPIO11を出力モードに設定
 3. 無限ループ内で`digital-write`を使ってGPIO11の電圧のHigh(1)/Low(0)を切り替える
+4. `delay`で指定した数値分ミリ秒単位で待機する
 
 ### 実行
 
@@ -385,20 +400,22 @@ GPIOピンの出力制御を行います。
 (cl-raspi/src/blink:main)
 ```
 
-これで、電子工作の基本であるLチカができました。  
+## タクトスイッチ
 
-## タクトスイッチでGPIO入力
-
-LチカでGPIO出力をやったので、次はタクトスイッチによるGPIO入力をやってみます。
+Raspberry Pi に何かしら指示を与えたいときにはスイッチを使用します。  
+今回は、ボタン形式のスイッチ「タクトスイッチ」の押下を Raspberry Pi 側で検知してみます。
 
 ### 使用するWiringPi関数
 
-GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
+最初に、必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
 前回作った物に必要な関数を追加していきます。  
 
 - pullUpDnControl  
-ピンのプルアップ、プルダウンを設定します。  
-第1引数にGPIOピン番号、第2引数にモード(0：PUD_OFF、1：PUD_DOWN、2：PUD_UP)を設定。
+GPIOピンに何も接続されていない場合の状態を設定します。  
+第1引数にGPIOピン番号、第2引数にモード(0：PUD\_OFF、1：PUD\_DOWN、2：PUD_UP)を設定。
+
+GPIOピンは本来、何も接続していない状態だと周りの電子的なノイズにより入力値が不安定になります。Raspberry Piでは「プルアップ(PUD\_UP)」または「プルダウン(PUD\_DOWN)」という回路を使ってGPIOピンの状態を安定させています。  
+プルアップでは、入力端子に抵抗(50k〜65kΩ)を介して3.3Vに接続しておくことで、入力端子に何も接続場合に端子を3.3Vの状態で安定させます。プルダウンでは、GNDに接続しておき、0Vの状態にします。
 
 ```
 (defcfun ("pullUpDnControl" pull-updn-control) :void
@@ -441,14 +458,14 @@ GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加し
 
 ### プログラム本体作成
 
-プログラム本体を`src`ディレクトリ内に`gpio-input.lisp`という名前で作成します。
+プログラム本体を`src`ディレクトリ内に`button.lisp`という名前で作成します。
 
 ```
-(defpackage :cl-raspi/src/gpio-input
+(defpackage :cl-raspi/src/button
   (:use :cl
         :cl-raspi/lib-wiring-pi)
   (:export :main))
-(in-package :cl-raspi/src/gpio-input)
+(in-package :cl-raspi/src/button)
 
 (defconstant +pin+ 17)
 
@@ -463,17 +480,22 @@ GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加し
      (delay 500)))
 ```
 
+最初に`cl-raspi/src/button`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+タクトスイッチをつないだGPIOピン番号を`defconstant`で定数定義します(今回はGPIO17を使用)。
+プログラム本体は`main`関数として書いていきます。
 流れとしては、以下の通りです。
 
 1. `wiringpi-setup-gpio`で初期化
 2. `pin-mode`でGPIO17を入力モードに設定
 3. `pull-updn-control`でGPIO17ピンを`PUD_UP`モードに設定
 4. 無限ループ内でタクトスイッチ押下を待ち受ける
-5. タクトスイッチが押下されるとピンの状態がLOW(0)になり、離すとHIGH(1)になる
+5. タクトスイッチが押下されるとピンの状態がLOW(0)になり、離すとHIGH(1)
+6. 状態によってコンソールに異なる文字列を出力
 
 ### 実行
 
-`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/gpio-input`を追加します。
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/button`を追加します。
 
 ```
 (defsystem "cl-raspi"
@@ -482,27 +504,28 @@ GPIO入力で必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加し
     :license "MIT"
     :depends-on ("cffi"
                  "cl-raspi/lib-wiring-pi"
-                 "cl-raspi/src/gpio-input"))
+                 "cl-raspi/src/button"))
 ```
 
 `cl-raspi`を`quicklisp`でロードし`cl-raspi/src/gpio-input`パッケージの`main`関数を実行します。
 
 ```
 (ql:quickload :cl-raspi)
-(cl-raspi/src/gpio-input:main)
+(cl-raspi/src/button:main)
 ```
-
-これで、スイッチによる外部からの入力を感知出来るようになりました。
 
 ## ソフトウェアPWM
 
-PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オンとオフを繰り返し切り替えて出力される電圧を制御します。  
+PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オンとオフを繰り返し切り替えて出力される電圧を制御することができます。  
+今回はPWMをつかってRGBフルカラーLED光らせてみます。
 
 ### 使用するWiringPi関数
 
+ソフトウェアPWMで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
+
 - soft-pwm-create  
 ソフトウェア制御のPWMピンを生成。  
-第1引数に任意のGPIOピン、第2引数にPWMの初期値、第3引数にPWMの最大値を指定します。
+第1引数に任意のGPIOピン番号、第2引数にPWMの初期値、第3引数にPWMの最大値を指定します。
 
 ```
 (defcfun ("softPwmCreate" soft-pwm-create) :int
@@ -510,7 +533,7 @@ PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オ�
 ```
 
 - soft-pwm-write  
-第1引数で指定されたGPIOピンを第2引数の値でPWMを更新。  
+第1引数で指定されたGPIOピン番号を第2引数の値でPWMを更新。  
 値が範囲内であることが確認され、`soft-pwm-create`によって初期化されていないGPIOピンの場合は無視される。
 
 ```
@@ -522,15 +545,17 @@ PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オ�
 
 - RGBフルカラーLED カソードコモン (OSTA5131A)
 - トランジスタ (2SC1815GR) 3個
-- 120Ω抵抗 (茶赤茶金)
-- 150Ω抵抗 (茶緑茶金) 3個
-- 10kΩ抵抗 (茶黒橙金) 3個
+- 120 Ω抵抗 (茶赤茶金)
+- 150 Ω抵抗 (茶緑茶金) 3個
+- 10k Ω抵抗 (茶黒橙金) 3個
 
 上記電子部品を以下のようにブレッドボードに配置します。
 
 ![回路図](images/09-circuit-diagram-color.jpg)
 
 ### プログラム本体作成
+
+プログラム本体を`src`ディレクトリ内に`color.lisp`という名前で作成します。
 
 ```
 (defpackage :cl-raspi/src/color
@@ -560,9 +585,19 @@ PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オ�
   (soft-pwm-write +red-pin+  100))
 ```
 
+最初に`cl-raspi/src/color`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+RGBフルカラーLEDをつないだGPIOピン番号を`defconstant`で定数定義します(今回はGPIO18/GPIO23/GPIO24を使用)。
+プログラム本体は`main`関数として書いていきます。流れとしては、以下の通りです。
+
+1. `wiringpi-setup-gpio`で初期化
+2. `pin-mode`でGPIO18/GPIO23/GPIO24を出力モードに設定
+3. `soft-pwm-create`でPWMの指定する数値の範囲を設定(今回は0〜100の間で制御するように設定)
+4. `soft-pwm-write`で各GPIOピンにPWMで出力する割合を指定
+
 ### 実行
 
-`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/gpio-input`を追加します。
+`cl-raspi.asd`に作成したパッケージ`cl-raspi/src/color`を追加します。
 
 ```
 (defsystem "cl-raspi"
@@ -581,13 +616,13 @@ PWM(Pulse Width Modulation)とは、電力を制御する方式の1つで、オ�
 (cl-raspi/src/color:main)
 ```
 
-これで、3色カラーLEDを制御することができました。
-
 ## ハードウェアPWM
 
-今回は、サーボモーターの制御に使用します。
+ハードウェアPWMを使用してサーボモーターを制御してみます。
 
 ### 使用するWiringPi関数
+
+ハードウェアPWMで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
 
 - pwm-set-mode  
 PWMジェネレータは2つのモード(バランス、マークスペース)で動作させることが出来ます。  
@@ -682,14 +717,22 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
         (pwm-write +pin+ move-deg))))) 
 ```
 
-流れとしては、以下の通りです。
+最初に`cl-raspi/src/servomotor`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+RGBフルカラーLEDをつないだGPIOピン番号を`defconstant`で定数定義します(今回はGPIO12を使用)。
+プログラム本体は`main`関数として書いていきます。流れとしては、以下の通りです。
+
+- `init`関数
 
 1. `wiringpi-setup-gpio`で初期化
 2. `pin-mode`でGPIO12をPWM出力モードに設定
 3. `pwm-set-range`でPWMジェネレータの範囲レジスタを`1024`に設定
 4. `pwm-set-clock`でPWMクロックの約数を`375`に設定
-5. `pwm-write`でPWMレジスタに標準入力した数値を設定し、サーボモーターを動かします
 
+- `main`関数の無限ループ
+
+1. サーボモーターの動作角度を計算
+2. `pwm-write`でPWMレジスタに標準入力した数値を設定し、サーボモーターを動かす
 
 ### サーボモーターの角度計算について
 
@@ -741,8 +784,6 @@ aspberry Piには1つのオンボードPWMピン、ピン1（BMC_GPIO 18、Phys 
 (cl-raspi/src/servomotor:main)
 ```
 
-これで、PWMを使ったサーボモーターの制御が出来ました。
-
 ## I2C 温度センサー
 
 I2Cとは、Inter Integrated Circuit の略で、「I2C」と書いて アイ・スクウェア・シー と呼びます。
@@ -750,6 +791,8 @@ I2Cとは、Inter Integrated Circuit の略で、「I2C」と書いて アイ・
 シリアルデータ (SDA) とシリアルクロック (SCL) の２本の信号線で情報伝達を行います。
 
 ### 使用するWiringPi関数
+
+I2Cで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
 
 - wiringPiI2CSetup  
 これにより、指定されたデバイスIDでI2Cシステムが初期化されます。  
@@ -809,7 +852,6 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
   (:export :main))
 (in-package :cl-raspi/src/i2c-temperature-sensor)
 
-;; I2C device address (0x48)
 (defconstant +i2c-addr+ #X48)
 
 (defun byte-swap (num-value)
@@ -828,20 +870,36 @@ IDはデバイスのI2C番号で、これを見つけるためにi2cdetectコマ
     (format t "~d~%" (get-data fd))))
 ```
 
-流れとしては、以下の通りです。
+最初に`cl-raspi/src/i2c-temperature-sensor`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+ADT7410のアドレスを`defconstant`で定数定義します(#X48)。  
+I2Cデバイスのアドレスは、Raspberry Piと接続後、以下のコマンドを実行すると取得できます。
 
-1. `(wiringpi-i2c-setup +i2c-addr+)`  
-I2Cシステムの初期化
-2. `(wiringpi-i2c-write-reg8 fd #X03 #X80)`  
-レジスタ`0x03`に`0x80`を書き込むことで、16ビットの高精度で温度を取得
-3. `(wiringpi-i2c-read-reg16 fd #X00)`  
-レジスタ`0x00`から16ビットのデータを取得
-4. バイトスワップ  
+```
+sudo i2cdetect -y 1
+```
+
+プログラム本体は`main`関数として書いていきます。流れとしては、以下の通りです。
+
+1. `wiringpi-i2c-setup`でI2Cシステムの初期化
+2. `wiringpi-i2c-write-reg8`でレジスタ`0x03`に`0x80`を書き込むことで、16ビットの高精度で温度を取得
+3. `get-data`関数で温度データを取得し、コンソールに出力
+
+- `get-data`関数  
+`wiringpi-i2c-read-reg16`でレジスタ`0x00`から16ビットのデータを取得
+
+- `byte-swap`関数  
 温度データを取得するとビッグエンディアンになってしまっているので、バイトスワップしてリトルエンディアンに変換
-5. 温度計算  (13ビットの場合)  
+
+### 温度データの計算について
+
+- 13ビットの場合
+
 4～16ビット目までが有効なデータなので、取得データを8で割って下位3ビットを捨ててから、温度分解能値である0.0625をかけます。  
 計算式：(取得データ / 8) × 0.0625
-6. 温度計算 (16ビットの場合)  
+
+- 16ビットの場合(今回はこっちを使用)
+
 全てのデータが使えるので、そのまま温度分解能値である0.0078とかけます。  
 計算式：取得データ × 0.0078
 
@@ -866,13 +924,14 @@ I2Cシステムの初期化
 (cl-raspi/src/i2c-temperature-sensor:main)
 ```
 
-これで、温度センサーからデータを取得することが出来ました。
-
 ## SPI 3軸加速度センサー
 
-
+SPI(Serial Peripheral Interface)通信とは、同期式シリアル通信の一つです。  
+SCK、SDO、SDIの3本の信号線を用いて通信を行います。
 
 ### 使用するWiringPi関数
+
+SPIで必要になるWiringPiの機能を`lib-wiring-pi.lisp`に追加していきます。
 
 - wiringPiSPISetup  
 チャンネルを初期化する関数。（RaspberryPiには2つのチャンネル、0と1があります。）  
@@ -924,8 +983,8 @@ I2Cシステムの初期化
   (:export :main))
 (in-package :cl-raspi/src/3-axis-acceleration-sensor)
 
-(defconstant +spi-cs+ 0)                ; Select target SPI device
-(defconstant +spi-speed+ 100000)        ; SPI communication speed
+(defconstant +spi-cs+ 0)                ; 対象のSPIデバイスを選択
+(defconstant +spi-speed+ 100000)        ; SPIの通信速度
 
 (defconstant +out-x-l+ #X28)            ; OUT_X Low
 (defconstant +out-x-h+ #X29)            ; OUT_X High
@@ -945,6 +1004,7 @@ I2Cシステムの初期化
 (defconstant +high+  1)
 (defconstant +low+   0)
 
+;; SPIデータの読み書き
 (defun spi-data-rw (channel data &optional (len (length data)))
   (let ((mp (cffi:foreign-alloc :unsigned-char :count len :initial-contents data)))
     (digital-write +pin+ +low+)
@@ -955,15 +1015,18 @@ I2Cシステムの初期化
       (cffi:foreign-free mp)
       rval)))
 
+;; 加速度センサーで計測したデータを取得する処理
 (defun spi-read (read-addr)
   (let (outdat out)
     (setf outdat (list (logior read-addr +read+) #X00))
     (setf out (spi-data-rw +spi-cs+ outdat))
     (nth 1 out)))
 
+;; CTRL_REGに値を設定する処理
 (defun spi-write (write-addr data)
   (spi-data-rw +spi-cs+ (list (logand write-addr +write+) data)))
 
+;; 取得したデータから加速度を算出する処理
 (defun conv-two-byte (high low)
   (let (dat)
     (setq dat (logior (ash high 8) low))
@@ -977,25 +1040,30 @@ I2Cシステムの初期化
     (wiringpi-spi-setup +spi-cs+ +spi-speed+)
     (wiringpi-setup-gpio)
     (pin-mode +pin+ +output+)
+    
+    ;; 最初はCSをHighにしておく
     (digital-write +pin+ +high+)
 
+    ;; LIS3DHのレジスタWHO_AM_Iを読み、0x33なら正しく通信できている
     (if (equal (spi-read +who-am-i+) #X33)
-        (format t "I AM LIS3DH~%")
-        (return-from main nil))
+        (format t "I AM LIS3DH~%") ; 正しく通信できている場合は、"I AM LIS3DH"と表示
+        (return-from main nil))    ; 正しく通信できていない場合は、処理終了
+
+    ;; CTRL_REG1に0x77をを書込み、HR/Normal/Low-power mode (400 Hz)とします。
     (spi-write +ctrl-reg1+ #X77)
 
     (loop
-       ;; Get X axis data
+       ;; X軸のデータを取得
        (setf lb (spi-read +out-x-l+))
        (setf hb (spi-read +out-x-h+))
        (setf x  (conv-two-byte hb lb))
 
-       ;; Get Y axis data
+       ;; Y軸のデータを取得
        (setf lb (spi-read +out-y-l+))
        (setf hb (spi-read +out-y-h+))
        (setf y  (conv-two-byte hb lb))
 
-       ;; Get Z axis data
+       ;; Z軸のデータを取得
        (setf lb (spi-read +out-z-l+))
        (setf hb (spi-read +out-z-h+))
        (setf z  (conv-two-byte hb lb))
@@ -1005,13 +1073,47 @@ I2Cシステムの初期化
        (delay 500))))
 ```
 
+最初に`cl-raspi/src/3-axis-acceleration-sensor`という名前でパッケージを定義し、`cl-raspi/lib-wiring-pi`を読み込みます。
+また、外部から`main`関数を参照できるように`export`しておきます。
+プログラム本体は`main`関数として書いていきます。
 流れとしては、以下の通りです。
 
-1. `wiringpi-spi-setup`でSPIの初期化を行います。
-2. `wiringpi-setup-gpio`でGPIOの初期化を行います。
-3. `pin-mode`
-4. `digital-write`
-5. `spi-data-rw`で、書込み/読出しトランザクションを実行します。
+- `main`関数
+
+1. `wiringpi-spi-setup`でSPIシステムの初期化
+2. `wiringpi-setup-gpio`でGPIOの初期化
+3. `pin-mode`でCS(GPIO8)を出力に設定
+4. `digital-write`で最初はCSをHighにしておく
+5. `spi-write`関数でCTRL\_REGに値を設定
+
+- `main`関数 無限ループ内
+
+1. `spi-read`関数でX/Y/Z軸方向の加速度を取得
+2. `conv-two-byte`関数で加速度を算出
+3. X/Y/Z軸方向の加速度をコンソール出力
+
+- `spi-data-rw`関数
+
+1. `foreign-alloc`で要素数lenのunsigned char型配列mpを確保して、dataを代入
+2. `digital-write`でCSをLowにセット
+3. `wiringpi-spi-data-rw`でSPI Read/Write 実行
+4. `digital-write`でCSをHighにセット
+5. 0～(len-1)までiをインクリメントしながらループ
+6. `mem-aref`でmpから値を取得し、rvalへ格納
+7. `foreign-free`でmpを開放
+
+- `spi-read`関数 加速度センサーで計測したデータを取得する処理
+
+1. 書込みデータ作成
+2. SPIデータの読書き処理実行
+3. リストの2つ目の値がデバイスからのデータなのでそれを返す
+
+- `spi-write`関数  
+CTRL\_REGに値を設定する処理  
+CTRL\_REG1に0x77をを書込み、HR/Normal/Low-power mode (400 Hz)とする
+
+- `conv-two-byte`関数  
+取得したデータから加速度を算出する処理
 
 ### 実行
 
@@ -1034,4 +1136,10 @@ cl-raspiをquicklispでロードし`cl-raspi/src/3-axis-acceleration-sensor`パ�
 (cl-raspi/src/3-axis-acceleration-sensor)
 ```
 
-これで、3軸加速度センサーからデータを取得することが出来ました。
+## 終わりに
+
+ここまで読んでくださってありがとうございます。
+Raspberry Pi での電子工作では Python が主流となっているようですが、Common Lisp でもできるよという話でした。
+ラッパーを用意しなければいけないため少々面倒ではありますが、必要なものをその都度調べて使うため機能を理解できるし、一度作ってしまえば後は使いまわせるので気にするほど手間ではないと思っています。
+簡単なことしか書けてないですが、基本的なことは一通り書けたと思います。
+これを読んでCommon LispでRaspberry Pi電子工作をエンジョイして頂ければ幸いです。

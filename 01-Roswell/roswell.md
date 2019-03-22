@@ -327,23 +327,3 @@ Fast-forward
  create mode 100644 src/dbpedia.lisp
 (以下省略)
 ```
-
-## まとめ
-
-* ASDFはCommon Lispのビルドツールであり、QuicklispはASDFを元に構築されている。
-
-* RoswellではデフォルトでQuicklispを利用できる。
-
-* 処理系をインストールするには`ros install <処理系>`とする。
-
-* REPLを起動するには`ros run`とする。
-
-* Roswell Scriptを用いると、Common Lispでシェルコマンドを書くことができる。
-
-* `ros build`では、Roswell Scriptをビルドして実行ファイルを生成することができる。
-
-* ライブラリをインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
-
-* プロジェクト・トップの`roswell`フォルダにRoswell Scriptを入れておくと、Roswell Scriptをターミナルのコマンドとして使うことができる。
-
-* ライブラリを最新版に更新するには、`ros update <ライブラリ名>`とする。

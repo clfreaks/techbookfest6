@@ -1,35 +1,48 @@
-# Rove
+# テストフレームワーク「Rove」
+
+## Common Lispのテストライブラリ
+
+Common Lispには数多くのテストライブラリがあります。長い歴史の中でメンテナンスされていないものも含めると三十近くもあります。
+
+その中で最も多く使われているものはFiveAMとProveです。
+
+FiveAMはシンプルなテストライブラリです。Common Lispライブラリで古くから使われており、ファンも多くいます。一方でProveはテスト結果の色付けやコマンドラインインターフェイスなどテスト実行環境周辺にも目を向けて作られたものです。
+
+この章ではProveの後継であるRoveを紹介します。
+
+Roveは現代のCommon LispプログラムのトレンドにフィットするようにProveを再構成したものです。たとえば、ASDF 3.1から取り入れられたpackage-inferred-systemというファイル単位でのプログラム分割機能を使えるようになっています。また、非同期なプログラムのテストのためのスレッドサポートや、一定時間以上テストの実行にかかったものを色付けして表示するなどの機能が含まれています。
 
 ## セットアップ
 
-まずはREPLでRoveをロードします。RoveはQuicklispに登録されているため、他のライブラリ同様にql:quickloadでインストールとロードができます。
+まずはREPLでRoveをインストール・ロードしましょう。RoveはQuicklispに登録されているため、他のライブラリ同様に `ql:quickload` でインストールとロードができます。
 
 ```
 (ql:quickload :rove)
 ```
 
-この本ではRove 0.9.1を使います。各環境のRoveのバージョン番号は以下のように確認できます。古いバージョンの場合はQuicklispのdistをアップデートしてください。
+この本ではバージョン 0.9.1を前提としています。各環境のRoveのバージョン番号を確認し、古いバージョンの場合はQuicklispのdistをアップデートしてください。
 
 ```
 (asdf:component-version (asdf:find-system :rove))
 ;=> "0.9.1"
 ```
 
-0.9.1より新しいバージョンでは挙動にやや変化があるかもしれませんがご了承ください。
-
-以下の説明では特に言及がない限りcl-userパッケージで `rove` パッケージをインポートした状態を前提としています。
+読み進めながらREPLで試せるように説明と同時にコード実行例を多く挟んでいます。途中のコード例では特に言及がない限りcl-userパッケージで `rove` パッケージをインポートした状態を前提としています。REPLを起動して以下の二行を実行すれば準備完了です。
 
 ```
+(ql:quickload :rove)
 (use-package :rove)
 ```
+
+それではRoveの基本機能から見ていきましょう。
 
 ## Roveの基本機能
 
 ### 基本的なアサーション
 
-まずは単純な値の比較から行いましょう。
+まずはRoveを使って単純な値の比較をしてみます。
 
-`ok` はフォームを受け取り、その返り値が真のときは成功、偽のときは失敗となるマクロです。
+Roveの基本的なマクロ `ok` はフォームを受け取り、その返り値が真のときは成功、偽のときは失敗となるマクロです。
 
 ```
 ;; 成功
@@ -57,7 +70,7 @@
 ;=> NIL
 ```
 
-`Expect ...` の部分を変えることもできます。 `ok` の第二引数に文字列として表示したい文字列を渡します。
+ログに出力される `Expect ...` の部分を変えることもできます。 `ok` の第二引数に文字列として表示したい文字列を渡します。
 
 ```
 (ok (= 1 1) "1 should be 1")
@@ -66,46 +79,6 @@
 ```
 
 Roveを使ったテストではこの `ok` や `ng` を基本単位としてテストプログラムを構成します。この最小単位を「アサーション」と呼びます。
-
-異常系のテストではエラーが発生することをテストしたいこともあるでしょう。 `signals` は与えられたフォーム内でエラーが発生すると真を返すマクロです。
-
-```
-(defun add (x y) (+ x y))
-
-;; 第二引数に捕捉するコンディションクラスを指定する
-(ok (signals (add 1 "2") 'type-error))
-;-> ✓ Expect (ADD 1 "2") to signal TYPE-ERROR.
-
-;; 第二引数が指定されないときは ERROR をすべて捕捉する
-(ok (signals (add 1 "2")))
-;-> ✓ Expect (ADD 1 "2") to signal ERROR.
-```
-
-出力をテストするには `outputs` を使います。
-
-```
-(defun say-hello (&optional (name "Guest")) (format t "Hi, ~A" name))
-
-(ok (outputs (say-hello "Eitaro") "Hi, Eitaro"))
-;-> ✓ Expect (SAY-HELLO "Eitaro") to output "Hi, Eitaro".
-
-(ok (outputs (say-hello) "Hi, Guest"))
-;-> ✓ Expect (SAY-HELLO) to output "Hi, Guest".
-```
-
-マクロのテストをするには `expands` を使います。マクロのテストで厄介なのは、展開されるフォームに gensym が含まれることです。gensymが含まれると単純な `equal` で比較することができません。一方で `expands` はパッケージにインターンされていないシンボル、 `#:` で始まるシンボルをgensymとして緩いマッチングを行います。
-
-```
-(defmacro defun-addn (n)
-  (let ((m (gensym "m")))
-    `(defun ,(intern (format nil "ADD~A" n)) (,m)
-       (+ ,m ,n))))
-
-(ok (expands '(defun-addn 10)
-             `(defun add10 (#:m)
-                (+ #:m 10))))
-;-> ✓ Expect '(DEFUN-ADDN 10) to be expanded to `(DEFUN ADD10 (#:M) (+ #:M 10)).
-```
 
 ### テストの定義
 
@@ -281,7 +254,11 @@ ASDFシステムにRoveを組み込むにはASDファイルにテストシステ
 
 ```
 (asdf:test-system :my-project)
+
+;; テストシステムに対して rove:run を使っても同じ
+(rove:run :my-project/tests)
 ```
+
 
 コマンドラインから実行するには「rove」コマンドを使います。roveコマンドはRoswellでRoveをインストールすると ~/.roswell/bin/rove にコピーされます。
 
@@ -295,4 +272,103 @@ roveコマンドの引数にASDファイルを渡すとそのシステムの `as
 $ rove my-project.asd
 ```
 
-TODO: レポートスタイルの説明
+### レポートスタイルの変更
+
+Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「レポートスタイル」と呼びます。
+
+レポートスタイルを変更するには `rove:run` に `:style` でスタイル名を指定します。
+
+```
+;; デフォルトのレポートスタイル
+(rove:run :my-project/tests :style :spec)
+
+;; よりミニマルな表示。アサーションの結果を一つのドットで表現する
+(rove:run :my-project/tests :style :dot)
+
+;; 何も出力せず返り値のみ
+(rove:run :my-project/tests :style :none)
+```
+
+デフォルトのレポートスタイルは `:spec` です。これを変更するには `rove:*default-reporter*` に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は `cl-user:*rove-default-reporter*` に設定します。
+
+### Emacs/SLIMEでの色付け設定
+
+Roveはコマンドラインでは、成功したテストを緑、失敗したテストを赤で色付けして出力します。一方でEmacsで実行している人はSLIMEで実行するとバッファに色がつかないことに気づくかもしれません。これは、EmacsのSLIMEバッファではANSIエスケープシーケンスを認識せずそのままメタ文字が表示されてしまうため、RoveではEmacsでの実行では色付けをデフォルトでオフにしているためです。
+
+Emacs/SLIMEのREPLバッファでもテスト結果の色付けを行うためには多少の設定が必要です。
+
+SLIMEの拡張ライブラリ「slime-repl-ansi-color」 (https://github.com/enriquefernandez/slime-repl-ansi-color) をからslime-repl-ansi-color.elをダウンロードし、SLIMEのcontribディレクトリに置きます。RoswellでSLIMEをセットアップした場合には ~/.roswell/lisp/slime/*/contrib です。
+
+そしてEmacsの設定ファイル (~/.emacs.d/init.el) に以下のコードを追加します。
+
+```
+;; ~/.emacs.d/init.el
+;; slime-repl-ansi-colorを追加
+(setq slime-contribs
+      '(slime-fancy slime-banner slime-indentation slime-repl-ansi-color))
+(slime-setup slime-contribs)
+```
+
+さらにLispの初期化ファイル (~/.roswell/init.lisp) に以下のコードを追記します。
+
+```
+;; CL-USERパッケージ
+(defvar *rove-enable-colors* t)
+```
+
+これで再度Emacsを再起動し、SLIMEを起動すればRoveの色付けが有効になります。
+
+## テストに便利なマクロ群
+
+Roveではよくテストで使われる手法を簡便にするためのマクロがいくつか用意されています。
+
+異常系のテストではエラーが発生することをテストしたいときには `signals` が使えます。 `signals` は与えられたフォーム内でエラーが発生すると真を返すマクロです。
+
+```
+(defun add (x y) (+ x y))
+
+;; 第二引数に捕捉するコンディションクラスを指定する
+(ok (signals (add 1 "2") 'type-error))
+;-> ✓ Expect (ADD 1 "2") to signal TYPE-ERROR.
+
+;; 第二引数が指定されないときは ERROR をすべて捕捉する
+(ok (signals (add 1 "2")))
+;-> ✓ Expect (ADD 1 "2") to signal ERROR.
+```
+
+ストリームへの出力をテストするには `outputs` を使います。
+
+```
+(defun say-hello (&optional (name "Guest")) (format t "Hi, ~A" name))
+
+(ok (outputs (say-hello "Eitaro") "Hi, Eitaro"))
+;-> ✓ Expect (SAY-HELLO "Eitaro") to output "Hi, Eitaro".
+
+(ok (outputs (say-hello) "Hi, Guest"))
+;-> ✓ Expect (SAY-HELLO) to output "Hi, Guest".
+```
+
+マクロのテストをするには `expands` を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
+
+単純に `macroexpand-1` して `equalp` で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な `equal` で比較することができません。一方で `expands` はパッケージにインターンされていないシンボル、 `#:` で始まるシンボルをgensymとして緩いマッチングを行います。
+
+```
+(defmacro defun-addn (n)
+  (let ((m (gensym "m")))
+    `(defun ,(intern (format nil "ADD~A" n)) (,m)
+       (+ ,m ,n))))
+
+(ok (expands '(defun-addn 10)
+             `(defun add10 (#:m)
+                (+ #:m 10))))
+;-> ✓ Expect '(DEFUN-ADDN 10) to be expanded to `(DEFUN ADD10 (#:M) (+ #:M 10)).
+```
+
+## まとめ
+
+この章ではRoveを紹介し、Common Lispのテストを行う流れを説明しました。Roveではアサーションを最小単位として、テスト、テストスイート、テストシステムに分割してテストを定義します。
+
+最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてみてください。
+
+- Safety-Params (https://github.com/fukamachi/safety-params)
+- jsonrpc (https://github.com/fukamachi/jsonrpc)
