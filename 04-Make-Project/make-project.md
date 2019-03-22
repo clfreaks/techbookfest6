@@ -118,9 +118,9 @@ packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`
 
 ### package-inferred-system
 
-後に、効率的にパッケージを管理するために、`one package per file`(1ファイルにつき1パッケージ)という手法が提唱されました。この手法では、全てのファイルはdefpackageで始まります。複数のパッケージ間の依存関係が明示的で、全てのファイルが固有のパッケージ名をもつので、ファイル間の依存関係は推測(inferred)されます。
+次に`one package per file`と呼ばれるパッケージ管理方法を紹介します。この手法では、全てのファイルはdefpackageで始まります。全てのファイルに固有のパッケージ名をもたせ、パッケージ間の依存関係を明示的に指定することで、依存関係が推測(inferred)されて解決されます。
 
-WebフレームワークのUtopianでは、この手法でシステムが構築されています。`utopian.asd`の`depends-on`に注目してください。"utopian/package"と指定されているのは、utpianフォルダー内のpackage.lispを示します。このように、パッケージ名をファイルのパスと対応させて管理するのも特徴の1つです。
+WebフレームワークのUtopianでは、この手法でシステムが構築されています。`utopian.asd`の`depends-on`で"utopian/package"と指定されているのは、utpianフォルダー内のpackage.lispを示します。このように、ファイルのパスとパッケージ名を対応させて管理します。
 
 ```
 (defsystem "utopian"
@@ -136,11 +136,10 @@ package.lispを開くと、次のように定義されてます。:use-reexport�
   (:use-reexport #:utopian/view
                  #:utopian/config
                  #:utopian/db
-		 ;; 以下省略
-		 ))
+		 ;; 以下省略 ))
 ```
 
-`db.lisp`では、次のようにパッケージが定義されています。defpackage内で、依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:ライブラリ名 #:シンボル名1 #:シンボル名2)`とします。
+`db.lisp`では、次のようにパッケージが定義されています。defpackage内で依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:ライブラリ名 #:シンボル名1 #:シンボル名2)`とします。このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
 
 ```
 (defpackage #:utopian/db
@@ -156,7 +155,6 @@ package.lispを開くと、次のように定義されてます。:use-reexport�
            #:with-connection))
 ```
 
-このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
 
 ## プロジェクト作成の例 - 地名検索システムyubin
 
