@@ -73,11 +73,10 @@ GREET
                (:file "who"))
 ```
 
-CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれていきます。`packages.lisp`では、次のように、パッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートされるシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、もし処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するという指定です。CL-WHOの`defconstant`は specials.lisp で定義されています。
+CL-WHOでは、`packages.lisp`が読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれます。`packages.lisp`では、次のようにパッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートするシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するための指定です。CL-WHOの`defconstant`は`specials.lisp`で定義されています。
 
 ```
 (in-package :cl-user)
-
 (defpackage :cl-who
   (:use :cl)
   (:nicknames :who)
@@ -115,7 +114,7 @@ packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`
   *html-mode*)  ; 以下省略
 ```
 
-CL-WHOではファイル数が少ないためこの手法が十分機能しますが、ライブラリの規模が大きくなり、管理するパッケージが多くなるにつれて、この手法でのパッケージ管理は複雑化します。
+この手法ではファイル数が少ないケースでは十分機能しますが、ライブラリの規模が大きくなるにつれて、この手法でのパッケージ管理は難しくなります。
 
 ### package-inferred-system
 
