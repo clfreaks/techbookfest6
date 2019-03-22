@@ -41,7 +41,7 @@ something
 
 ### パッケージ
 
-Common Lispにおいて、パッケージは名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、プロジェクト内で同じ名前のシンボルを共存させることができます。次の例では、パッケージJPNの`greet関数`では"こんにちは"、パッケージCOMMON-LISP-USERのgreetでは"Hello"と印字するように、greetという名前のシンボルを複数のパッケージで共存させます。
+Common Lispにおいて、パッケージは名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、同じ名前のシンボルを共存させることができます。次の例では、デフォルトのCOMMON-LISP-USERパッケージのgreetでは"Hello"、JPNパッケージの`greet関数`では"こんにちは"と印字するように、greetという名前のシンボルを複数のパッケージで共存させます。
 
 ```
 $ ros run
@@ -95,7 +95,7 @@ CL-WHOでは、`packages.lisp`が最初に読み込まれた後、`specials.lisp
                (:file "who"))
 ```
 
-`packages.lisp`では、次のように、パッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートされるシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、もし処理系がSBCLの場合、SBCLの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するという指定です。CL-WHOの`defconstant`は specials.lisp で定義されています。
+`packages.lisp`では、次のように、パッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートされるシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、もし処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するという指定です。CL-WHOの`defconstant`は specials.lisp で定義されています。
 
 ```
 (in-package :cl-user)
