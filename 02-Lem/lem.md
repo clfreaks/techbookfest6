@@ -66,11 +66,18 @@ $ lem [ファイル名]
 * (lem:lem) ;; sbclの場合は(ed)でも可能
 ```
 
-終了するには`C-x C-c`です。
+起動時の画面は次のようになります。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-startup.png)
+
+Lemでは起動時にREPLが始まります。
+REPLについては後述します。
+
+終了するには`C-x C-c`と入力してください。
 
 ## 初期化ファイルについて
+
 lemを起動時に初期化ファイルが読み込まれます。
-ファイル名は`~/.lemrc`か`~/.lem.d/init.lisp`です。
+ファイル名は`~/.lemrc`または`~/.lem.d/init.lisp`です。
 
 以下のように書きます。
 
@@ -82,7 +89,7 @@ lemを起動時に初期化ファイルが読み込まれます。
 ;; ここから設定を記述
 ```
 
-一例として次のようなリポジトリが参考になります。  
+一例として次のリポジトリが参考になります。  
 https://github.com/fukamachi/.lem/
 
 ## 基本的な使い方
