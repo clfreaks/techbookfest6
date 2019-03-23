@@ -255,31 +255,15 @@ CL-USER> (ql:quickload :cl-ppcre)
 ### 入力補完
 
 Lemでは入力中にTabを押すことで補完が出来ます。
-例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
 
-![補完](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
 
-SWANKサーバのランタイム上に存在するシンボルから補完候補を出すので、補完したいライブラリのシンボルは、そのライブラリを読み込むことで出来ます。
+このときに`C-n`や`M-n`、カーソルキーの下を入力すれば一つ下の候補を選べます。  
+上にするには`C-p` `M-p` カーソルキーの上を入力します。  
+Enterを押すことでその補完候補を選択できます。
 
-ここではcl-ppcreのシンボルを補完をしたいのでREPLでcl-ppcreをquickloadしてみます。
-```
-CL-USER> (ql:quickload :cl-ppcre) 
-To load "cl-ppcre":
-  Load 1 ASDF system:
-    cl-ppcre
-; Loading "cl-ppcre"
-.
-(:CL-PPCRE)
-```
-
-exportされたシンボルはコロンを一つ付けることで補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-1.png)
-
-exportされていないシンボルは、2つコロンをつけると補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-2.png)
-
-補完は曖昧検索を使っているので並びさえあっていれば補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-3.png)
+lisp-modeではあいまい補完を使っているので並びがあっていれば補完候補に表示されます。  
+補完機能はミニバッファでの入力などでも出来るので、例えばファイルを開く(`C-x C-f`)場合はファイル名が補完されます。
 
 ### 式の評価とコンパイル
 
