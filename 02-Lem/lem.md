@@ -51,6 +51,12 @@ LemではEmacsと同じようにControlやMetaをプリフィクスとするコ�
 ### ウィンドウ
 ウィンドウは一つのバッファを画面に表示するデータ構造を表します。
 
+### コマンド
+コマンドはエディタを操作する機能です。
+ カーソルを動かしたり文字を挿入する処理は一つのコマンドとして定義されます。
+コマンドはキーに割り当てられたり`M-x`の後、ミニバッファでコマンド名を入力することでも実行できます。
+以後`(M-x コマンド名)` と表記します。
+
 ## Lemの起動と終了
 コマンドラインからLemを起動するにはlemコマンドを使います。
 lemコマンドはRoswellからインストールしている場合に使えます。
@@ -627,11 +633,17 @@ REPLでも結果が返ってきていることを確認できます。
 
 このようにCommon Lispではデバッガやinspectを使って動作中のプログラムを変更し、リスタートを行うことで動的に開発を行えます。
 
+## Tips
+
+### grep
+
+### カラーテーマ
+
 ## 拡張機能の書き方
 
 lemでの拡張機能の書き方を紹介します。プロジェクト名はposts-listとして、redditの投稿一覧のビューアを作ります。
 
-完成は、次のようになります。
+完成は次のようになります。
 
 ![完成図](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
 
@@ -656,7 +668,7 @@ posts-list
 
 `M-x start-lisp-repl`でREPLを起動して、作成したプロジェクトを読み込みます。
 
-```
+```lisp
 CL-USER> (ql:quickload :lem-posts-list)
 ```
 
@@ -666,7 +678,7 @@ CL-USER> (ql:quickload :lem-posts-list)
 
 subredditを指定して、redditの記事をjsonで取得します。1つの記事をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
 
-```
+```lisp
 (defpackage #:lem-posts-list/posts
   (:import-from #:jonathan)
   (:import-from #:dexador)
@@ -705,37 +717,35 @@ subredditを指定して、redditの記事をjsonで取得します。1つの記
   (extract-posts (jojo:parse (dex:get (make-posts-url subreddit)))))
 ```
 
-lem-posts-list/postsというパッケージに分離しました。fetch-postsという関数とpostのアクセサを外部から使いたいのでexportします。
+lem-posts-list/postsというパッケージに分離しました。fetch-postsという関数とpostのアクセサを外部から使いたいのでexportしています。
 
-fetch-postsはsubreddit名を引数で受け取りpostのリストを返します。REPLから動作を確認します。
+関数fetch-postsは引数でsubreddit名を受け取り返り値はpostのリストです。REPLから動作を確認してみます。
 
-```
+```lisp
 CL-USER> (ql:quickload :lem-posts-list/posts)
 CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 ;; 出力は長いので省略
 ```
 
-### Lemへの表示
-
 投稿一覧が取得できるようになったので、次はその内容をLemに表示し選択できるようにします。投稿一覧用のバッファを作り、そこにfetch-posts関数から返ってきたpostのリストを書き出していきます。その前にlemで扱うオブジェクトについていくつか見ていきます。
 
-#### buffer
+### buffer
 
 バッファはテキストとその色やカーソルの位置、モードなどが入ったオブジェクトです。通常はファイルを開くときにバッファはそのファイルと関連付けられますが、ファイルと関連付けずにバッファ自体を作成することも可能です。
 
 バッファは`make-buffer`関数を使うことで作成できます。ファイルと関連付けられたバッファは`find-file-buffer`関数を使うことで作成できます。
 
-```
+```lisp
 (lem:make-buffer "test") ; => #<BUFFER test NIL>
 (lem:find-file-buffer "/tmp/hoge") ; => #<BUFFER hoge /tmp/hoge>
 ```
 
-#### point
+### point
 
 ポイントはバッファ内の位置を指すオブジェクトです。主にカーソルなどに使われています。バッファ内への文字列の挿入や削除に使います。ポイントを扱う場合はバッファ内に既にあるポイントをコピーして使う事が多いです。バッファからポイントを得るアクセサは次のようなものがあります。
 
-```
+```lisp
 ;; バッファの現在の位置のポイントを得る
 (buffer-point buffer)
 
@@ -748,22 +758,24 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 ポイントのコピーには`copy-point`関数を使います。
 
-`(copy-point point &optional kind)`
+```lisp
+(copy-point point &optional kind)
+```
 
 ポイントはスティッキーな動作をします。そのポイントより前の位置に文字列を挿入するとその分右へずれていき、削除すると左にずれていきます。
  
-`kind`にはバッファ編集時のオフセットを計算するときに使います。
+`kind`はバッファ編集時のオフセットを計算するときに使います。
 
 `kind`が:left-insertingならポイントと同じ位置に文字列を挿入したときに右にずれ、:right-insertingならそのままです。
 
 `kind`が:temporaryの場合は何も行いません。
 
-`kind`を指定しばければ渡された`point`と同じ値になります。
+`kind`を指定しなければ渡された`point`と同じ値になります。
 
 `kind`が:temporary以外ならpointをbufferが保持しておく必要があるので不要になったら明示的に削除しなければいけません。
 削除には`delete-point`関数を使います。
 
-```
+```lisp
 (let ((point (copy-point (buffer-point buffer) kind)))
   (unwind-protect ...
     (delete-point point)))
@@ -771,10 +783,33 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 このために`with-point`マクロを用意しています。
 
-```
+```lisp
 (with-point ((point (buffer-point buffer) kind))
   ...)
 ```
 
 `with-point`の`kind`を省略した場合は:temporaryになります。
 
+### コマンドの定義
+
+コマンドは`define-command`で定義できます。
+
+```lisp
+(define-command コマンド (引数) (引数記述子)
+  本体...)
+```
+
+定義したコマンドは関数としても呼び出すことができます。
+
+基本的にはdefunと同じですが引数記述子というものを指定します。
+コマンドが引数を取る場合に引数記述子にどうやって受け取るかを記述します。  
+"p"とした場合、コマンド実行の前に(C-u 数値)を入力したときの値が入り、デフォルトでは1が渡されます。  
+"P"だとデフォルト値がnilになります。
+"s文字列"とした場合コマンドを実行したときにミニバッファで入力を行い、入力した文字列が引数の値になります。
+ほかにもいくつかありますが、ここでは使わないので割愛します。
+
+### モードの定義
+
+### キーバインドの追加
+
+### attribute
