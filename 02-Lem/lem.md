@@ -450,19 +450,7 @@ Common Lispでは最後にREPLで評価した値が`*`に入るので、`(lem:cu
 `Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。  
 左側の`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
 
-inspectの操作の一覧は次のとおりです。
-
-|キーバインド                                    |説明                                        |
-|------------------------------------------------|--------------------------------------------|
-|l (M-x lisp-inspector-pop)                      |一つ前のinspectに戻る                       |
-|n (M-x lisp-inspector-pop) またはSpace          |次のinspectに進む                           |
-|d (M-x lisp-inspector-describe)                 |inspectしているオブジェクトの詳細を表示     |
-|p (M-x lisp-inspector-pprint)                   |カーソル位置のオブジェクトをpprint          |
-|e (M-x lisp-inspector-eval)                     |inspect画面でeval                           |
-|h (M-x lisp-inspector-history)                  |履歴を表示                                  |
-|g (M-x lisp-inspector-reinspect)                |inspect画面の更新                           |
-|. (M-x lisp-inspector-show-source)              |カーソル位置のオブジェクトの定義にジャンプ  |
-|q (M-x lisp-inspector-quit)                     |inspectを終了                               |
+inspectのコマンドの一覧についてはinspectバッファで`M-x describe-bindings`を実行してください。
 
 試しにlemのウィンドウの中のmodeline-formatを変更してみます。  
 modeline-foramtを選択しチェックを付け、`[set value]`を選択するとミニバッファに次の入力画面が出ます。
