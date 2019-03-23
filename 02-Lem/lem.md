@@ -166,6 +166,7 @@ Moreとよく似た操作方法でSpaceで1ページ分スクロール、閉じ�
 viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
 元に戻すには`M-x emacs-mode`です。
 起動時に自動でvi-modeにするには`~/.lem.d/init.lisp`に次の式を加えます。
+
 ```
 (lem-vi-mode:vi-mode)
 ```
@@ -197,6 +198,7 @@ M-x slime
 ```
 
 `C-u`を前に入力してslimeコマンドを使うと起動する処理系を選べます。
+
 ```
 C-u M-x slime
 ```
@@ -302,6 +304,7 @@ lispファイル上の式を評価してみます。
 関数fooの中で`C-M-x`とすると、そのdefunが評価され、定義されます。
 
 REPLで定義した関数を呼びだしてみます。
+
 ```lisp
 CL-USER> (foo 0)
 1
@@ -321,6 +324,7 @@ CL-USER> (foo 0)
 コンパイルし、その結果を読み込むには`C-c C-k`をします。
 
 カーソルの前の式を評価するには`C-c C-e`をします。
+
 ```lisp
 (progn
   (foo)
@@ -491,6 +495,7 @@ alexandria:lastcarは引数にリストを期待していますが文字列を�
 色々書いてますが一つずつ内容を見ていきます。
 
 まず一番上の
+
 ```
 The value
   "foo"
@@ -501,6 +506,7 @@ is not of type
 ですが、これはエラーメッセージとコンディションの型です。
 
 次に
+
 ```
 Restarts:
  0: [RETRY] Retry SLIME REPL evaluation request.
@@ -513,6 +519,7 @@ Common Lispにはリスタートという機構があり、プログラムの例
 SLDBではそのバッファで数字を押すかカーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
 
 最後に
+
 ```
 Backtrace:
   0: (ALEXANDRIA.0.DEV:LASTCAR "foo")
