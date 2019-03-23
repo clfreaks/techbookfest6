@@ -15,7 +15,7 @@ Common Lispにおいてシンボルは、名前、パッケージ、変数の値
 * something
 1
 
-* (defun something ()(princ "something"))  ; "関数
+* (defun something () (princ "something"))  ; "関数
 * (something)
 something
 "something"
@@ -37,15 +37,15 @@ Common Lispにおいてパッケージは、名前空間の役割を果たしま
 
 ```
 $ ros run
-* (defpackage :JPN (:use :cl)(:export :greet)) ; パッケージJPNを定義する
+* (defpackage :jpn (:use :cl) (:export :greet)) ; パッケージJPNを定義する
 #<PACKAGE "JPN">
-* (in-package :JPN)                            ; パッケージをJPNに移動する
+* (in-package :jpn)                            ; パッケージをJPNに移動する
 #<PACKAGE "JPN">
-* (defun greet()(format nil "こんにちは"))　; JPNパッケージ内で関数を定義する
+* (defun greet() (format nil "こんにちは")) ; JPNパッケージ内で関数を定義する
 GREET
 * (in-package :cl-user)                   ; パッケージをCOMMON-LISP-USERに移動する
 #<PACKAGE "COMMON-LISP-USER">
-* (defun greet()(format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
+* (defun greet () (format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
 * (greet)                                 ; カレントパッケージでgreet関数を実行する。
 "Hello"
 * (jpn:greet)                             ; パッケージJPNのgreet関数を実行する。
