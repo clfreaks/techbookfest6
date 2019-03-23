@@ -400,7 +400,7 @@ Common Lispではオブジェクトの中身を見たり、必要ならその場
 SLIMEではエディタから使うためのインターフェースを提供しています。
 
 試しにlemのウィンドウをinspectしてみます。
-RPELで取り出したい式を評価し、その評価結果の値をinspectします。
+RPELで取り出したい式を評価し、その評価結果の値をinspectしてみます。
 
 ```
 CL-USER> (lem:current-window)
@@ -409,26 +409,16 @@ CL-USER> (lem:current-window)
 
 `C-c I (M-x lisp-inspect)`でinspectを始められます。
 
-`Inspect Value (evaluated): *`
+```
+Inspect Value (evaluated): *
+```
 
 Common Lispでは最後にREPLで評価した値が`*`に入るので、`(lem:current-window)`の評価結果がinspectされます。
 
 ![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-inspect-1.png)
 
-`Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。
-`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
-
-試しにmodeline-formatを変更してみます。  
-modeline-foramtを選択しチェックを付け、`[set value]`を選択すると画面の下に次の入力画面が出ます。
-
-```lisp
-Set slot LEM:MODELINE-FORMAT to (evaluated) :
-```
-
-たとえば次のように入力するとREPLウィンドウのモードラインの見た目が変更されます。
-```lisp
-`(("-----------------HELLO WORLD------------------" ,(lem:make-attribute :foreground "red" :background "white" :bold-p t)))
-```
+`Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。  
+左側の`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
 
 inspectの操作の一覧は次のとおりです。
 
@@ -443,6 +433,29 @@ inspectの操作の一覧は次のとおりです。
 |g (M-x lisp-inspector-reinspect)                |inspect画面の更新                           |
 |. (M-x lisp-inspector-show-source)              |カーソル位置のオブジェクトの定義にジャンプ  |
 |q (M-x lisp-inspector-quit)                     |inspectを終了                               |
+
+試しにlemのウィンドウの中のmodeline-formatを変更してみます。  
+modeline-foramtを選択しチェックを付け、`[set value]`を選択するとミニバッファに次の入力画面が出ます。
+
+```lisp
+Set slot LEM:MODELINE-FORMAT to (evaluated) :
+```
+
+たとえば次のように入力するとREPLウィンドウのモードラインの見た目が変更されます。
+
+```lisp
+Set slot LEM:MODELINE-FORMAT to (evaluated) : 
+`(("-----------------HELLO WORLD------------------"
+  ,(lem:make-attribute :foreground "red" :background "white" :bold-p t)))
+```
+
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-inspect-2.png)
+
+今動かしているエディタ自体をinspectで動的に変更することはエディタを簡単に壊せてしまいますが、とても魅力的な機能です。
+
+他の使いどころとしてはhttp-requestで返ってきたレスポンスの中身を覗く場合に使います。  
+クラスのインスタンスやハッシュテーブルの中身はREPLの結果からは見えないので、inspectで表示し、さらにその中身をinspectすることで
+オブジェクトブラウザとして使うことが出来ます。
 
 ### SLDB(デバッガ)
 SLIMEでのデバッガはSLDBと呼ばれています。
