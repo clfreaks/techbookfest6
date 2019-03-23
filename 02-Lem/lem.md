@@ -19,45 +19,65 @@ $ ros install cxxxr/lem
 ```
 
 パスの設定は次のとおりです。
+
 ```
 export PATH=$PATH:~/.roswell/bin
 ```
 
 次のコマンドでlemを最新の状態に更新できます。
+
 ```
 $ ros update lem
 ```
 
-## コマンド表記と入力方法について
+## Lemで使う用語
 
-本章では、`C-x`や`M-x`等のコマンド表記が出てきますが、それぞれのコマンド表記に対応する実際の入力方法は次の表のようになります。
+LemではEmacsと同じようにControlやMetaをプリフィクスとするコマンドを使います。
 
-| コマンド表記 | 実際の入力方法 |
-|:-----------:|:------------:|
-| `C-c` | `Control`キーを押しながら`C`を押す |
-| `M-x` | `Meta`キー(`Esc`か`Alt`キーであることが多い)を押しながら`X`を押す |
-| `C-x C-e` | `Control`キーを押しながら`X`を押し、そのまま`Control`キーを押したまま`E`を押す |
-| `C-x o` | `Control`キーを押しながら`X`を押し、`Control`キーを離してから`O`を押す |
+*C-* コントロールキーを押しっぱなしにして別のキーを打つことを意味します。  
+
+*M-* メタキーを押しっぱなしにして別のキーを打つことを意味します。メタキーはAltキーを使い、Macのターミナルでは設定でOptionキーに割り当てられます。
+
+たとえば  
+`C-x o`はControlを押しながらxを押したあと、Controlを離してoを押します。  
+`C-x C-o`だとControlを押しながらxを押し、更にControlを押しながらoを押します。
+
+### ミニバッファ
+画面の一番下で入力が出来る空間のことです。
+
+### バッファ
+バッファはファイルと関連付けられたデータ構造を表します。
+
+### ウィンドウ
+ウィンドウは一つのバッファを画面に表示するデータ構造を表します。
 
 ## Lemの起動と終了
 コマンドラインからLemを起動するにはlemコマンドを使います。
-これはRoswellからインストールしている必要があります。
+lemコマンドはRoswellからインストールしている場合に使えます。
 
 ```
 $ lem [ファイル名]
 ```
 
 コマンドラインで起動したCommon LispのREPLから使うには次のとおりです。
+
 ```
 * (ql:quickload :lem-ncurses)
 * (lem:lem) ;; sbclの場合は(ed)でも可能
 ```
 
-終了するには`C-x C-c`です。
+起動時の画面は次のようになります。
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-startup.png)
+
+Lemでは起動時にREPLが始まります。
+REPLについては後述します。
+
+終了するには`C-x C-c`と入力してください。
 
 ## 初期化ファイルについて
+
 lemを起動時に初期化ファイルが読み込まれます。
-ファイル名は`~/.lemrc`か`~/.lem.d/init.lisp`です。
+ファイル名は`~/.lemrc`または`~/.lem.d/init.lisp`です。
 
 以下のように書きます。
 
@@ -69,7 +89,7 @@ lemを起動時に初期化ファイルが読み込まれます。
 ;; ここから設定を記述
 ```
 
-一例として次のようなリポジトリが参考になります。  
+一例として次のリポジトリが参考になります。  
 https://github.com/fukamachi/.lem/
 
 ## 基本的な使い方
@@ -157,13 +177,13 @@ Common Lispランタイム上で動作するswnakサーバがあり、Emacs上�
 
 ### lisp-mode
 LemではCommon Lispの開発に便利な機能をlisp-modeとして提供し、内部でSLIMEを使っています。
-lispファイルを開くか、明示的に`M-x lisp-mode`とするとlisp-modeが有効化されます。
+lispファイルを開くか、明示的に`M-x lisp-mode`とするかREPLが開かれるとlisp-modeが有効化されます。
 
 ### SWANKサーバへの接続
 lisp-modeが有効化されたときにSWANKサーバに接続していない場合は、自動でLemランタイム上でサーバを起動し、接続します。
 LemはCommon Lispで書いているのでLemとSWANKサーバを同じランタイム上で動かせ、それをすることでLem自身の状態の変更をSLIMEの機能を介して行うことが出来ます。
 
-REPLを開くには`start-lisp-repl`コマンドを使います。
+起動時にはREPLが開かれていますが、明示的にREPLを開くには`start-lisp-repl`コマンドを使います。
 
 ```
 M-x start-lisp-repl
@@ -183,22 +203,24 @@ C-u M-x slime
 
 ### REPL
 
-試しにREPLに式を打ち込んでみます。
+ためしに何か入力してみます。
 
 ```
-CL-USER> (cons 'a '(b c))
-(A B C)
-CL-USER> (mapcar #'1+ '(1 2 3)) 
-(2 3 4)
+CL-USER> (loop :for i :from 0 :below 100 :sum i)
+5050
 ```
 
-`M-p` `M-n`でREPLの履歴を辿れます。
+REPLは基本的にコマンドラインからの使用と同じですがSLIMEで追加された機能があります。
 
-実行を中断したい場合はC-c C-cで出来ます。
+履歴を辿るには`M-p` `M-n`で行えます。
+
+現在のパッケージを切り替えるには`(in-package パッケージ名)`で出来ますが`C-c M-p (M-x lisp-set-package)`でも出来ます。
+
+実行を中断したい場合はC-c C-cです。
 
 ```
 CL-USER> (loop)
-;; C-c C-cで中断 デバッガがqを入力してreplに戻る
+;; C-c C-cで中断 デバッガでqを押してreplに戻る
 CL-USER>
 ```
 
@@ -255,31 +277,15 @@ CL-USER> (ql:quickload :cl-ppcre)
 ### 入力補完
 
 Lemでは入力中にTabを押すことで補完が出来ます。
-例えば`defst`と打ち込んだ後にTabキーを押すと、次のように候補が表示されます。
 
-![補完](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
 
-SWANKサーバのランタイム上に存在するシンボルから補完候補を出すので、補完したいライブラリのシンボルは、そのライブラリを読み込むことで出来ます。
+このときに`C-n`や`M-n`、カーソルキーの下を入力すれば一つ下の候補を選べます。  
+上にするには`C-p` `M-p` カーソルキーの上を入力します。  
+Enterを押すことでその補完候補を選択できます。
 
-ここではcl-ppcreのシンボルを補完をしたいのでREPLでcl-ppcreをquickloadしてみます。
-```
-CL-USER> (ql:quickload :cl-ppcre) 
-To load "cl-ppcre":
-  Load 1 ASDF system:
-    cl-ppcre
-; Loading "cl-ppcre"
-.
-(:CL-PPCRE)
-```
-
-exportされたシンボルはコロンを一つ付けることで補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-1.png)
-
-exportされていないシンボルは、2つコロンをつけると補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-2.png)
-
-補完は曖昧検索を使っているので並びさえあっていれば補完候補に出ます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion-3.png)
+lisp-modeではあいまい補完を使っているので並びがあっていれば補完候補に表示されます。  
+補完機能はミニバッファでの入力などでも出来るので、例えばファイルを開く(`C-x C-f`)場合はファイル名が補完されます。
 
 ### 式の評価とコンパイル
 
@@ -416,7 +422,7 @@ Common Lispではオブジェクトの中身を見たり、必要ならその場
 SLIMEではエディタから使うためのインターフェースを提供しています。
 
 試しにlemのウィンドウをinspectしてみます。
-RPELで取り出したい式を評価し、その評価結果の値をinspectします。
+RPELで取り出したい式を評価し、その評価結果の値をinspectしてみます。
 
 ```
 CL-USER> (lem:current-window)
@@ -425,26 +431,16 @@ CL-USER> (lem:current-window)
 
 `C-c I (M-x lisp-inspect)`でinspectを始められます。
 
-`Inspect Value (evaluated): *`
+```
+Inspect Value (evaluated): *
+```
 
 Common Lispでは最後にREPLで評価した値が`*`に入るので、`(lem:current-window)`の評価結果がinspectされます。
 
 ![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-inspect-1.png)
 
-`Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。
-`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
-
-試しにmodeline-formatを変更してみます。  
-modeline-foramtを選択しチェックを付け、`[set value]`を選択すると画面の下に次の入力画面が出ます。
-
-```lisp
-Set slot LEM:MODELINE-FORMAT to (evaluated) :
-```
-
-たとえば次のように入力するとREPLウィンドウのモードラインの見た目が変更されます。
-```lisp
-`(("-----------------HELLO WORLD------------------" ,(lem:make-attribute :foreground "red" :background "white" :bold-p t)))
-```
+`Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。  
+左側の`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
 
 inspectの操作の一覧は次のとおりです。
 
@@ -459,6 +455,29 @@ inspectの操作の一覧は次のとおりです。
 |g (M-x lisp-inspector-reinspect)                |inspect画面の更新                           |
 |. (M-x lisp-inspector-show-source)              |カーソル位置のオブジェクトの定義にジャンプ  |
 |q (M-x lisp-inspector-quit)                     |inspectを終了                               |
+
+試しにlemのウィンドウの中のmodeline-formatを変更してみます。  
+modeline-foramtを選択しチェックを付け、`[set value]`を選択するとミニバッファに次の入力画面が出ます。
+
+```lisp
+Set slot LEM:MODELINE-FORMAT to (evaluated) :
+```
+
+たとえば次のように入力するとREPLウィンドウのモードラインの見た目が変更されます。
+
+```lisp
+Set slot LEM:MODELINE-FORMAT to (evaluated) : 
+`(("-----------------HELLO WORLD------------------"
+  ,(lem:make-attribute :foreground "red" :background "white" :bold-p t)))
+```
+
+![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-inspect-2.png)
+
+今動かしているエディタ自体をinspectで動的に変更することはエディタを簡単に壊せてしまいますが、とても魅力的な機能です。
+
+他の使いどころとしてはhttp-requestで返ってきたレスポンスの中身を覗く場合に使います。  
+クラスのインスタンスやハッシュテーブルの中身はREPLの結果からは見えないので、inspectで表示し、さらにその中身をinspectすることで
+オブジェクトブラウザとして使うことが出来ます。
 
 ### SLDB(デバッガ)
 SLIMEでのデバッガはSLDBと呼ばれています。
