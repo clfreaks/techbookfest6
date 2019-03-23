@@ -508,7 +508,7 @@ Restarts:
 これはエラー後にどういう対応をするかをユーザーに尋ねています。  
 Common Lispにはリスタートという機構があり、プログラムの例外時にユーザーに次に何をするかの判断を委ねることが出来ます。  
 この場合は0と1と2という選択があります。  
-SLDBではそのバッファで数字を押すかカーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
+SLDBではそのバッファで数字を押すか、カーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
 
 最後に
 
@@ -519,11 +519,13 @@ Backtrace:
   2: (EVAL (ALEXANDRIA.0.DEV:LASTCAR "foo"))
  --more--
 ```
-がありますが、これは他の言語にもよくあるバックトラックを表示しています。  
+がありますが、フレームのリストを表示しています。  
 --more--と表示されている位置でEnterを押すと更に前の省略されているフレームも表示されます。  
 フレームの位置にカーソルを移動してEnterを押すとローカル変数などの詳細が表示されます。
 
 `Tab`で次の選択できる要素に移動します。
+
+`n`と`p`で上下のフレームにカーソルを移動でき、`M-n`と`M-p`で移動と同時に詳細を表示できます。
 
 デバッガは終了するには`q`を押します。
 
@@ -531,30 +533,39 @@ sldbのコマンドの一覧についてはsldbバッファで`M-x describe-bind
 
 #### 実例
 
-実際にデバッグをしてみましょう。
+実際にsldbを使ってみましょう。
 
 まずこのようなファイルがあるとします。
 
 ```lisp
 ;;; example.lisp
-(in-package :cl-user)
 
-(defun g (n)
-  (string= n "foo"))
+(ql:quickload :cl-ppcre :silent t)
 
-(defun f (x)
-  (if (= x 0)
-    (g x)
-    (f (1- x))))
+(defclass matcher ()
+  ((pattern
+    :initarg :pattern
+    :reader matcher-pattern)
+   (action
+    :initarg :action
+    :reader matcher-action)))
+
+(defun match (matcher input)
+  (if (ppcre:scan (matcher-pattern matcher) input)
+      (funcall (matcher-action matcher) input)
+      (error "match error")))
+
+(defun convert-integer (input)
+  (values (parse-integer input)))
 ```
 
-このファイルの関数`g`は文字列"foo"と比較しますが関数`f`から数値を渡すのでエラーが出ます。
+これはmatcherでルールに正規表現を使ってマッチしたらactionを呼び出すプログラムです。
 
-デバッグをする場合は始めにコンパイルオプションをデバッグ用に設定するのが良いです。
+デバッグをする場合はコンパイルオプションをデバッグ用に設定するのが良いです。
 RPELで次の宣言をします。
 
 ```
-CL-USER> (declaim (optimize (speed 0) (safety 3) (debug 3)))
+CL-USER> (declaim (optimize (debug 3)))
 ```
 
 こうすることで、これからコンパイルするプログラムにはこのオプションが適用されるのでデバッグ時に参照できる情報が多くなります。
@@ -562,9 +573,56 @@ CL-USER> (declaim (optimize (speed 0) (safety 3) (debug 3)))
 次にREPLから使うためにファイルをコンパイルします。
 このファイルを開いているバッファで`C-c C-k`をしてファイルのコンパイルと読み込みを行います。
 
-![](02-lem-sldb-compile.png)
+![](02-lem-sldb-practice-1)
 
-REPLから関数`f`を呼び出してみましょう。
-エラーが出てsldbが起動します。
+REPLからmatcherインスタンスを作ってmatch関数を使ってみます。
 
-![](02-lem-sldb-2.png)
+```lisp
+CL-USER> (defparameter m
+           (make-instance 'matcher :pattern "\\d+" :action 'convert-integer))
+m
+CL-USER> (match m "123")
+123
+CL-USER> (match m "1000")
+1000
+```
+
+matcherを使ってmatch関数を呼び出すことで入力を数値に変換することができました。
+
+次はエラーが出る例を試してみます。
+
+```lisp
+CL-USER> (match m "123d")
+```
+
+![](02-lem-sldb-practice-2.png)
+
+2番目のフレームのconvert-integer関数内でエラーが起こってるみたいです。
+sldbのフレームの位置で`v (M-x sldb-show-frame-source)`をすると対応するソースの箇所に飛べます。
+エラーの原因としてはparse-integerで"123d"を渡していることが原因のようですが、
+ここでは"123d"も123に変換してほしいのでconvert-integerとは別に曖昧な入力も許す関数を追加します。
+
+```lisp
+(defun convert-integer* (input)
+  (values (parse-integer input :junk-allowed t)))
+```
+
+ここでこの関数を使えるようにするためにこの関数を`C-c C-c`でコンパイルします。
+
+![](02-lem-sldb-practice-3.png)
+
+sldbからでもinspectを使うことが出来ます。
+新しく追加した関数をmatcherオブジェクトのactionにしてしまいましょう。
+
+match関数内に対応する0から数えて2のフレームを選択し、詳細が表示されるので、引数のmatcherを選択するとinspectが起動します。
+
+![](02-lem-sldb-practice-4.png)
+
+ここで、inspectの項でスロットの変更を行なったのと同じようにmatcherのスロットのactionを`'convert-integer*`に変更します。
+このあとinspectを`q`で終了し、同じ2番目のフレーム内で`r (M-x sldb-restart-frame)`をすると、そのフレームからリスタートが行なわれます。
+これでエラーが起こらずに値を変換できました。  
+REPLでも結果が返ってきていることを確認できます。
+
+![](02-lem-sldb-practice-5.png)
+
+このようにCommon Lispではデバッガやinspectを使って動作中のプログラムを動的に修正し、再実行を行うことが出来ます。
