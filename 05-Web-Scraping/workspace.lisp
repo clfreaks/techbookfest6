@@ -148,8 +148,93 @@
  ".hb2Smf"
  (plump:parse (dex:get "https://www.google.com/")))
 
-"#tsf > div:nth-child(2) > div > div.RNNXgb > div > div.dRYYxd > div > span"
+;;; for site which require login
+
+(defparameter *yahoo-login-url* "https://login.yahoo.co.jp/config/login")
+(defparameter *yahoo-login* (dex:get "https://login.yahoo.co.jp/config/login"))
+(defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
+
+(dex:post *yahoo-login-url*
+          :cookie-jar *cookie*
+          :headers '(("User-Agent" . "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"))
+          :content '(("login" . "s_imai")
+                     ("passwd" . "Gar.yahoo202.sden0")))
 
 
-copy selector
-"#file-05-web-scraping-md-readme > article > p:nth-child(49) > code:nth-child(1)"
+
+(dex:head "https://mixi.jp" :cookie-jar *cookie-jar* :verbose t)
+(dex:head *yahoo-login-url* :cookie-jar *cookie-jar* :verbose t)
+
+;; #S(CL-COOKIE:COOKIE-JAR
+;;    :COOKIES (#S(CL-COOKIE:COOKIE
+;;                 :NAME "_auid"
+;;                 :VALUE "9ba15521315f5ae77249555a6e91042d"
+;;                 :EXPIRES 3825214754
+;;                 :PATH "/"
+;;                 :DOMAIN ".mixi.jp"
+;;                 :SECURE-P NIL
+;;                 :HTTPONLY-P NIL
+;;                 :ORIGIN-HOST "mixi.jp")
+;;              #S(CL-COOKIE:COOKIE
+;;                 :NAME "_lcp"
+;;                 :VALUE "ca22c19aea29c82a32c961dff402ab80"
+;;                 :EXPIRES 3762229154
+;;                 :PATH NIL
+;;                 :DOMAIN ".mixi.jp"
+;;                 :SECURE-P NIL
+;;                 :HTTPONLY-P NIL
+;;                 :ORIGIN-HOST "mixi.jp")))
+
+
+"https://srad.jp/my/login"
+
+returnto: 
+op: userlogin
+unickname: masatoi
+upasswd: gardenwiz
+userlogin: ログイン
+
+(defparameter *srad-login-url* "https://srad.jp/my/login")
+(defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
+
+
+(dex:post *srad-login-url*
+          :cookie-jar *cookie-jar*
+          :content '(("unickname" . "masatoi")
+                     ("upasswd" . "gardenwiz")))
+
+
+"https://srad.jp/~masatoi/achievements"
+
+(dex:get "http://b.hatena.ne.jp/masatoi/hotentry")
+
+(defparameter *hatena-login-url* "https://www.hatena.ne.jp/login")
+(defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
+
+(dex:post *hatena-login-url*
+          :cookie-jar *cookie-jar*
+          :content '(("name" . "masatoi")
+                     ("password" . "garden")))
+
+(dex:get "http://b.hatena.ne.jp/masatoi/hotentry" :cookie-jar *cookie-jar*)
+
+name: masatoi
+password: garden
+
+
+"span.math"
+
+
+(defmacro with-login (((cookie-jar) &key url id password) &body body)
+  `(let ((,cookie-jar (cl-cookie:make-cookie-jar)))
+     (dex:post url
+               :cookie-jar ,cookie-jar
+               :content (jojo:to-json (list :|organization| ,organization
+                                            :|email| ,email
+                                            :|password| ,password
+                                            :|_csrf_token| ,csrf-token))
+               :headers '(("content-type" . "application/json")))
+     (unwind-protect
+          (progn ,@body)
+       (request "/logout" :cookie-jar ,cookie-jar))))
+
