@@ -1,128 +1,14 @@
 # プロジェクトの作り方
 
-## 前提知識
+## プロジェクト
 
-### プロジェクト
+Common Lispでプロジェクトというとき、多くの場合はライブラリのことを指します。オープンソースで公開されているライブラリの多くは、ASDFを用いて構築されています。ASDFでは、規定の方法でシステムファイルを書くことで自動でライブラリをビルドします。
 
-Common Lispでプロジェクトというとき、多くの場合はライブラリのことを指します。オープンソースで公開されているライブラリの多くは、ASDFを用いて構築されています。ASDFでは、システムファイルにパッケージやファイルを規定の方法で記すことで、自動でライブラリをビルドします。
+## package-inferred-system
 
-### シンボル
+`package-inferred-system`を用いたプロジェクトの作り方を紹介します。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、`one package per file`(1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
 
-Common Lispにおいてシンボルは、名前、パッケージ、変数の値、関数、属性リストを含む一意のデータです。例として`something`という名前でシンボルを作成して、変数の値、関数、属性リストに値を設定して印字してみます。
-
-```
-* (defvar something 1)  ; 変数の値
-* something
-1
-
-* (defun something () (princ "something"))  ; "関数
-* (something)
-something
-"something"
-
-* (setf (get 'something 'old) "10years")  ; 属性リスト
-"10years"
-* (setf (get 'something 'color) "blue")
-"blue"
-* (symbol-plist 'something)
-(COLOR "blue" OLD "10years")
-```
-
-このように、シンボルは見た目以上に多くの内容を含みます。
-
-
-### パッケージ
-
-Common Lispにおいてパッケージは、名前空間の役割を果たします。デフォルトのパッケージは`COMMON-LISP-USER`です。プロジェクト内でパッケージを切り替えることで、同じ名前のシンボルを共存させることができます。次の例では、greetという名前のシンボルを複数のパッケージで共存させます。
-
-```
-$ ros run
-* (defpackage :jpn (:use :cl) (:export :greet)) ; パッケージJPNを定義する
-#<PACKAGE "JPN">
-* (in-package :jpn)                            ; パッケージをJPNに移動する
-#<PACKAGE "JPN">
-* (defun greet() (format nil "こんにちは")) ; JPNパッケージ内で関数を定義する
-GREET
-* (in-package :cl-user)                   ; パッケージをCOMMON-LISP-USERに移動する
-#<PACKAGE "COMMON-LISP-USER">
-* (defun greet () (format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
-* (greet)                                 ; カレントパッケージでgreet関数を実行する。
-"Hello"
-* (jpn:greet)                             ; パッケージJPNのgreet関数を実行する。
-"こんにちは"
-```
-
-このように、プロジェクトではシンボルが実行時にどのパッケージを参照するかを管理する必要があります。
-
-
-## パッケージの管理方法
-
-### packages.lisp
-
-広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。次のようにdefsystem内で`:serial t`とすることで、components内のファイルを上から順に読み込んでいきます。
-
-EDITOR NOTE by fukamachi: ASDFベストプラクティスでは `asdf:` のパッケージ名補完はしない、システム名は文字列でと推奨されているが、cl-whoはそれに沿っていないので悩ましい
-
-```
-(asdf:defsystem :cl-who
-  :description "(X)HTML generation macros"
-  :version "1.1.4"
-  :serial t
-  :license "BSD"
-  :components ((:file "packages")
-               (:file "specials")
-               (:file "util")
-               (:file "who"))
-```
-
-CL-WHOでは、`packages.lisp`が読み込まれた後、`specials.lisp` `util.lisp` `who.lisp`が順に読み込まれます。`packages.lisp`では、次のようにパッケージが定義されています。`:use`の節では利用するパッケージを指定し、`:export`の節では、エクスポートするシンボルを指定します。`#+:sbcl (:shadow :defconstant)`は、処理系がSBCLの場合、COMMON-LISPパッケージの`defconstant`を隠して(shadow)、CL-WHOで定義されている`defconstant`を利用するための指定です。CL-WHOの`defconstant`は`specials.lisp`で定義されています。
-
-```
-(in-package :cl-user)
-(defpackage :cl-who
-  (:use :cl)
-  (:nicknames :who)
-  #+:sbcl (:shadow :defconstant)
-  #+:sb-package-locks (:lock t)
-  (:export :*attribute-quote-char*
-           :*empty-attribute-syntax*
-	   (中略)
-           :with-html-output
-           :with-html-output-to-string))
-```
-
-packages.lisp以降に読み込まれるファイルが、`(in-package :cl-who)`で始まっているところに注目してください。`packages.lisp`以降に読み込まれるファイルでは、ファイルの冒頭で`packages.lisp`で定義されたパッケージに`in-package`することで、`packages.lisp`で定義したパッケージ(この場合はcl-who)にシンボルを登録していきます。
-
-```
-;; specials.lisp
-(in-package :cl-who)
-(defmacro defconstant (name value &optional doc)
-  "Make sure VALUE is evaluated only once \(to appease SBCL)."
-  `(cl:defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
-     ,@(when doc (list doc))))
-
-;; util.lisp
-(in-package :cl-who)
-(defmacro n-spaces (n)
-  "A string with N spaces - used by indentation."
-  `(make-array ,n
-               :element-type 'base-char
-               :displaced-to +spaces+
-               :displaced-index-offset 0))
-
-;; who.lisp
-(in-package :cl-who)
-(defun html-mode ()
-  *html-mode*)  ; 以下省略
-```
-
-この手法ではファイル数が少ないケースでは十分機能しますが、ライブラリの規模が大きくなるにつれて、この手法でのパッケージ管理は難しくなります。
-
-### package-inferred-system
-
-次に`one package per file`と呼ばれるパッケージ管理方法を紹介します。この手法では、全てのファイルはdefpackageで始まります。全てのファイルに固有のパッケージ名をもたせ、パッケージ間の依存関係を明示的に指定することで、依存関係が推測(inferred)されて解決されます。
-
-WebフレームワークのUtopianでは、この手法でシステムが構築されています。`utopian.asd`の`depends-on`で"utopian/package"と指定されているのは、utpianフォルダー内のpackage.lispを示します。このように、ファイルのパスとパッケージ名を対応させて管理します。
+WebフレームワークUtopianでは、この手法でシステムが構築されています。`utopian.asd`で`utopian/package`と指定されているのは、utpianフォルダーのpackage.lispを示します。
 
 ```
 (defsystem "utopian"
@@ -130,9 +16,7 @@ WebフレームワークのUtopianでは、この手法でシステムが構築�
   :depends-on ("utopian/package" "lack" "mito" "bordeaux-threads"))
 ```
 
-package.lispを開くと、次のように定義されてます。:use-reexportの`#:utopian/db`は、utopianフォルダにあるdb.lispを示します。
-
-EDITOR NOTE by fukamachi: cl-whoの例ではパッケージ名を単なるキーワードにしていたが、UtopianではUninternedシンボルにしている。特に違いはないが、詳しくない人は混乱するかもしれない。また、 `uiop:define-package` の説明がないのもおそらく初見ではわからない。
+`package.lisp`の中を見ましょう。`#:utopian/db`は、utopianフォルダのdb.lispを示します。
 
 ```
 (uiop:define-package #:utopian/package
@@ -143,9 +27,7 @@ EDITOR NOTE by fukamachi: cl-whoの例ではパッケージ名を単なるキー
 		 ;; 以下省略 ))
 ```
 
-EDITOR NOTE by fukamachi: package-inferred-systemの挙動ではなく、ルールを単純に説明するほうがいいかも。プロジェクト内のファイルの文頭で、プロジェクト名 + / (slash) から始まるディレクトリ構成を反映した名前のパッケージを定義すると、それがシステムとして呼び出せる。つまり `(ql:quickload :utopian/db)` でロードできる。それぞれの依存関係は `:use` や `:import-from` で表現される。
-
-`db.lisp`では、次のようにパッケージが定義されています。defpackage内で依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:ライブラリ名 #:シンボル名1 #:シンボル名2)`とします。このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
+`db.lisp`では、次のようにパッケージが定義されています。
 
 ```
 (defpackage #:utopian/db
@@ -161,6 +43,29 @@ EDITOR NOTE by fukamachi: package-inferred-systemの挙動ではなく、ルー�
            #:with-connection))
 ```
 
+defpackage内で依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:パッケージ名 #:シンボル名)`とします。上記の場合は、`utopian/config.lisp`の`config`、`cl-dbi`の`connect-cached`、`mito`の`*connection*`がインポートされます。
+
+このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
+
+//embed[latex]{
+\clearpage
+//}
+
+## Qlot
+
+Qlotは、プロジェクトごとにライブラリを管理するためのツールです。Qlotでは、依存ライブラリの情報を`qlfile`に記載することで、プロジェクトフォルダ内の`quicklisp`フォルダ内にライブラリがダウンロードされて、ライブラリのバージョンを固定することができます。
+
+同じマシンで複数のプロジェクトの開発を行うとき、それぞれのプロジェクトで依存ライブラリのバージョンが異なると、Quicklispだけでは管理しきれません。Qlotを用いると、複数人で開発するとき、それぞれの環境で依存ライブラリのバージョンをあわせることができます。
+
+qlfileは、Node.jsのpackage.json、RubyのGemfileのような働きをします。Nodejsではpackage.jsonで指定したバージョンがnode_modulesにダウンロードされますが、Qlotではqlfileでの指定バージョンがquicklispフォルダにダウンロードされます。
+
+![qlot](https://github.com/clfreaks/techbookfest6/blob/master/images/04-qlot-image.png)
+
+次のチャプターで、実際にプロジェクト内でQlotを用いて、Qlotの使い方を説明します。
+
+//embed[latex]{
+\clearpage
+//}
 
 ## プロジェクト作成の例 - 地名検索システムyubin
 
@@ -169,8 +74,7 @@ package-inferred-systemを用いて、簡単なプロジェクトを作成して
 ```
 $ ros install t-cool/yubin
 $ yubin 6380321
-奈良県吉野郡天川村坪内
-$
+$ 奈良県吉野郡天川村坪内
 ```
 
 ### yubin.asd
@@ -180,27 +84,28 @@ $
 ```
 (defsystem "yubin"
   :class :package-inferred-system
-  :depends-on (yubin/main))  
+  :depends-on (#:yubin/main))  
 ```
 
 ### main.lisp
 
-ここでは、JSONのパーズのためにJonathanのparse関数、HTTP通信のためにDexadorのget関数をインポートします。
+ここでは、JSONのパーズのためにJonathanのparse関数、HTTPのGETメソッドを使うためにDexadorのget関数をインポートします。
 
 ```
 (defpackage #:yubin/main
+  (:use #:cl)
   (:import-from #:jonathan
-                #:parse)
-  (:import-from #:dexador
-                #:get)
+		#:parse)
+  (:shadowing-import-from #:dexador
+			  #:get)
   (:export #:get-place))
 (in-package #:yubin/main)
 
-(defun get-place (zipcode)
+(defun get-place (zipcode)      
   (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))
-         (data (reverse (car (fourth (jonathan:parse (dex:get url))))))
-         (place (concatenate 'string (first data) (third data) (fifth data))))
-    (format t "~&~A~%" place)))
+	 (data (reverse (car (fourth (jonathan:parse (dex:get url))))))
+	 (place (concatenate 'string (first data)(third data) (fifth data))))
+    (format t "~A~%" place)))
 ```
 
 ### roswell/yubin.ros
@@ -215,59 +120,64 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(yubin) :silent t)
-  )
-
+  #+quicklisp(ql:quickload '(yubin) :silent t))
 (defpackage :ros.script.yubin.3761982565
   (:use :cl))
 (in-package :ros.script.yubin.3761982565)
 
 (defun main (zipcode &rest argv)
   (declare (ignorable argv))
-  (yubin:get-place zipcode))
+  (yubin/main:get-place zipcode))
 ```
  
-これでライブラリは完成です。では、完成したライブラリをインストールして使ってみましょう。
+### qlfile
+
+このプロジェクトでは、外部ライブラリとしてDexadorとJonathanを用いています。yubinのプロジェクト内にqlfileを作成して、各ライブラリのバージョンを固定します。次のように、qlfileを作成して編集します。
 
 ```
-$ ros install t-cool/yubin
-$ yubin 6380321
-  奈良県吉野郡天川村坪内
-```
-
-## Qlot
-
-Qlotは、プロジェクトごとにライブラリを管理するためのツールです。ライブラリによっては、開発途中にAPIが変更される可能性があります。Qlotでは、依存ライブラリの情報を`qlfile`に記載することで、プロジェクトフォルダ内の`quicklisp`フォルダ内にライブラリがダウンロードされて、ライブラリのバージョンを固定することができます。
-
-試しに、qlfileを書いて試してみます。次のように、Github上のブランチ、Quicklispの月別レポジトリを指定することができます。
-
-```
-git dexador https://github.com/fukamachi/dexador :ref 031ee9935797e17d544710551d4b0c40a57a6180
+git dexador https://github.com/fukamachi/dexador.git
 ql jonathan 2018-12-10
 ```
 
-qlfileがあるディレクトリ内で`qlot install`とすると、プロジェクト内のquicklispフォルダにソースコードがダウンロードされた後、インストールされます。
+ql:quickloadでqlotをロードして、qlot:installでプロジェクトをインストールします。
 
 ```
-$ qlot install
+(ql:quickload :qlot)
+(qlot:install :yubin)
 ```
 
-インストール後、quicklispフォルダを開くと、dists以下にライブラリのソースコード、binフォルダにRowell Scriptを確認できます。
- 
-プロジェクト内のquicklispフォルダからライブラリをロードするには`qlot exec`を用いる。`qlot exec ros -S . run`とすれば、REPLが起動します。
+インストール後、プロジェクトルートにquicklisp/ディレクトリとqlfile.lockファイルが作成されます。
+
+qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールしておけば、他の環境で`qlot:install`したときにも全く同じバージョンのライブラリを使うことが保証されます。
+
+#### プロジェクトをロードする
+
+プロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
 
 ```
-$ qlot exec ros -S . run
-* (ql:quickload :yubin)
-* (yubin:get-place 6380321)
+* (qlot:quickload :yubin)
+* (yubin/main:get-place 6380321)
   奈良県吉野郡天川村坪内
 ```
 
-`qlot exec <Roswell Script>`とすると、プロジェクト内の`quicklisp/bin`からRoswell Scriptのコマンドを実行することができます。
+#### ライブラリをアップデートする
+
+ライブラリのバージョンを更新するためにqlfileを変更したときは`qlot:update`を実行します。
 
 ```
-$ qlot exec yubin 6380321
-  奈良県吉野郡天川村坪内
+(qlot:update :yubin)
 ```
 
-EDITOR NOTE by fukamachi: Emacs/lemでQlotを使うときの説明もしてあげたい
+これで、`quicklisp/`以下とqlfile.lockが更新されます。
+
+#### 複数人での開発
+
+開発者間でqlfile.lockを共有し、各環境で`qlot:install`を実行すると、ライブラリのバージョンを統一させることができます。
+
+## まとめ
+
+* オープンソースで公開されているライブラリの多くは、ASDFを用いて構成されている。
+
+* `package-inferred-system`を用いたパッケージ管理では、ファイルごとにパッケージを管理する。
+
+* Qlotを使うと、複数人で開発するときに、各々の環境で依存ライブラリのバージョンをあわせることができる。
