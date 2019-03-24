@@ -51,6 +51,12 @@ LemではEmacsと同じようにControlやMetaをプリフィクスとするコ�
 ### ウィンドウ
 ウィンドウは一つのバッファを画面に表示するデータ構造を表します。
 
+### コマンド
+コマンドはエディタを操作する機能です。
+ カーソルを動かしたり文字を挿入する処理は一つのコマンドとして定義されます。
+コマンドはキーに割り当てられたり`M-x`の後、ミニバッファでコマンド名を入力することでも実行できます。
+以後`(M-x コマンド名)` と表記します。
+
 ## Lemの起動と終了
 コマンドラインからLemを起動するにはlemコマンドを使います。
 lemコマンドはRoswellからインストールしている場合に使えます。
@@ -166,6 +172,7 @@ Moreとよく似た操作方法でSpaceで1ページ分スクロール、閉じ�
 viに合わせたい場合は`M-x vi-mode`と入力することで切り替えられます。
 元に戻すには`M-x emacs-mode`です。
 起動時に自動でvi-modeにするには`~/.lem.d/init.lisp`に次の式を加えます。
+
 ```
 (lem-vi-mode:vi-mode)
 ```
@@ -197,6 +204,7 @@ M-x slime
 ```
 
 `C-u`を前に入力してslimeコマンドを使うと起動する処理系を選べます。
+
 ```
 C-u M-x slime
 ```
@@ -214,9 +222,13 @@ REPLは基本的にコマンドラインからの使用と同じですがSLIME�
 
 履歴を辿るには`M-p` `M-n`で行えます。
 
-現在のパッケージを切り替えるには`(in-package パッケージ名)`で出来ますが`C-c M-p (M-x lisp-set-package)`でも出来ます。
+現在のパッケージを切り替えるには`(in-package パッケージ名)`を入力することでも出来ますが`C-c M-p (M-x lisp-set-package)`でもREPLのパッケージを切り替えられます。
 
-実行を中断したい場合はC-c C-cです。
+`C-c M-o (M-x listener-clear-buffer)`でバッファをクリアできます。
+
+`C-c C-u (M-x listener-clear-input)`で現在の入力を消去します。
+
+実行を中断したい場合は`C-c C-c (M-x lisp-repl-interrupt)`です。
 
 ```
 CL-USER> (loop)
@@ -302,6 +314,7 @@ lispファイル上の式を評価してみます。
 関数fooの中で`C-M-x`とすると、そのdefunが評価され、定義されます。
 
 REPLで定義した関数を呼びだしてみます。
+
 ```lisp
 CL-USER> (foo 0)
 1
@@ -321,6 +334,7 @@ CL-USER> (foo 0)
 コンパイルし、その結果を読み込むには`C-c C-k`をします。
 
 カーソルの前の式を評価するには`C-c C-e`をします。
+
 ```lisp
 (progn
   (foo)
@@ -442,19 +456,7 @@ Common Lispでは最後にREPLで評価した値が`*`に入るので、`(lem:cu
 `Tab`で次の選択できる位置までカーソルが移動され`Enter`で選択でき、値を選択するとその値をさらにinspectできます。  
 左側の`[ ]`を選択するとチェックがつき。その状態で[set value]を選択するとその値を変更することが出来ます。
 
-inspectの操作の一覧は次のとおりです。
-
-|キーバインド                                    |説明                                        |
-|------------------------------------------------|--------------------------------------------|
-|l (M-x lisp-inspector-pop)                      |一つ前のinspectに戻る                       |
-|n (M-x lisp-inspector-pop) またはSpace          |次のinspectに進む                           |
-|d (M-x lisp-inspector-describe)                 |inspectしているオブジェクトの詳細を表示     |
-|p (M-x lisp-inspector-pprint)                   |カーソル位置のオブジェクトをpprint          |
-|e (M-x lisp-inspector-eval)                     |inspect画面でeval                           |
-|h (M-x lisp-inspector-history)                  |履歴を表示                                  |
-|g (M-x lisp-inspector-reinspect)                |inspect画面の更新                           |
-|. (M-x lisp-inspector-show-source)              |カーソル位置のオブジェクトの定義にジャンプ  |
-|q (M-x lisp-inspector-quit)                     |inspectを終了                               |
+inspectのコマンドの一覧についてはinspectバッファで`M-x describe-bindings`を実行してください。
 
 試しにlemのウィンドウの中のmodeline-formatを変更してみます。  
 modeline-foramtを選択しチェックを付け、`[set value]`を選択するとミニバッファに次の入力画面が出ます。
@@ -480,7 +482,7 @@ Set slot LEM:MODELINE-FORMAT to (evaluated) :
 オブジェクトブラウザとして使うことが出来ます。
 
 ### SLDB(デバッガ)
-SLIMEでのデバッガはSLDBと呼ばれています。
+SLIMEでのデバッガはSLDBと呼ばれています。  
 評価した式でエラーが起こった場合はSLDBが起動し、専用のsldbバッファが表示されます。
 
 次の画像はREPLでエラーが出る式を評価してSLDBが出た例です。
@@ -488,9 +490,10 @@ SLIMEでのデバッガはSLDBと呼ばれています。
 
 alexandria:lastcarは引数にリストを期待していますが文字列を渡しているので型エラーが出ています。
 
-色々書いてますが一つずつ内容を見ていきます。
+sldbバッファの内容を一つずつ見ていきます。
 
 まず一番上の
+
 ```
 The value
   "foo"
@@ -501,18 +504,20 @@ is not of type
 ですが、これはエラーメッセージとコンディションの型です。
 
 次に
+
 ```
 Restarts:
  0: [RETRY] Retry SLIME REPL evaluation request.
  1: [*ABORT] Return to SLIME's top level.
  2: [ABORT] abort thread (#<THREAD "repl-thread" RUNNING {1005708413}>)
 ```
-これはエラー後にどういう対応をするかをユーザーに尋ねています。
-Common Lispにはリスタートという機構があり、プログラムの例外時などにユーザーに次に何をするかの判断を委ねることが出来ます。
-この場合は0と1と2という選択があります。
-SLDBではそのバッファで数字を押すかカーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
+これはエラー後にどういう対応をするかをユーザーに尋ねています。  
+Common Lispにはリスタートという機構があり、プログラムの例外時にユーザーに次に何をするかの判断を委ねることが出来ます。  
+この場合は0と1と2という選択があります。  
+SLDBではそのバッファで数字を押すか、カーソル位置を色が変えられて表示されている[...]に合わせてEnterを押すと選択できます。
 
 最後に
+
 ```
 Backtrace:
   0: (ALEXANDRIA.0.DEV:LASTCAR "foo")
@@ -520,12 +525,291 @@ Backtrace:
   2: (EVAL (ALEXANDRIA.0.DEV:LASTCAR "foo"))
  --more--
 ```
-がありますが、これは他の言語にもよくあるバックトラックを表示しています。
---more--と表示されている位置でEnterを押すと更に前の省略されているフレームも表示されます。
+がありますが、フレームのリストを表示しています。  
+--more--と表示されている位置でEnterを押すと更に前の省略されているフレームも表示されます。  
 フレームの位置にカーソルを移動してEnterを押すとローカル変数などの詳細が表示されます。
 
 `Tab`で次の選択できる要素に移動します。
-`n`, `p`でカーソルを上下のフレームに移動できます。
-`M-n`, `M-p`で上下のフレームに移動し、そのフレームの詳細を表示できます。
 
-デバッガは終了するには`q`で出来ます。
+`n`と`p`で上下のフレームにカーソルを移動でき、`M-n`と`M-p`で移動と同時に詳細を表示できます。
+
+デバッガは終了するには`q`を押します。
+
+sldbのコマンドの一覧についてはsldbバッファで`M-x describe-bindings`を実行してください。
+
+#### 実例
+
+実際にsldbを使ってみましょう。
+
+まずこのようなファイルがあるとします。
+
+```lisp
+;;; example.lisp
+
+(ql:quickload :cl-ppcre :silent t)
+
+(defclass matcher ()
+  ((pattern
+    :initarg :pattern
+    :reader matcher-pattern)
+   (action
+    :initarg :action
+    :reader matcher-action)))
+
+(defun match (matcher input)
+  (if (ppcre:scan (matcher-pattern matcher) input)
+      (funcall (matcher-action matcher) input)
+      (error "match error")))
+
+(defun convert-integer (input)
+  (values (parse-integer input)))
+```
+
+これはmatcherでルールに正規表現を使ってマッチしたらactionを呼び出すプログラムです。
+
+デバッグをする場合はコンパイルオプションをデバッグ用に設定するのが良いです。
+RPELで次の宣言をします。
+
+```
+CL-USER> (declaim (optimize (debug 3)))
+```
+
+こうすることで、これからコンパイルするプログラムにはこのオプションが適用されるのでデバッグ時に参照できる情報が多くなります。
+
+次にREPLから使うためにファイルをコンパイルします。
+このファイルを開いているバッファで`C-c C-k`をしてファイルのコンパイルと読み込みを行います。
+
+![](02-lem-sldb-practice-1)
+
+REPLからmatcherインスタンスを作ってmatch関数を使ってみます。
+
+```lisp
+CL-USER> (defparameter m
+           (make-instance 'matcher :pattern "\\d+" :action 'convert-integer))
+m
+CL-USER> (match m "123")
+123
+CL-USER> (match m "1000")
+1000
+```
+
+matcherを使ってmatch関数を呼び出すことで入力を数値に変換することができました。
+
+次はエラーが出る例を試してみます。
+
+```lisp
+CL-USER> (match m "123d")
+```
+
+![](02-lem-sldb-practice-2.png)
+
+2番目のフレームのconvert-integer関数内でエラーが起こってるみたいです。
+sldbのフレームの位置で`v (M-x sldb-show-frame-source)`をすると対応するソースの箇所に飛べます。
+エラーの原因としてはparse-integerで"123d"を渡していることが原因のようですが、
+ここでは"123d"も123に変換してほしいのでconvert-integerとは別に曖昧な入力も許す関数を追加します。
+
+```lisp
+(defun convert-integer* (input)
+  (values (parse-integer input :junk-allowed t)))
+```
+
+ここでこの関数を使えるようにするためにこの関数を`C-c C-c`でコンパイルします。
+
+![](02-lem-sldb-practice-3.png)
+
+sldbからでもinspectを使うことが出来ます。
+新しく追加した関数をmatcherオブジェクトのactionにしてしまいましょう。
+
+match関数内に対応する0から数えて2のフレームを選択し、詳細が表示されるので、引数のmatcherを選択するとinspectが起動します。
+
+![](02-lem-sldb-practice-4.png)
+
+ここで、inspectの項でスロットの変更を行なったのと同じようにmatcherのスロットのactionを`'convert-integer*`に変更します。
+このあとinspectを`q`で終了し、同じ2番目のフレーム内で`r (M-x sldb-restart-frame)`をすると、そのフレームからリスタートが行なわれます。
+これでエラーが起こらずに値を変換できました。  
+REPLでも結果が返ってきていることを確認できます。
+
+![](02-lem-sldb-practice-5.png)
+
+このようにCommon Lispではデバッガやinspectを使って動作中のプログラムを変更し、リスタートを行うことで動的に開発を行えます。
+
+## Tips
+
+### grep
+
+### カラーテーマ
+
+## 拡張機能の書き方
+
+lemでの拡張機能の書き方を紹介します。プロジェクト名はposts-listとして、redditの投稿一覧のビューアを作ります。
+
+完成は次のようになります。
+
+![完成図](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
+
+上のスクリーンショットでは/r/lispの投稿のリストを取得して表示しています。選択するとリンク先をブラウザで開く機能などがついています。
+
+### プロジェクトの作成
+
+lemの拡張機能は、他のプロジェクトと同様に、ASDFのシステムとして扱います。ベースとするディレクトリの下に、拡張機能と同じ名前のディレクトリを用意し、その下に各ファイルを配置します。以下のコマンドでプロジェクトのテンプレートを生成します。
+
+```
+$ ros init lem posts-list
+```
+
+これでプロジェクトのベースが出来ました。ディレクトリツリーは以下のようになります。
+
+```
+$ tree posts-list
+posts-list
+├── lem-posts-list.asd
+└── main.lisp
+```
+
+`M-x start-lisp-repl`でREPLを起動して、作成したプロジェクトを読み込みます。
+
+```lisp
+CL-USER> (ql:quickload :lem-posts-list)
+```
+
+もしエラーが出て読み込めない場合、パスが通っていない可能性が高いです。デフォルトでは`$HOME/common-lisp`にパスが通ってあるので、posts-listディレクトリを`$HOME/common-lisp/`以下に配置してみてください。
+
+### 記事のリストを取得
+
+subredditを指定して、redditの記事をjsonで取得します。1つの記事をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
+
+```lisp
+(defpackage #:lem-posts-list/posts
+  (:import-from #:jonathan)
+  (:import-from #:dexador)
+  (:import-from #:trivia
+                #:match
+                #:plist)
+  (:import-from #:quri)
+  (:use #:cl)
+  (:export #:post-title
+           #:post-url
+           #:post-author
+           #:fetch-posts))
+(in-package #:lem-posts-list/posts)
+
+(defstruct post title url author)
+
+(defun extract-posts (data)
+  (match data
+    ((plist :|data| (plist :|children| children))
+     (loop :for child :in children
+           :collect (match child
+                      ((plist :|data|
+                              (plist :|title| title
+                                     :|url| url
+                                     :|author| author))
+                       (make-post :title title
+                                  :url url
+                                  :author author)))))))
+
+(defun make-posts-url (subreddit)
+  (quri:make-uri :scheme "https"
+                 :host "reddit.com"
+                 :path (format nil "/r/~A/.json" subreddit)))
+
+(defun fetch-posts (subreddit)
+  (extract-posts (jojo:parse (dex:get (make-posts-url subreddit)))))
+```
+
+lem-posts-list/postsというパッケージに分離しました。fetch-postsという関数とpostのアクセサを外部から使いたいのでexportしています。
+
+関数fetch-postsは引数でsubreddit名を受け取り返り値はpostのリストです。REPLから動作を確認してみます。
+
+```lisp
+CL-USER> (ql:quickload :lem-posts-list/posts)
+CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
+
+;; 出力は長いので省略
+```
+
+投稿一覧が取得できるようになったので、次はその内容をLemに表示し選択できるようにします。投稿一覧用のバッファを作り、そこにfetch-posts関数から返ってきたpostのリストを書き出していきます。その前にlemで扱うオブジェクトについていくつか見ていきます。
+
+### buffer
+
+バッファはテキストとその色やカーソルの位置、モードなどが入ったオブジェクトです。通常はファイルを開くときにバッファはそのファイルと関連付けられますが、ファイルと関連付けずにバッファ自体を作成することも可能です。
+
+バッファは`make-buffer`関数を使うことで作成できます。ファイルと関連付けられたバッファは`find-file-buffer`関数を使うことで作成できます。
+
+```lisp
+(lem:make-buffer "test") ; => #<BUFFER test NIL>
+(lem:find-file-buffer "/tmp/hoge") ; => #<BUFFER hoge /tmp/hoge>
+```
+
+### point
+
+ポイントはバッファ内の位置を指すオブジェクトです。主にカーソルなどに使われています。バッファ内への文字列の挿入や削除に使います。ポイントを扱う場合はバッファ内に既にあるポイントをコピーして使う事が多いです。バッファからポイントを得るアクセサは次のようなものがあります。
+
+```lisp
+;; バッファの現在の位置のポイントを得る
+(buffer-point buffer)
+
+;; バッファの先頭の位置のポイントを得る
+(buffer-start-point buffer)
+
+;; バッファの末尾の位置のポイントを得る
+(buffer-end-point buffer)
+```
+
+ポイントのコピーには`copy-point`関数を使います。
+
+```lisp
+(copy-point point &optional kind)
+```
+
+ポイントはスティッキーな動作をします。そのポイントより前の位置に文字列を挿入するとその分右へずれていき、削除すると左にずれていきます。
+ 
+`kind`はバッファ編集時のオフセットを計算するときに使います。
+
+`kind`が:left-insertingならポイントと同じ位置に文字列を挿入したときに右にずれ、:right-insertingならそのままです。
+
+`kind`が:temporaryの場合は何も行いません。
+
+`kind`を指定しなければ渡された`point`と同じ値になります。
+
+`kind`が:temporary以外ならpointをbufferが保持しておく必要があるので不要になったら明示的に削除しなければいけません。
+削除には`delete-point`関数を使います。
+
+```lisp
+(let ((point (copy-point (buffer-point buffer) kind)))
+  (unwind-protect ...
+    (delete-point point)))
+```
+
+このために`with-point`マクロを用意しています。
+
+```lisp
+(with-point ((point (buffer-point buffer) kind))
+  ...)
+```
+
+`with-point`の`kind`を省略した場合は:temporaryになります。
+
+### コマンドの定義
+
+コマンドは`define-command`で定義できます。
+
+```lisp
+(define-command コマンド (引数) (引数記述子)
+  本体...)
+```
+
+定義したコマンドは関数としても呼び出すことができます。
+
+基本的にはdefunと同じですが引数記述子というものを指定します。
+コマンドが引数を取る場合に引数記述子にどうやって受け取るかを記述します。  
+"p"とした場合、コマンド実行の前に(C-u 数値)を入力したときの値が入り、デフォルトでは1が渡されます。  
+"P"だとデフォルト値がnilになります。
+"s文字列"とした場合コマンドを実行したときにミニバッファで入力を行い、入力した文字列が引数の値になります。
+ほかにもいくつかありますが、ここでは使わないので割愛します。
+
+### モードの定義
+
+### キーバインドの追加
+
+### attribute

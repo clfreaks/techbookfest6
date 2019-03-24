@@ -15,7 +15,7 @@ Common Lispにおいてシンボルは、名前、パッケージ、変数の値
 * something
 1
 
-* (defun something ()(princ "something"))  ; "関数
+* (defun something () (princ "something"))  ; "関数
 * (something)
 something
 "something"
@@ -37,15 +37,15 @@ Common Lispにおいてパッケージは、名前空間の役割を果たしま
 
 ```
 $ ros run
-* (defpackage :JPN (:use :cl)(:export :greet)) ; パッケージJPNを定義する
+* (defpackage :jpn (:use :cl) (:export :greet)) ; パッケージJPNを定義する
 #<PACKAGE "JPN">
-* (in-package :JPN)                            ; パッケージをJPNに移動する
+* (in-package :jpn)                            ; パッケージをJPNに移動する
 #<PACKAGE "JPN">
-* (defun greet()(format nil "こんにちは"))　; JPNパッケージ内で関数を定義する
+* (defun greet() (format nil "こんにちは")) ; JPNパッケージ内で関数を定義する
 GREET
 * (in-package :cl-user)                   ; パッケージをCOMMON-LISP-USERに移動する
 #<PACKAGE "COMMON-LISP-USER">
-* (defun greet()(format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
+* (defun greet () (format nil "Hello"))     ; COMMON-LISP-USERパッケージ内で関数を定義する
 * (greet)                                 ; カレントパッケージでgreet関数を実行する。
 "Hello"
 * (jpn:greet)                             ; パッケージJPNのgreet関数を実行する。
@@ -60,6 +60,8 @@ GREET
 ### packages.lisp
 
 広く使われているパッケージの管理方法として、packages.lisp(もしくはpackage.lisp)を最初に読み込む手法があります。HTML生成ライブラリのCL-WHOは、この手法でパッケージが管理されています。次のようにdefsystem内で`:serial t`とすることで、components内のファイルを上から順に読み込んでいきます。
+
+EDITOR NOTE by fukamachi: ASDFベストプラクティスでは `asdf:` のパッケージ名補完はしない、システム名は文字列でと推奨されているが、cl-whoはそれに沿っていないので悩ましい
 
 ```
 (asdf:defsystem :cl-who
@@ -130,6 +132,8 @@ WebフレームワークのUtopianでは、この手法でシステムが構築�
 
 package.lispを開くと、次のように定義されてます。:use-reexportの`#:utopian/db`は、utopianフォルダにあるdb.lispを示します。
 
+EDITOR NOTE by fukamachi: cl-whoの例ではパッケージ名を単なるキーワードにしていたが、UtopianではUninternedシンボルにしている。特に違いはないが、詳しくない人は混乱するかもしれない。また、 `uiop:define-package` の説明がないのもおそらく初見ではわからない。
+
 ```
 (uiop:define-package #:utopian/package
   (:nicknames #:utopian)
@@ -138,6 +142,8 @@ package.lispを開くと、次のように定義されてます。:use-reexport�
                  #:utopian/db
 		 ;; 以下省略 ))
 ```
+
+EDITOR NOTE by fukamachi: package-inferred-systemの挙動ではなく、ルールを単純に説明するほうがいいかも。プロジェクト内のファイルの文頭で、プロジェクト名 + / (slash) から始まるディレクトリ構成を反映した名前のパッケージを定義すると、それがシステムとして呼び出せる。つまり `(ql:quickload :utopian/db)` でロードできる。それぞれの依存関係は `:use` や `:import-from` で表現される。
 
 `db.lisp`では、次のようにパッケージが定義されています。defpackage内で依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:ライブラリ名 #:シンボル名1 #:シンボル名2)`とします。このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
 
@@ -163,7 +169,8 @@ package-inferred-systemを用いて、簡単なプロジェクトを作成して
 ```
 $ ros install t-cool/yubin
 $ yubin 6380321
-$ 奈良県吉野郡天川村坪内
+奈良県吉野郡天川村坪内
+$
 ```
 
 ### yubin.asd
@@ -183,17 +190,17 @@ $ 奈良県吉野郡天川村坪内
 ```
 (defpackage #:yubin/main
   (:import-from #:jonathan
-		#:parse)
+                #:parse)
   (:import-from #:dexador
-		#:get)
+                #:get)
   (:export #:get-place))
 (in-package #:yubin/main)
 
-(defun get-place (zipcode)      
+(defun get-place (zipcode)
   (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))
-	 (data (reverse (car (fourth (jonathan:parse (dex:get url))))))
-	 (place (concatenate 'string (first data)(third data) (fifth data))))
-    (format t "~A" place)))
+         (data (reverse (car (fourth (jonathan:parse (dex:get url))))))
+         (place (concatenate 'string (first data) (third data) (fifth data))))
+    (format t "~&~A~%" place)))
 ```
 
 ### roswell/yubin.ros
@@ -262,3 +269,5 @@ $ qlot exec ros -S . run
 $ qlot exec yubin 6380321
   奈良県吉野郡天川村坪内
 ```
+
+EDITOR NOTE by fukamachi: Emacs/lemでQlotを使うときの説明もしてあげたい
