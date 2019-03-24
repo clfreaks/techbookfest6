@@ -201,7 +201,7 @@ Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
 (以下、省略)
 ```
 
-`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされます。　
+`ros install <GitHubアカウント名/レポジトリ名>`とすると、GitHubのレポジトリからダウンロードされます。　
 
 試しにClackをインストールします。
 
@@ -260,7 +260,7 @@ Listening on localhost:5000.
 
 ### ライブラリの更新
 
-`ros update <ライブラリ名>`とすることで、ライブラリをGithub上の最新版に更新することができます。
+`ros update <ライブラリ名>`とすることで、ライブラリをGitHub上の最新版に更新することができます。
  
 ```
 $ ros update cl-ignition

@@ -57,9 +57,9 @@ Qlotは、プロジェクトごとにライブラリを管理するためのツ�
 
 同じマシンで複数のプロジェクトの開発を行うとき、それぞれのプロジェクトで依存ライブラリのバージョンが異なると、Quicklispだけでは管理しきれません。Qlotを用いると、複数人で開発するとき、それぞれの環境で依存ライブラリのバージョンをあわせることができます。
 
-qlfileは、Node.jsのpackage.json、RubyのGemfileのような働きをします。Nodejsではpackage.jsonで指定したバージョンがnode_modulesにダウンロードされますが、Qlotではqlfileでの指定バージョンがquicklispフォルダにダウンロードされます。
+qlfileは、Node.jsのpackage.json、RubyのGemfileのような働きをします。Nodejsではpackage.jsonで指定したバージョンがnode\_modulesにダウンロードされますが、Qlotではqlfileでの指定バージョンがquicklispフォルダにダウンロードされます。
 
-![qlot](https://github.com/clfreaks/techbookfest6/blob/master/images/04-qlot.png)
+![Qlot](https://github.com/clfreaks/techbookfest6/blob/master/images/04-qlot.png)
 
 次のチャプターで、実際にプロジェクト内でQlotを用いて、Qlotの使い方を説明します。
 
@@ -139,7 +139,7 @@ git dexador https://github.com/fukamachi/dexador.git
 ql jonathan 2018-12-10
 ```
 
-Lemで`M-x slime`でREPLを起動します。ql:quickloadでqlotをロードして、qlot:installでプロジェクトをインストールします。
+Lemの起動後、`M-x slime`でREPLを起動します。`ql:quickload`でQlotをロードした後、`qlot:install`でプロジェクトをインストールします。
 
 ```
 CL-USER> (ql:quickload :qlot)
@@ -148,16 +148,18 @@ CL-USER> (qlot:install :yubin)
 
 インストール後、プロジェクトルートにquicklisp/ディレクトリとqlfile.lockファイルが作成されます。
 
-qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールすれば、他の環境で`qlot:install`をすると、同じバージョンのライブラリを使うことができます。
+qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールすれば、他の環境で`qlot:install`したときにも同じバージョンのライブラリを使うことが保証されます。
 
 #### プロジェクトをロードする
 
-プロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
+プロジェクトローカルのquicklisp内からプロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
 
 ```
 CL-USER> (qlot:quickload :yubin)
 CL-USER> (yubin/main:get-place 6380321)
 奈良県吉野郡天川村坪内
+NIL
+CL-USER> 
 ```
 
 #### ライブラリをアップデートする
