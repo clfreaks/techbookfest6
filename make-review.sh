@@ -16,8 +16,6 @@ echo "converting 06-Test/rove.md"
 md2review ./06-Test/rove.md               > ./src/06-Test.re
 echo "converting 09-RaspberryPi/RaspberryPi.md"
 md2review ./09-RaspberryPi/RaspberryPi.md > ./src/09-RaspberryPi.re
-echo "converting 10-atsuage/atsuage.md"
-md2review ./10-atsuage/atsuage.md > ./src/10-atsuage.re
 
 cd ./src
 review-pdfmaker config.yml
