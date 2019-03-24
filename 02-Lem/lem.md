@@ -795,11 +795,26 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 `with-point`の`kind`を省略した場合は:temporaryになります。
 
+### モード
+バッファ上で操作をするときに、ソースコードを表示する場合はその言語専用の振舞いをしてほしい場合があります。
+モードではそのモードの名前や対応するキーバインド、シンタックステーブル、などを設定します。
+
+モードにはメジャーモードとマイナーモードがあり、メジャーモードはバッファに一つだけ設定でき、マイナーモードは複数設定できます。
+
 ### posts-list-mode
 
 では実際にLemに投稿の一覧の表示をしていきます。
 
-表示するための専用のバッファを用意し、そのバッファをモードをposts-list-modeに設定します。
+表示するための専用のバッファを用意し、そのバッファのメジャーモードをposts-list-modeに設定します。
+
+メジャーモードを定義するにはdefine-major-modeを使います。
+
+```lisp
+(define-major-mode posts-list-mode nil
+  (:name "Posts list"
+   :keymap *posts-list-mode-keymap*)
+  (setf (buffer-read-only-p (current-buffer)) t))
+```
 
 ### コマンドの定義
 
