@@ -261,15 +261,20 @@ CL-USER>
 
 あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロをSWANKサーバ側で定義さていると出来ます。
 例えばcl-ppcreにregister-groups-bindというマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
+
+```lisp
+(ppcre:register-groups-bind (key value)
+                            ("(\\w+):(\\w+)" "foo:bar")
+                            (cons key value))
+```
+
 cl-ppcreを読み込むと正しくインデントできます。
 
 ```
 CL-USER> (ql:quickload :cl-ppcre)
 ```
 
-実際に試してみると次のようにインデントされます。
-
-```
+```lisp
 (ppcre:register-groups-bind (key value)
     ("(\\w+):(\\w+)" "foo:bar")
   (cons key value))
@@ -278,7 +283,7 @@ CL-USER> (ql:quickload :cl-ppcre)
 静的にインデントを設定したい場合は`lem-lisp-syntax:set-indentation`を使います。
 `~/.lem.d/init.lisp`に次の式を追加してみます。
 
-```
+```lisp
 (lem-lisp-syntax:set-indentation
  "with-mock-functions"
  (lem-lisp-syntax.indent:get-indentation "flet"))
@@ -674,9 +679,9 @@ CL-USER> (ql:quickload :lem-posts-list)
 
 もしエラーが出て読み込めない場合、パスが通っていない可能性が高いです。デフォルトでは`$HOME/common-lisp`にパスが通ってあるので、posts-listディレクトリを`$HOME/common-lisp/`以下に配置してみてください。
 
-### 記事のリストを取得
+### 投稿リストを取得
 
-subredditを指定して、redditの記事をjsonで取得します。1つの記事をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
+subredditを指定して、redditの投稿をjsonで取得します。1つの投稿をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
 
 ```lisp
 (defpackage #:lem-posts-list/posts
@@ -789,6 +794,12 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 ```
 
 `with-point`の`kind`を省略した場合は:temporaryになります。
+
+### posts-list-mode
+
+では実際にLemに投稿の一覧の表示をしていきます。
+
+表示するための専用のバッファを用意し、そのバッファをモードをposts-list-modeに設定します。
 
 ### コマンドの定義
 
