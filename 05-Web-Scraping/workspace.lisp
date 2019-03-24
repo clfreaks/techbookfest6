@@ -150,63 +150,7 @@
 
 ;;; for site which require login
 
-(defparameter *yahoo-login-url* "https://login.yahoo.co.jp/config/login")
-(defparameter *yahoo-login* (dex:get "https://login.yahoo.co.jp/config/login"))
-(defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
-
-(dex:post *yahoo-login-url*
-          :cookie-jar *cookie*
-          :headers '(("User-Agent" . "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"))
-          :content '(("login" . "s_imai")
-                     ("passwd" . "Gar.yahoo202.sden0")))
-
-
-
-(dex:head "https://mixi.jp" :cookie-jar *cookie-jar* :verbose t)
-(dex:head *yahoo-login-url* :cookie-jar *cookie-jar* :verbose t)
-
-;; #S(CL-COOKIE:COOKIE-JAR
-;;    :COOKIES (#S(CL-COOKIE:COOKIE
-;;                 :NAME "_auid"
-;;                 :VALUE "9ba15521315f5ae77249555a6e91042d"
-;;                 :EXPIRES 3825214754
-;;                 :PATH "/"
-;;                 :DOMAIN ".mixi.jp"
-;;                 :SECURE-P NIL
-;;                 :HTTPONLY-P NIL
-;;                 :ORIGIN-HOST "mixi.jp")
-;;              #S(CL-COOKIE:COOKIE
-;;                 :NAME "_lcp"
-;;                 :VALUE "ca22c19aea29c82a32c961dff402ab80"
-;;                 :EXPIRES 3762229154
-;;                 :PATH NIL
-;;                 :DOMAIN ".mixi.jp"
-;;                 :SECURE-P NIL
-;;                 :HTTPONLY-P NIL
-;;                 :ORIGIN-HOST "mixi.jp")))
-
-
-"https://srad.jp/my/login"
-
-returnto: 
-op: userlogin
-unickname: masatoi
-upasswd: gardenwiz
-userlogin: ログイン
-
-(defparameter *srad-login-url* "https://srad.jp/my/login")
-(defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
-
-
-(dex:post *srad-login-url*
-          :cookie-jar *cookie-jar*
-          :content '(("unickname" . "masatoi")
-                     ("upasswd" . "gardenwiz")))
-
-
-"https://srad.jp/~masatoi/achievements"
-
-(dex:get "http://b.hatena.ne.jp/masatoi/hotentry")
+(dex:get "http://b.hatena.ne.jp/masatoi/hotentry") ;; => error
 
 (defparameter *hatena-login-url* "https://www.hatena.ne.jp/login")
 (defparameter *cookie-jar* (cl-cookie:make-cookie-jar))
@@ -214,27 +158,50 @@ userlogin: ログイン
 (dex:post *hatena-login-url*
           :cookie-jar *cookie-jar*
           :content '(("name" . "masatoi")
-                     ("password" . "garden")))
+                     ("password" . "hogehoge")))
 
 (dex:get "http://b.hatena.ne.jp/masatoi/hotentry" :cookie-jar *cookie-jar*)
 
-name: masatoi
-password: garden
+(defparameter *hatena-logout-url* "https://www.hatena.ne.jp/logout")
 
-
-"span.math"
-
-
-(defmacro with-login (((cookie-jar) &key url id password) &body body)
+(defmacro with-hatena (((cookie-jar) &key id password) &body body)
   `(let ((,cookie-jar (cl-cookie:make-cookie-jar)))
-     (dex:post url
+     (dex:post *hatena-login-url*
                :cookie-jar ,cookie-jar
-               :content (jojo:to-json (list :|organization| ,organization
-                                            :|email| ,email
-                                            :|password| ,password
-                                            :|_csrf_token| ,csrf-token))
-               :headers '(("content-type" . "application/json")))
+               :content `(("name" . ,,id)
+                          ("password" . ,,password)))
      (unwind-protect
           (progn ,@body)
-       (request "/logout" :cookie-jar ,cookie-jar))))
+       (dex:post *hatena-logout-url* :cookie-jar ,cookie-jar))))
 
+;;; for cl-igo
+
+;; cl-igoをロードする
+(ql:quickload :igo)
+
+;; 辞書を読み込む
+(igo:load-tagger "~/igo/ipadic/")
+
+;; 形態素解析を実行する
+(igo:parse "庭には二羽にわとりがいる。")
+
+'(("庭" "名詞,一般,*,*,*,*,庭,ニワ,ニワ" 0)
+  ("に" "助詞,格助詞,一般,*,*,*,に,ニ,ニ" 1)
+  ("は" "助詞,係助詞,*,*,*,*,は,ハ,ワ" 2)
+  ("二" "名詞,数,*,*,*,*,二,ニ,ニ" 3)
+  ("羽" "名詞,接尾,助数詞,*,*,*,羽,ワ,ワ" 4)
+  ("にわとり" "名詞,一般,*,*,*,*,にわとり,ニワトリ,ニワトリ" 5)
+  ("が" "助詞,格助詞,一般,*,*,*,が,ガ,ガ" 9)
+  ("いる" "動詞,自立,*,*,一段,基本形,いる,イル,イル" 10)
+  ("。" "記号,句点,*,*,*,*,。,。,。" 12))
+
+(igo:parse "すもももももももものうち。")
+
+'(("すもも" "名詞,一般,*,*,*,*,すもも,スモモ,スモモ" 0)
+  ("も" "助詞,係助詞,*,*,*,*,も,モ,モ" 3)
+  ("もも" "名詞,一般,*,*,*,*,もも,モモ,モモ" 4)
+  ("も" "助詞,係助詞,*,*,*,*,も,モ,モ" 6)
+  ("もも" "名詞,一般,*,*,*,*,もも,モモ,モモ" 7)
+  ("の" "助詞,連体化,*,*,*,*,の,ノ,ノ" 9)
+  ("うち" "名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ" 10)
+  ("。" "記号,句点,*,*,*,*,。,。,。" 12))

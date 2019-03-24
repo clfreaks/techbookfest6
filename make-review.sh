@@ -11,7 +11,7 @@ md2review ./03-Library-Investigation/library-investigation.md > ./src/03-library
 echo "converting 04-Make-Project/make-project.md"
 md2review ./04-Make-Project/make-project.md > ./src/04-Make-Project.re
 echo "converting 05-Web-Scraping/outline.md"
-md2review ./05-Web-Scraping/outline.md    > ./src/05-Web-Scraping.re
+md2review --render-link-in-footnote ./05-Web-Scraping/outline.md    > ./src/05-Web-Scraping.re
 echo "converting 06-Test/rove.md"
 md2review ./06-Test/rove.md               > ./src/06-Test.re
 echo "converting 09-RaspberryPi/RaspberryPi.md"
