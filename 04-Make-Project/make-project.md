@@ -139,7 +139,7 @@ git dexador https://github.com/fukamachi/dexador.git
 ql jonathan 2018-12-10
 ```
 
-Lemで`M-x slime`でREPLを起動します。ql:quickloadでqlotをロードして、qlot:installでプロジェクトをインストールします。
+Lemの起動後、`M-x slime`でREPLを起動します。ql:quickloadでqlotをロードした後、qlot:installでプロジェクトをインストールします。
 
 ```
 CL-USER> (ql:quickload :qlot)
@@ -148,16 +148,18 @@ CL-USER> (qlot:install :yubin)
 
 インストール後、プロジェクトルートにquicklisp/ディレクトリとqlfile.lockファイルが作成されます。
 
-qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールすれば、他の環境で`qlot:install`をすると、同じバージョンのライブラリを使うことができます。
+qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールしておけば、他の環境で`qlot:install`したときにも全く同じバージョンのライブラリを使うことが保証されます。
 
 #### プロジェクトをロードする
 
-プロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
+プロジェクトローカルのquicklisp内からプロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
 
 ```
 CL-USER> (qlot:quickload :yubin)
 CL-USER> (yubin/main:get-place 6380321)
 奈良県吉野郡天川村坪内
+NIL
+CL-USER> 
 ```
 
 #### ライブラリをアップデートする
