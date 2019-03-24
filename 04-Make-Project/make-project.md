@@ -102,10 +102,10 @@ $ 奈良県吉野郡天川村坪内
 (in-package #:yubin/main)
 
 (defun get-place (zipcode)      
-  (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))
-	 (data (reverse (car (fourth (jonathan:parse (dex:get url))))))
-	 (place (concatenate 'string (first data)(third data) (fifth data))))
-    (format t "~A~%" place)))
+　(let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))
+　　　　　(data (reverse (car (fourth (jonathan:parse (dex:get url))))))
+　　　　　(place (concatenate 'string (first data)(third data) (fifth data))))
+　　(format t "~A~%" place)))
 ```
 
 ### roswell/yubin.ros
