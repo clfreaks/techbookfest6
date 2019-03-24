@@ -112,7 +112,7 @@ Obituary"
 同様にして、取得したDOMツリーに対して変更を加えることもできる。例えばテキストノードの文字列を全て大文字に変更するには、`traverse`でDOMツリーを走査しながら、`text-node-p`を満足するノードオブジェクトのスロットに`setf`で新しい値を設定すればよい。
 
 ```
-(plump:traverse root
+(plump:traverse *root-node*
                 (lambda (node)
                   (setf (plump:text node)
                         (string-upcase (plump:text node))))
@@ -265,7 +265,7 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
 ;; => #<SB-SYS:FD-STREAM for "socket 192.168.xx.yy:zz, peer: 13.35.50.30:80">
 ```
 
-ログインと同様に、ログアウトするときもログアウト用のURLにPOSTリクエストを送るだけである。ログインして一連の処理を行い、最後に必ずログアウトするようなマクロ`with-hatena`を考えることができる。
+ログインと同様に、Webサイトからログアウトするときもログアウト用のURLにPOSTリクエストを送るだけである。以下のように、ログインして一連の処理を行い、最後に必ずログアウトするようなマクロ`with-hatena`を考えることができる。
 
 ```
 (defparameter *hatena-logout-url* "https://www.hatena.ne.jp/logout")
@@ -281,7 +281,7 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
        (dex:post *hatena-logout-url* :cookie-jar ,cookie-jar))))
 ```
 
-このマクロでは内部で生成されるCookieは局所変数に束縛され、このマクロ内でのみ使用することができる。`with-hatena`を使うことで、ログイン/ログアウト処理を意識することなくログインが必要なURLにアクセスすることができる。
+このマクロ内で生成されるCookieオブジェクトは局所変数に束縛され、本体部分で使用することができる。`with-hatena`を使うことで、ログイン/ログアウト処理を意識することなくログインが必要なURLにアクセスすることができる。
 
 ```
 (with-hatena (cookie-jar) (:id "masatoi" :password "hogehoge")
@@ -291,7 +291,7 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
 実際のところ、ログインのためにJavascriptを必要とするサイトや、ユーザIDとパスワード以外にCSRFトークンなどを必要とするサイトも多く、サイト毎にログイン方法は異なる。しかし大枠としては、ここで解説したような流れでログインできるだろう。
 
 ## 文書分類 / 文書クラスタリング
-この節では、Webスクレイピングで得られた大量のテキストデータからどのように構造を取り出すかについて解説する。
+この節では、Webスクレイピングで得られた大量のテキストデータから、機械学習アルゴリズムを使って、どのように構造を取り出すかについて解説する。
 ここでは特に、文書分類と文書クラスタリングについて解説する。
 
 文書分類は教師あり学習の問題であり、文書に対してあらかじめラベル(記事カテゴリやスパムか否かなど)が付いているデータで学習し、未知の文書に対してその文書がどのラベルかを推定する。例えばメールソフトのスパムフィルタや自動タグ付けがこれに当たる。
@@ -310,7 +310,7 @@ Common Lispには機械学習ライブラリの数こそ少ないが、外部ラ
 
 ### 形態素解析器: cl-igo
 
-[cl-igo](http://igo.osdn.jp/cl-igo.html)はCommon Lispから使える形態素解析器で、MeCabの辞書を変換したバイナリ辞書を使う。
+[cl-igo](http://igo.osdn.jp/cl-igo.html)はCommon Lispから使える形態素解析器で、MeCabの辞書を変換したバイナリ辞書を使う。辞書の変換にはJavaを使用するが、その後の推論部分はCommon Lispのみで実装されている。
 
 #### cl-igoのインストール
 
@@ -338,7 +338,7 @@ mecab-ipadic-2.7.0-20070801 EUC-JP
 ```
 
 #### cl-igoをロードし、形態素解析を実行する
-最後に、LispのREPLなどで`ql:quickload`でcl-igoをロードし、`igo:load-tagger`で先程作ったバイナリ辞書のディレクトリを指定して読み込む。ここまでで準備は完了である。以降は`igo:parse`関数に日本語の文を与えればそれを形態素解析した結果のリストが返る。
+最後に、LispのREPLなどで`ql:quickload`でcl-igoをロードし、`igo:load-tagger`で先程作ったバイナリ辞書のディレクトリを指定して読み込む。ここまでで準備は完了となる。以降は`igo:parse`関数に日本語の文を与えればそれを形態素解析した結果のリストが返る。
 
 ```
 ;; cl-igoをロードする
@@ -362,8 +362,67 @@ mecab-ipadic-2.7.0-20070801 EUC-JP
 ```
 
 ### データセットの作成
+#### Livedoorニュースコーパス
+ここでは説明のために、クリエイティブコモンズライセンスで公開されているLivedoorニュースコーパスを使用する。これは次のURLからダウンロードできる。
+
+- https://www.rondhuit.com/download.html#ldcc
+
+このデータセットは9つのニュースサイトから合計7367個の記事を集めたものであり、出展ごとにディレクトリに分けて、1記事1ファイルのテキストファイルとして収録されている。以降では、ここでダウンロードしたファイルを`~/datasets/livedoor`に展開したものとして話を進める。
+
+#### 文書データのスパースベクトルとしての表現
+機械学習アルゴリズムを使ってデータから学習するには、まずデータの特徴量を適切に定める必要がある。
+
+文書集合を構成する各文書は、1つの実数ベクトルとして表現できる。表現方法としては色々なものが考えられるが、文書分類の場合は文書中に出現する単語の頻度に注目した表現方法がよく使われる。具体的には、文書集合全体に現れる全単語数分の長さを持つベクトルを用意し、出現した単語に対応する位置に出現した回数を設定する。
+
+文書集合全体に現れる単語数は3万語以上あるが、1つの文書の中に現れる単語数は高々2、3百個でしかない。そのため1つの文書に対応するベクトルはほとんどが0の疎なベクトル(スパースベクトル)になる。
+
 #### TF-IDF
-#### スパースなデータの取り扱い
+単純な単語の出現回数ではなく、単語の重要度を測るための指標の一つとして、TF-IDFがある。
+
+TF-IDFは"Term Frequency - Inverse Document Frequency"の略で、「ある文書中に出現する単語の頻度」を「文書集合全体で出現する単語の頻度」で割ったものである。この意味するところは、ある文書中で相対的に頻繁に出てくる単語は重要度が高いと考えられるが、どの文書にも共通して現れるような一般的な単語であるなら、その重要度は差し引いて考える、ということである。
+
+TF-IDFでも文書中に出現していない単語に対する値は0となるので、やはりスパースベクトルになる。
+
+#### cl-docclassによるテキストデータからの特徴抽出
+
+テキストデータを形態素解析し、TF-IDFで単語の重要度を計算し、スパースベクトルのリストとして返す一連の処理を行うライブラリとして`cl-docclass`がある。これはRoswellからインストールできる。
+
+```
+ros install masatoi/cl-docclass
+```
+
+```
+(ql:quickload :cl-docclass)
+
+(defparameter *livedoor-data-dir* #P"~/datasets/livedoor/text/")
+
+(defparameter *news-site-names*
+  '("kaden-channel" "peachy" "sports-watch" "dokujo-tsushin" "livedoor-homme"
+    "topic-news" "it-life-hack" "movie-enter" "smax"))
+
+(defparameter *livedoor-data*
+  (mapcar (lambda (p)
+            (uiop:directory-files
+             (merge-pathnames (concatenate 'string p "/") *livedoor-data-dir*)))
+          *news-site-names*))
+
+(defparameter *livedoor-data-files*
+  (alexandria:flatten *livedoor-data*))
+
+;; 単語の文字列をキー、単語の通しインデックスと出現回数のドット対をバリューとするハッシュテーブル
+(defparameter *word-hash* (make-hash-table :test 'equal))
+
+;; *word-hash*に値を設定する
+(dolist (file *livedoor-data-files*)
+  (docclass:add-words-to-hash-from-file! file *word-hash*))
+
+;; 頻度の小さい単語を除いてハッシュテーブルを作り直す
+(setf *word-hash* (remove-infrequent-words *word-hash* 10))
+
+(defparameter *tf-idf-sparse-vector-list*
+  (docclass:make-tf-idf-list-from-files *livedoor-data-files* *word-hash*))
+```
+
 ### 教師あり学習、線形分類器: cl-online-learning
 ### 教師なし学習、テンソル分解: cl-tensor-decomposition
 

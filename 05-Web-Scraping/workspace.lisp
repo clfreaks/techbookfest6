@@ -209,3 +209,35 @@
   ("の" "助詞,連体化,*,*,*,*,の,ノ,ノ" 9)
   ("うち" "名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ" 10)
   ("。" "記号,句点,*,*,*,*,。,。,。" 12))
+
+;;; cl-docclass
+
+(ql:quickload :cl-docclass)
+
+(defparameter *livedoor-data-dir* #P"~/datasets/livedoor/text/")
+
+(defparameter *news-site-names*
+  '("kaden-channel" "peachy" "sports-watch" "dokujo-tsushin" "livedoor-homme"
+    "topic-news" "it-life-hack" "movie-enter" "smax"))
+
+(defparameter *livedoor-data*
+  (mapcar (lambda (p)
+            (uiop:directory-files
+             (merge-pathnames (concatenate 'string p "/") *livedoor-data-dir*)))
+          *news-site-names*))
+
+(defparameter *livedoor-data-files*
+  (alexandria:flatten *livedoor-data*))
+
+;; 単語の文字列をキー、単語の通しインデックスと出現回数のドット対をバリューとするハッシュテーブル
+(defparameter *word-hash* (make-hash-table :test 'equal))
+
+;; *word-hash*に値を設定する
+(dolist (file *livedoor-data-files*)
+  (docclass:add-words-to-hash-from-file! file *word-hash*))
+
+;; 頻度の小さい単語を除いてハッシュテーブルを作り直す
+(setf *word-hash* (remove-infrequent-words *word-hash* 10))
+
+(defparameter *tf-idf-sparse-vector-list*
+  (docclass:make-tf-idf-list-from-files *livedoor-data-files* *word-hash*))
