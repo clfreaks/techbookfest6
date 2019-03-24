@@ -261,15 +261,20 @@ CL-USER>
 
 あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロをSWANKサーバ側で定義さていると出来ます。
 例えばcl-ppcreにregister-groups-bindというマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
+
+```lisp
+(ppcre:register-groups-bind (key value)
+                            ("(\\w+):(\\w+)" "foo:bar")
+                            (cons key value))
+```
+
 cl-ppcreを読み込むと正しくインデントできます。
 
 ```
 CL-USER> (ql:quickload :cl-ppcre)
 ```
 
-実際に試してみると次のようにインデントされます。
-
-```
+```lisp
 (ppcre:register-groups-bind (key value)
     ("(\\w+):(\\w+)" "foo:bar")
   (cons key value))
@@ -278,7 +283,7 @@ CL-USER> (ql:quickload :cl-ppcre)
 静的にインデントを設定したい場合は`lem-lisp-syntax:set-indentation`を使います。
 `~/.lem.d/init.lisp`に次の式を追加してみます。
 
-```
+```lisp
 (lem-lisp-syntax:set-indentation
  "with-mock-functions"
  (lem-lisp-syntax.indent:get-indentation "flet"))
@@ -358,7 +363,7 @@ lemからマクロ展開をするには`C-c C-m (M-x lisp-macroexpand)`を使い
 
 マクロ展開にはSWANKサーバ側でそのマクロを定義されている必要があるため、事前にマクロを評価しておく必要があります。
 
-例として[clhs](http://clhs.lisp.se/Body/f_mexp_.htm) のExamplesで定義されているマクロ`alpha`, `beta`でマクロ展開してみます。
+例としてhttp://clhs.lisp.se/Body/f_mexp_.htm のExamplesで定義されているマクロ`alpha`, `beta`でマクロ展開してみます。
 
 ```lisp
 (defmacro alpha (x y) `(beta ,x ,y))
@@ -647,7 +652,11 @@ lemでの拡張機能の書き方を紹介します。プロジェクト名はpo
 
 ![完成図](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-extension-preview.png)
 
-上のスクリーンショットでは/r/lispの投稿のリストを取得して表示しています。選択するとリンク先をブラウザで開く機能などがついています。
+上のスクリーンショットでは/r/lispの投稿のリストを取得して表示しています。
+それぞれの行の[...]が投稿者名でそのあとのテキストがタイトルです。
+選択するとリンク先をブラウザで開く機能などがついています。
+
+本書が白黒で印刷された場合の注意書きですが、投稿者名のところは赤で、タイトルは水色で表示されています。
 
 ### プロジェクトの作成
 
@@ -674,9 +683,9 @@ CL-USER> (ql:quickload :lem-posts-list)
 
 もしエラーが出て読み込めない場合、パスが通っていない可能性が高いです。デフォルトでは`$HOME/common-lisp`にパスが通ってあるので、posts-listディレクトリを`$HOME/common-lisp/`以下に配置してみてください。
 
-### 記事のリストを取得
+### 投稿リストを取得
 
-subredditを指定して、redditの記事をjsonで取得します。1つの記事をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
+subredditを指定して、redditの投稿をjsonで取得します。1つの投稿をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので`posts.lisp`に分離します。
 
 ```lisp
 (defpackage #:lem-posts-list/posts
@@ -728,7 +737,7 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 ;; 出力は長いので省略
 ```
 
-投稿一覧が取得できるようになったので、次はその内容をLemに表示し選択できるようにします。投稿一覧用のバッファを作り、そこにfetch-posts関数から返ってきたpostのリストを書き出していきます。その前にlemで扱うオブジェクトについていくつか見ていきます。
+投稿一覧が取得できるようになったので、次はその内容をLemに表示し選択できるようにしますが、その前にLemで扱うオブジェクトについていくつか見ていきます。
 
 ### buffer
 
@@ -790,6 +799,74 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 `with-point`の`kind`を省略した場合は:temporaryになります。
 
+### モード
+バッファ上で操作をするときに、ソースコードを表示する場合はその言語専用の振舞いをしてほしい場合があります。
+モードではそのモードの名前や対応するキーバインド、シンタックステーブル、などを設定します。
+
+モードにはメジャーモードとマイナーモードがあり、メジャーモードはバッファに一つだけ設定でき、マイナーモードは複数設定できます。
+
+### キーマップ
+キーを入力したときに特定のコマンドを呼び出すために、キーとコマンドの対応表をキーマップとして管理し、モードと関連付けて使われます。
+キーマップは関数`make-keymap`で作れますが、後述する`define-major-mode`を使うと自動的に作られるようになっています。
+
+### posts-list-mode
+
+では実際にLemに投稿の一覧を表示していくコードを書いていきます。
+
+投稿の一覧を表示するための専用のバッファを用意し、そのバッファのメジャーモードをposts-list-modeに設定します。
+
+メジャーモードを定義するにはdefine-major-modeを使います。
+
+```lisp
+(define-major-mode posts-list-mode nil
+  (:name "Posts list"
+   :keymap *posts-list-mode-keymap*)
+  (setf (buffer-read-only-p (current-buffer)) t))
+```
+
+define-major-modeのシンタックスは次のとおりです。
+
+```lisp
+(define-major-mode モード名 継承する親モード
+  (:name モードラインに表示する名前
+   :keymap キーマップ
+   :syntax-table シンタックステーブル)
+  本体...)
+```
+
+`:name` `:keymap` `:syntax-table` は省略可能です。
+本体はモードが有効になったタイミングで使われます。
+
+今回は`:name`と`:keymap`を使います。
+`:keymap`には`*posts-list-mode-keymap*`を指定しています。
+:keymapを指定すると自動的にキーマップが作られ、指定した名前のスペシャル変数が定義されます。
+
+また投稿一覧が表示されているバッファをユーザーが変更できないようにしたいので読み込み専用にします。
+本体に
+
+```lisp
+(setf (buffer-read-only-p (current-buffer)) t)
+```
+
+と書くことでモードが有効になったときに現在のバッファを読み込み専用になるようにします。
+
+### 色の定義
+投稿者名とタイトルの色を設定するために、その色の定義をします。
+バッファ内のテキストの見た目はattributeというオブジェクトで扱っていて、
+attributeの定義は`define-attribute`を使います。
+
+```lisp
+(define-attribute author-attribute
+  (t :foreground "red"))
+
+(define-attribute title-attribute
+  (:light :foreground "blue")
+  (:dark :foreground "cyan"))
+```
+
+author-attributeは投稿者に対応するattributeでforegroundをredにしています。
+title-attributeはタイトルに対応し、Lemで設定している背景色が明るい色ならforegroundをblue、暗い色ならcyanにします。
+
 ### コマンドの定義
 
 コマンドは`define-command`で定義できます。
@@ -807,9 +884,3 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 "P"だとデフォルト値がnilになります。
 "s文字列"とした場合コマンドを実行したときにミニバッファで入力を行い、入力した文字列が引数の値になります。
 ほかにもいくつかありますが、ここでは使わないので割愛します。
-
-### モードの定義
-
-### キーバインドの追加
-
-### attribute

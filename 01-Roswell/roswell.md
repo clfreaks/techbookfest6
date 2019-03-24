@@ -1,49 +1,6 @@
 # Roswell
 
-### Roswellで何が嬉しいのか
-
-Common Lispには、ANSI Common Lispの仕様に準拠した処理系が複数あり、それぞれインストール方法やシェルとの連携方法が違います。Roswellは、処理系の違いを統一して扱うための開発ツールです。Roswellを用いると、Common Lispの開発環境の構築、アプリケーション開発、テスト、デプロイをコマンドラインからシンプルに行うことができます。
-
-### Roswell以前のCommon Lisp
-
-### ASDF
-
-ASDF（Another System Definition Facility）は、Common Lispのビルドツールです。主な処理系に組み込まれており、デフォルトで利用することができます。ASDFでは、システム定義ファイルに読み込むコードや依存ライブラリを書くことで、アプリケーションを統一した方法でビルドします。ただし、依存関係にあるライブラリのダウンロードは行いません。
-  
-### Quicklisp
-
-Quicklispは、ASDFをベースにしたライブラリ管理システムです。ライブラリのダウンロード、コンパイル、読み込みを自動で行います。Zach Beane氏により登録済みのライブラリーが主な処理系での動作を確認のうえ、毎月最新版が公開されています。利用するには、次のように`quicklisp.lisp`をダウンロードして処理系から読み込んで初期化する必要があります。
- 
-```
-$ curl -O https://beta.quicklisp.org/quicklisp.lisp
-$ sbcl --load "quicklisp.lisp"
-* (quicklisp-quickstart:install)
-* (ql:add-to-init-file)
-```
- 
-Quicklispでライブラリをインストールするには、REPLから`(ql:quickload :ライブラリ名)`とします。試しに、ユーティリティライブラリAlexandriaをインストールしてみます。
-
-```
-* (ql:quickload :alexandria)
-NIL
-* To load "alexandria":
-  Load 1 ASDF system:
-    alexandria
-; Loading "alexandria"
-
-(:ALEXANDRIA)
-```
-
-`(ql:quickload :<ライブラリ名>)`でロードした後は、`(ライブラリのパッケージ名:シンボル名)`でエクスポートされた関数やマクロを使うことができます。要素をシャッフルする`shuffle`関数を使うには次のようにします。
-
-```
-* (alexandria:shuffle '(1 2 3 4 5 6))
-
-(6 3 5 2 4 1)
-* 
-```
-
-では、Roswellをインストールしましょう。RoswellにはQuicklispが組み込まれているため、Quicklispのダウンロードや初期化の手順は必要ありません。
+本章はRoswellについて解説します。Roswellは複数のCommon Lispの処理系のインストール、管理、切り替え、異なるコマンドラインオプションの共通化等を行なう処理系マネージャです。2014年から開発を開始した、比較的新しいツールであるため、ツールの作者としては悲しいことに、Common Lispのコミュニティの中にはこんなものは不要だろうという意見もあります。Roswellの使い方の一通りがCommon Lispの使い方の説明になるため、他の章に入る前にRoswellの使いかたについて説明します。
 
 ### Roswellのインストール
 
@@ -55,9 +12,9 @@ LinuxとmacOSではHomebrewでインストールすることができます。
 $ brew install roswell
 ```
 
-#### ソースからインストールするには
+#### ソースからインストールする
 
-Homebrewは使わないが、Roswellの開発に興味がある読者は、
+Homebrewが使えない環境での、Roswellのインストールには
 
 * Cのコンパイル環境
 * libcurlと、そのヘッダ
@@ -68,7 +25,8 @@ Homebrewは使わないが、Roswellの開発に興味がある読者は、
 Debianベースの環境では、手順は次の通りです。
 
 ```
-$ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential automake libcurl4-openssl-dev;fi
+$ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential \
+ automake libcurl4-openssl-dev;fi
 $ git clone -b release https://github.com/roswell/roswell.git
 $ cd roswell
 $ sh bootstrap
@@ -142,7 +100,7 @@ $
 
 ## Roswell Script
 
-Roswell Scriptを用いると、シェルコマンドであることを意識せずにCommon Lispでスクリプトを書くことができます。
+Roswell Scriptを用いると、Common Lispでコマンドラインから利用できるスクリプトを書くことができます。
 
 ### ひな形を作成する
 
@@ -243,7 +201,7 @@ Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
 (以下、省略)
 ```
 
-`ros install <Githubアカウント名/レポジトリ名>`とすると、Githubのレポジトリからダウンロードされます。　
+`ros install <GitHubアカウント名/レポジトリ名>`とすると、GitHubのレポジトリからダウンロードされます。　
 
 試しにClackをインストールします。
 
@@ -302,7 +260,7 @@ Listening on localhost:5000.
 
 ### ライブラリの更新
 
-`ros update <ライブラリ名>`とすることで、ライブラリをGithub上の最新版に更新することができます。
+`ros update <ライブラリ名>`とすることで、ライブラリをGitHub上の最新版に更新することができます。
  
 ```
 $ ros update cl-ignition
