@@ -363,7 +363,7 @@ lemからマクロ展開をするには`C-c C-m (M-x lisp-macroexpand)`を使い
 
 マクロ展開にはSWANKサーバ側でそのマクロを定義されている必要があるため、事前にマクロを評価しておく必要があります。
 
-例として[clhs](http://clhs.lisp.se/Body/f_mexp_.htm) のExamplesで定義されているマクロ`alpha`, `beta`でマクロ展開してみます。
+例としてhttp://clhs.lisp.se/Body/f_mexp_.htm のExamplesで定義されているマクロ`alpha`, `beta`でマクロ展開してみます。
 
 ```lisp
 (defmacro alpha (x y) `(beta ,x ,y))
@@ -801,11 +801,14 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
 
 モードにはメジャーモードとマイナーモードがあり、メジャーモードはバッファに一つだけ設定でき、マイナーモードは複数設定できます。
 
+### キーマップ
+キーを入力したときに特定のコマンドを呼び出すために、キーとコマンドの対応表をキーマップとして管理しています。
+
 ### posts-list-mode
 
 では実際にLemに投稿の一覧の表示をしていきます。
 
-表示するための専用のバッファを用意し、そのバッファのメジャーモードをposts-list-modeに設定します。
+投稿の一覧を表示するための専用のバッファを用意し、そのバッファのメジャーモードをposts-list-modeに設定します。
 
 メジャーモードを定義するにはdefine-major-modeを使います。
 
@@ -815,6 +818,22 @@ CL-USER> (lem-posts-list/posts:fetch-posts "lisp")
    :keymap *posts-list-mode-keymap*)
   (setf (buffer-read-only-p (current-buffer)) t))
 ```
+
+define-major-modeのシンタックスを次に示します。
+
+```lisp
+(define-major-mode モード名 継承する親モード
+  (:name モードラインに表示する名前
+   :keymap キーマップ
+   :syntax-table シンタックステーブル)
+  本体...)
+```
+
+`:name` `:keymap` `:syntax-table` は省略可能です。
+本体はモードが有効になったタイミングで使われます。
+
+今回は`:name`と`:keymap`を使います。
+`:keymap`には`*posts-list-mode-keymap*`を指定しています。
 
 ### コマンドの定義
 
