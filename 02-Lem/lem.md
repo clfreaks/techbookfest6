@@ -850,6 +850,23 @@ define-major-modeのシンタックスは次のとおりです。
 
 と書くことでモードが有効になったときに現在のバッファを読み込み専用になるようにします。
 
+### 色の定義
+投稿者名とタイトルの色を設定するために、その色の定義をします。
+バッファ内のテキストの見た目はattributeというオブジェクトで扱っていて、
+attributeの定義は`define-attribute`を使います。
+
+```lisp
+(define-attribute author-attribute
+  (t :foreground "red"))
+
+(define-attribute title-attribute
+  (:light :foreground "blue")
+  (:dark :foreground "cyan"))
+```
+
+author-attributeは投稿者に対応するattributeでforegroundをredにしています。
+title-attributeはタイトルに対応し、Lemで設定している背景色が明るい色ならforegroundをblue、暗い色ならcyanにします。
+
 ### コマンドの定義
 
 コマンドは`define-command`で定義できます。
