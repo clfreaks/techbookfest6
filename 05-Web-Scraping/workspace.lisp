@@ -164,7 +164,7 @@
 
 (defparameter *hatena-logout-url* "https://www.hatena.ne.jp/logout")
 
-(defmacro with-hatena (((cookie-jar) &key id password) &body body)
+(defmacro with-hatena ((cookie-jar) (&key id password) &body body)
   `(let ((,cookie-jar (cl-cookie:make-cookie-jar)))
      (dex:post *hatena-login-url*
                :cookie-jar ,cookie-jar
@@ -173,6 +173,10 @@
      (unwind-protect
           (progn ,@body)
        (dex:post *hatena-logout-url* :cookie-jar ,cookie-jar))))
+
+(with-hatena (cookie-jar) (:id "masatoi" :password "hogehoge")
+  (dex:get "http://b.hatena.ne.jp/masatoi/hotentry" :cookie-jar cookie-jar))
+
 
 ;;; for cl-igo
 

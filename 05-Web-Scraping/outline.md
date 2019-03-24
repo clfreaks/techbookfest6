@@ -265,6 +265,29 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
 ;; => #<SB-SYS:FD-STREAM for "socket 192.168.xx.yy:zz, peer: 13.35.50.30:80">
 ```
 
+ログインと同様に、ログアウトするときもログアウト用のURLにPOSTリクエストを送るだけである。ログインして一連の処理を行い、最後に必ずログアウトするようなマクロ`with-hatena`を考えることができる。
+
+```
+(defparameter *hatena-logout-url* "https://www.hatena.ne.jp/logout")
+
+(defmacro with-hatena ((cookie-jar) (&key id password) &body body)
+  `(let ((,cookie-jar (cl-cookie:make-cookie-jar)))
+     (dex:post *hatena-login-url*
+               :cookie-jar ,cookie-jar
+               :content `(("name" . ,,id)
+                          ("password" . ,,password)))
+     (unwind-protect
+          (progn ,@body)
+       (dex:post *hatena-logout-url* :cookie-jar ,cookie-jar))))
+```
+
+このマクロでは内部で生成されるCookieは局所変数に束縛され、このマクロ内でのみ使用することができる。`with-hatena`を使うことで、ログイン/ログアウト処理を意識することなくログインが必要なURLにアクセスすることができる。
+
+```
+(with-hatena (cookie-jar) (:id "masatoi" :password "hogehoge")
+  (dex:get "http://b.hatena.ne.jp/masatoi/hotentry" :cookie-jar cookie-jar))
+```
+
 実際のところ、ログインのためにJavascriptを必要とするサイトや、ユーザIDとパスワード以外にCSRFトークンなどを必要とするサイトも多く、サイト毎にログイン方法は異なる。しかし大枠としては、ここで解説したような流れでログインできるだろう。
 
 ## 文書分類 / 文書クラスタリング
@@ -315,7 +338,7 @@ mecab-ipadic-2.7.0-20070801 EUC-JP
 ```
 
 #### cl-igoをロードし、形態素解析を実行する
-最後に、LispのREPLなどで`ql:quickload`でcl-igoをロードし、`igo:load-tagger`で先程作ったバイナリ辞書のディレクトリを指定して読み込む。ここまで準備は完了である。以降は`igo:parse`関数に日本語の文を与えればそれを形態素解析した結果のリストが返る。
+最後に、LispのREPLなどで`ql:quickload`でcl-igoをロードし、`igo:load-tagger`で先程作ったバイナリ辞書のディレクトリを指定して読み込む。ここまでで準備は完了である。以降は`igo:parse`関数に日本語の文を与えればそれを形態素解析した結果のリストが返る。
 
 ```
 ;; cl-igoをロードする
