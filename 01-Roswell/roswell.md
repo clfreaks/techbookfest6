@@ -263,25 +263,21 @@ Listening on localhost:5000.
 `ros update <ライブラリ名>`とすることで、ライブラリをGitHub上の最新版に更新することができます。
  
 ```
-$ ros update cl-ignition
-git pull on /Users/t-cool/.roswell/local-projects/dbym4820/cl-ignition/
-find: lib: No such file or directory
-remote: Enumerating objects: 30, done.
-remote: Counting objects: 100% (30/30), done.
-remote: Compressing objects: 100% (11/11), done.
-remote: Total 22 (delta 14), reused 16 (delta 9), pack-reused 0
-Unpacking objects: 100% (22/22), done.
-From https://github.com/dbym4820/cl-ignition
-   2a91314..4d385a5  master     -> origin/master
-Updating 2a91314..4d385a5
-Fast-forward
- LICENSE              |  2 +-
- cl-ignition.asd      |  3 ++-
- example/example.lisp | 22 +++++++++++++---
- src/cl-ignition.lisp | 11 +++++++-
- src/dbpedia.lisp     | 58 +++++++++++++++++++++++++++++++++++++++++++
- src/query.lisp       |  5 +++-
- 6 files changed, 94 insertions(+), 7 deletions(-)
- create mode 100644 src/dbpedia.lisp
-(以下省略)
+$ ros update clack
 ```
+
+## まとめ
+
+* Roswellで処理系をインストールするには`ros install <処理系>`とする。
+
+* RoswellでREPLを起動するには`ros run`とする。
+
+* Roswell Scriptを用いると、Common Lispでシェルコマンドを書くことができる。
+
+* ros buildでは、Roswell Scriptをビルドして実行ファイルを生成することができる。
+
+* ライブラリをGithubからインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
+
+* プロジェクト・トップのroswellフォルダにRoswell Scriptを入れておくと、Roswell Scriptをターミナルのコマンドとして使うことができる。
+
+* ライブラリを最新版に更新するには、ros update <ライブラリ名>とする。
