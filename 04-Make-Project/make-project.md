@@ -102,7 +102,7 @@ package-inferred-systemを使うことを明示するために、システムフ
 
 ### main.lisp
 
-ここでは、JSONのパースにJonathanのparse関数、HTTPのGETメソッドにDexadorのget関数をインポートします。Dexadorのget関数がデフォルトパッケージのGETと名前衝突するので、shadowing-importを行います。
+ここでは、JSONのパースにJonathanのparse関数、HTTPのGETメソッドにDexadorのget関数をインポートします。Dexadorのget関数がデフォルトパッケージのgetと名前衝突を起こすため、shadowing-importを行います。
 
 ```
 (defpackage #:yubin/main
