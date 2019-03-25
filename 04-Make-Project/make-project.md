@@ -89,7 +89,7 @@ $ 奈良県吉野郡天川村坪内
 
 ### main.lisp
 
-ここでは、JSONのパーズのためにJonathanのparse関数、HTTPのGETメソッドを使うためにDexadorのget関数をインポートします。
+ここでは、JSONのパースのためにJonathanのparse関数、HTTPのGETメソッドを使うためにDexadorのget関数をインポートします。
 
 ```
 (defpackage #:yubin/main
