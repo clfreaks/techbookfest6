@@ -88,7 +88,7 @@ $ yubin 6380321
 $ 奈良県吉野郡天川村坪内
 ```
 
-では、システムファイル`yubin.asd`、メインファイルの`main.lisp`、Roswell Script用の`yubin.ros`、Qlotを用いたライブラリのバージョン管理法についてみていきます。
+では、システムファイル`yubin.asd`、メインファイルの`main.lisp`、Roswell Scriptの`yubin.ros`の内容、Qlotを用いたライブラリのバージョン管理法についてみていきます。
 
 ### yubin.asd
 
