@@ -152,27 +152,23 @@ git dexador https://github.com/fukamachi/dexador.git
 ql jonathan 2018-12-10
 ```
 
-Lemの起動後、`M-x slime`でREPLを起動します。`ql:quickload`でQlotをロードした後、`qlot:install`でプロジェクトをインストールします。
+Lemの起動後、`M-x slime`でREPLを起動します。`ql:quickload`でQlotの読み込み後、`qlot:install`でプロジェクトをインストールします。
 
 ```
 CL-USER> (ql:quickload :qlot)
 CL-USER> (qlot:install :yubin)
 ```
 
-インストール後、プロジェクトルートにquicklisp/ディレクトリとqlfile.lockファイルが作成されます。
-
-qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。一度こうしてインストールすれば、他の環境で`qlot:install`したときにも同じバージョンのライブラリを使うことが保証されます。
+インストール後、プロジェクト内のquicklispフォルダにライブラリがダウンロードされ、qlfile.lockファイルが作成されます。qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。開発者間でqlfile.lockを共有し、各環境で`qlot:install`を実行することで、依存ライブラリのバージョンを統一することができます。
 
 #### プロジェクトをロードする
 
-プロジェクトローカルのquicklisp内からプロジェクトをロードするときは`ql:quickload`の代わりに`qlot:quickload`を実行します。`qlot:quickload`を使うと、プロジェクトローカルのquicklisp以下からライブラリをロードします。
+`qlot:quickload`を使うと、プロジェクト内のquicklispからライブラリをロードします。
 
 ```
 CL-USER> (qlot:quickload :yubin)
 CL-USER> (yubin/main:get-place 6380321)
 奈良県吉野郡天川村坪内
-NIL
-CL-USER> 
 ```
 
 #### ライブラリをアップデートする
@@ -184,10 +180,6 @@ CL-USER> (qlot:update :yubin)
 ```
 
 これで、`quicklisp/`以下とqlfile.lockが更新されます。
-
-#### 複数人での開発
-
-開発者間でqlfile.lockを共有し、各環境で`qlot:install`を実行すると、ライブラリのバージョンを統一させることができます。
 
 ## まとめ
 
