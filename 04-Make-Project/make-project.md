@@ -69,7 +69,7 @@ qlfileは、Node.jsのpackage.json、RubyのGemfileのような働きをしま�
 
 ## プロジェクト作成の例 - 地名検索システムyubin
 
-package-inferred-systemを用いて、簡単なプロジェクトを作成してみましょう。zipcloudのWeb APIを利用して、郵便番号から地名を検索するシステム`yubin`を作ります。プロジェクト完成後の利用方法は次の通りです。
+package-inferred-systemを用いて、簡単なプロジェクトを作成します。zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。完成後の利用法は次の通りです。
 
 ```
 $ ros install t-cool/yubin
@@ -79,7 +79,7 @@ $ 奈良県吉野郡天川村坪内
 
 ### yubin.asd
 
-システムファイルを次のように書きます。package-inferred-systemを使うことを明示するために、`:class :package-inferred-system`を追加します。`:depends-on`で、mainファイルへのパスを書きます。
+package-inferred-systemを使うことを明示するために、システムファイルに`:class :package-inferred-system`を追加します。`:depends-on`でmainファイルへのパスを書きます。
 
 ```
 (defsystem "yubin"
@@ -89,7 +89,7 @@ $ 奈良県吉野郡天川村坪内
 
 ### main.lisp
 
-ここでは、JSONのパースのためにJonathanのparse関数、HTTPのGETメソッドを使うためにDexadorのget関数をインポートします。
+ここでは、JSONのパースにJonathanのparse関数、HTTPのGETメソッドにDexadorのget関数をインポートします。Dexadorのget関数がデフォルトパッケージのGETと名前衝突するので、shadowing-importを行います。
 
 ```
 (defpackage #:yubin/main
