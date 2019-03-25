@@ -179,7 +179,7 @@ CL-USER> (yubin/main:get-place 6380321)
 CL-USER> (qlot:update :yubin)
 ```
 
-これで、`quicklisp/`以下とqlfile.lockが更新されます。
+これで、プロジェクト内の`quicklisp`以下とqlfile.lockが更新されます。
 
 ## まとめ
 
