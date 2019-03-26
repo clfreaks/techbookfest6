@@ -27,9 +27,9 @@ $ make-project yubin --depends-on dexador jonathan rove
 
 ### ASDF
 
-Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。ASDFは、Common Lispのシステム管理ツールであり、主要な処理系にデフォルトで組み込まれています。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。
+Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。ASDFは、Common Lispのシステム管理ツールであり、主要な処理系にデフォルトで組み込まれています。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。
 
-### プロジェクト作成の例 - 地名検索システムyubin
+### プロジェクトの作成例 - 地名検索システムyubin
 
 では、生成されたファイルを編集しながら、簡単なアプリを作成します。zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。完成後は、次のように利用できます。
 
@@ -39,7 +39,7 @@ $ yubin 6380321
 奈良県吉野郡天川村坪内
 ```
 
-#### src/main.lisp
+cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。`main.lisp`を次のように編集します。
 
 ```
 (defpackage #:yubin  ; ①
@@ -63,8 +63,6 @@ yubinパッケージにin-packageした後、郵便番号(zipcode)から地名�
 \clearpage
 //}
 
-#### roswell/yubin.ros
-
 インストール後にyubinコマンドが使えるように、プロジェクト内のroswellフォルダ内にRoswell Scriptを作成します。Roswell Scriptは、`ros init`コマンドで生成される雛形を元に作成します。
 
 ```
@@ -72,6 +70,7 @@ $ mkdir roswell && cd roswell
 $ ros init yubin.ros
 Successfully generated: yubin.ros
 ```
+
 生成された雛形を次のように編集します。
 
 ```
@@ -95,7 +94,7 @@ exec ros -Q -- $0 "$@"
 
 ⑤では、デフォルトでコメントアウトされていますが、コメントアウトを解除してql:quickloadにyubinを指定します。⑥では、main関数を定義しています。yubinコマンドが呼ばれるとき、このmain関数が実行されます。
 
-#### プロジェクトの共有
+### プロジェクトの共有
 
 プロジェクトの完成後は、プロジェクトをGitHubのリポジトリにpushすることで、プロジェクトを他者と共有することができます。
 
