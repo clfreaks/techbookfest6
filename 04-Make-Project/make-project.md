@@ -12,13 +12,12 @@ $ ros install fukamachi/cl-project
 
 ### プロジェクトの雛形生成
 
-まず、Roswellからプロジェクトを読み込めるように、`~/.roswell/local-projects`に移動します。make-projectコマンドを用いて、プロジェクト名をyubin、依存ライブラリにdexador、janathan、roveを指定してプロジェクトの雛形を生成します。
+まず、Roswellからプロジェクトを読み込めるように、`~/.roswell/local-projects`に移動します。make-projectコマンドを用いて、プロジェクト名をyubin、依存ライブラリにdexador、jonathan、roveを指定してプロジェクトの雛形を生成します。
 
 ```
 $ cd ~/.roswell/local-projects
-$ make-project ./ --name yubin --depends-on dexador janathan rove
+$ make-project yubin --depends-on dexador jonathan rove
 ```
-
 
 上記のようにmake-projectコマンドを実行後、システム定義ファイル(yubin.asd)、メインファイル(src/main.lisp)、テストファイル(tests/main.lisp)、READMEファイルが生成されます。
 
