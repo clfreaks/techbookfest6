@@ -18,18 +18,6 @@ LemをインストールするにはRoswellを使うのが簡単です。
 $ ros install cxxxr/lem
 ```
 
-パスの設定は次のとおりです。
-
-```
-export PATH=$PATH:~/.roswell/bin
-```
-
-次のコマンドでlemを最新の状態に更新できます。
-
-```
-$ ros update lem
-```
-
 ## Lemで使う用語
 
 LemではEmacsと同じようにControlやMetaをプリフィクスとするコマンドを使います。
@@ -64,19 +52,6 @@ lemコマンドはRoswellからインストールしている場合に使えま�
 ```
 $ lem [ファイル名]
 ```
-
-コマンドラインで起動したCommon LispのREPLから使うには次のとおりです。
-
-```
-* (ql:quickload :lem-ncurses)
-* (lem:lem) ;; sbclの場合は(ed)でも可能
-```
-
-起動時の画面は次のようになります。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-startup.png)
-
-Lemでは起動時にREPLが始まります。
-REPLについては後述します。
 
 終了するには`C-x C-c`と入力してください。
 
@@ -190,7 +165,7 @@ lispファイルを開くか、明示的に`M-x lisp-mode`とするかREPLが開
 lisp-modeが有効化されたときにSWANKサーバに接続していない場合は、自動でLemランタイム上でサーバを起動し、接続します。
 LemはCommon Lispで書いているのでLemとSWANKサーバを同じランタイム上で動かせ、それをすることでLem自身の状態の変更をSLIMEの機能を介して行うことが出来ます。
 
-起動時にはREPLが開かれていますが、明示的にREPLを開くには`start-lisp-repl`コマンドを使います。
+REPLを開くには`start-lisp-repl`コマンドを使います。
 
 ```
 M-x start-lisp-repl
