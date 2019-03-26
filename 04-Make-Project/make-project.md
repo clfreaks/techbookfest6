@@ -27,7 +27,7 @@ $ make-project yubin --depends-on dexador jonathan rove
 
 ### ASDF
 
-Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。ASDFは、Common Lispのシステム管理ツールであり、主要な処理系にデフォルトで組み込まれています。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。ASDFはプロジェクトの開発を管理します。cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。
+Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。ASDFは、Common Lispのシステム管理ツールであり、主要な処理系にデフォルトで組み込まれています。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。
 
 ### プロジェクト作成の例 - 地名検索システムyubin
 
@@ -36,7 +36,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 ```
 $ ros install clfreaks/yubin
 $ yubin 6380321
-$ 奈良県吉野郡天川村坪内
+奈良県吉野郡天川村坪内
 ```
 
 #### src/main.lisp
@@ -58,6 +58,10 @@ $ 奈良県吉野郡天川村坪内
 ①では、yubinパッケージを定義しています。JSONのパースとHTTPのGETメソッドのために、jonathanパッケージとdexadorパッケージをimport-fromで指定します。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
 
 yubinパッケージにin-packageした後、郵便番号(zipcode)から地名を返す関数`get-place`を定義します。②では、zipcloudのURLと引数zipcodeの値を連結して、GETメソッドのリクエスト先をurlに設定します。③では、リクエストした結果から必要な情報をdataに設定します。④では、③で設定したdataから文字列を抜き出した値を連結して、値を返します。
+
+//embed[latex]{
+\clearpage
+//}
 
 #### roswell/yubin.ros
 
