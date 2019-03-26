@@ -1,130 +1,76 @@
-# プロジェクトの作り方
+# プロジェクトの作成
 
-## プロジェクト
+## cl-project
 
-Common Lispでプロジェクトというとき、多くの場合はライブラリのことを指します。オープンソースで公開されているライブラリの多くは、ASDFを用いて構築されています。ASDFでは、規定の方法でシステムファイルを書くことで自動でライブラリをビルドします。
+本章では、Common Lisp製ライブラリcl-projectを用いて、小さなCommon Lispプロジェクトを作成する方法を紹介します。cl-projectは、Common Lispプロジェクトの雛形を生成するライブラリです。プロジェクトのシステム定義ファイル、メインファイル、テストファイル、READMEファイルを生成します。
 
-## package-inferred-system
-
-`package-inferred-system`を用いたプロジェクトの作り方を紹介します。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、`one package per file`(1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
-
-WebフレームワークUtopianでは、この手法でシステムが構築されています。`utopian.asd`で`utopian/package`と指定されているのは、utpianフォルダーのpackage.lispを示します。
+では、cl-projectをRoswellでインストールしましょう。Roswellでcl-projectをインストールすると、make-projectコマンドが使えるようになります。
 
 ```
-(defsystem "utopian"
-  :description "Full stack web application framework"
-  :depends-on ("utopian/package" "lack" "mito" "bordeaux-threads"))
+$ ros install fukamachi/cl-project
 ```
 
-`package.lisp`の中を見ましょう。`#:utopian/db`は、utopianフォルダのdb.lispを示します。
+### プロジェクトの雛形生成
+
+まず、Roswellからプロジェクトを読み込めるように、`~/.roswell/local-projects`に移動します。make-projectコマンドを用いて、プロジェクト名をyubin、依存ライブラリにdexador、janathan、roveを指定してプロジェクトの雛形を生成します。
 
 ```
-(uiop:define-package #:utopian/package
-  (:nicknames #:utopian)
-  (:use-reexport #:utopian/view
-                 #:utopian/config
-                 #:utopian/db
-		 ;; 以下省略 ))
+$ cd ~/.roswell/local-projects
+$ make-project ./ --name yubin --depends-on dexador janathan rove
 ```
 
-`db.lisp`では、次のようにパッケージが定義されています。
 
-```
-(defpackage #:utopian/db
-  (:use #:cl)
-  (:import-from #:utopian/config
-                #:config)
-  (:import-from #:cl-dbi
-                #:connect-cached)
-  (:import-from #:mito
-                #:*connection*)
-  (:export #:db
-           #:connection-settings
-           #:with-connection))
-```
-
-defpackage内で依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。ライブラリから指定のシンボルのみを取り込むときは、`(:import-from #:パッケージ名 #:シンボル名)`とします。上記の場合は、`utopian/config.lisp`の`config`、`cl-dbi`の`connect-cached`、`mito`の`*connection*`がインポートされます。
-
-このようにシステムを定義後、Quicklispでシステムを読み込むと、依存関係にあるライブラリがダウンロードされて順番に読み込まれます。
+上記のようにmake-projectコマンドを実行後、システム定義ファイル(yubin.asd)、メインファイル(src/main.lisp)、テストファイル(tests/main.lisp)、READMEファイルが生成されます。
 
 //embed[latex]{
 \clearpage
 //}
 
-## Qlot
+### ASDF
 
-Qlotは、プロジェクトごとにライブラリを管理するためのツールです。Qlotでは、依存ライブラリの情報を`qlfile`に記載することで、プロジェクトフォルダ内の`quicklisp`フォルダ内にライブラリがダウンロードされて、ライブラリのバージョンを固定することができます。
+Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。ASDFは、Common Lispのシステム管理ツールであり、主要な処理系にデフォルトで組み込まれています。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。ASDFはプロジェクトの開発を管理します。cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。
 
-同じマシンで複数のプロジェクトの開発を行うとき、それぞれのプロジェクトで依存ライブラリのバージョンが異なると、Quicklispだけでは管理しきれません。Qlotを用いると、複数人で開発するとき、それぞれの環境で依存ライブラリのバージョンをあわせることができます。
+### プロジェクト作成の例 - 地名検索システムyubin
 
-qlfileは、Node.jsのpackage.json、RubyのGemfileのような働きをします。Nodejsではpackage.jsonで指定したバージョンがnode\_modulesにダウンロードされますが、Qlotではqlfileでの指定バージョンがquicklispフォルダにダウンロードされます。
-
-![Qlot](https://github.com/clfreaks/techbookfest6/blob/master/images/04-qlot.png)
-
-次のチャプターで、実際にプロジェクト内でQlotを用いて、Qlotの使い方を説明します。
-
-//embed[latex]{
-\clearpage
-//}
-
-## プロジェクト作成の例 - 地名検索システムyubin
-
-package-inferred-systemを用いて、簡単なプロジェクトを作成します。zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。プロジェクトのファイル構成は次の通りです。
+では、生成されたファイルを編集しながら、簡単なアプリを作成します。zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。完成後は、次のように利用できます。
 
 ```
-yubin
-├── yubin.asd
-├── main.lisp
-├── roswell
-│   └── yubin.ros
-└── qlfile
-```
-
-Roswellでyubinをインストール後、次のように利用できます。
-
-```
-$ ros install t-cool/yubin
+$ ros install clfreaks/yubin
 $ yubin 6380321
 $ 奈良県吉野郡天川村坪内
 ```
 
-では、システムファイル`yubin.asd`、メインファイルの`main.lisp`、Roswell Scriptの`yubin.ros`の内容、Qlotを用いたライブラリのバージョン管理法についてみていきます。
-
-### yubin.asd
-
-package-inferred-systemを使うことを明示するために、システムファイルに`:class :package-inferred-system`を追加します。`:depends-on`で`main.lisp`へのパスを書きます。
+#### src/main.lisp
 
 ```
-(defsystem "yubin"
-  :class :package-inferred-system
-  :depends-on (#:yubin/main))  
-```
-
-### main.lisp
-
-ここでは、JSONのパースにJonathanのparse関数、HTTPのGETメソッドにDexadorのget関数をインポートします。Dexadorのget関数がデフォルトパッケージのgetと名前衝突を起こすため、shadowing-importを行います。
-
-```
-(defpackage #:yubin/main
+(defpackage #:yubin  ; ①
   (:use #:cl)
-  (:import-from #:jonathan
-		#:parse)
-  (:shadowing-import-from #:dexador
-			  #:get)
-  (:export #:get-place))
-(in-package #:yubin/main)
+  (:import-from #:jonathan)
+  (:import-from #:dexador)
+  (:export #:get-place)) 
+(in-package #:yubin)
 
-(defun get-place (zipcode)      
-　(let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))
-　　　　　(data (reverse (car (fourth (jonathan:parse (dex:get url))))))
-　　　　　(place (concatenate 'string (first data)(third data) (fifth data))))
-　　(format t "~A~%" place)))
+(defun get-place (zipcode)
+  (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))  ; ②
+         (data (reverse (car (fourth (jonathan:parse (dex:get url)))))))　; ③
+    (concatenate 'string (first data) (third data) (fifth data))))  ; ④
 ```
 
-### roswell/yubin.ros
+①では、yubinパッケージを定義しています。JSONのパースとHTTPのGETメソッドのために、jonathanパッケージとdexadorパッケージをimport-fromで指定します。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
 
-roswellからget-place関数を使えるように、Roswellスクリプトを書きます。
- 
+yubinパッケージにin-packageした後、郵便番号(zipcode)から地名を返す関数`get-place`を定義します。②では、zipcloudのURLと引数zipcodeの値を連結して、GETメソッドのリクエスト先をurlに設定します。③では、リクエストした結果から必要な情報をdataに設定します。④では、③で設定したdataから文字列を抜き出した値を連結して、値を返します。
+
+#### roswell/yubin.ros
+
+インストール後にyubinコマンドが使えるように、プロジェクト内のroswellフォルダ内にRoswell Scriptを作成します。Roswell Scriptは、`ros init`コマンドで生成される雛形を元に作成します。
+
+```
+$ mkdir roswell && cd roswell
+$ ros init yubin.ros
+Successfully generated: yubin.ros
+```
+生成された雛形を次のように編集します。
+
 ```
 #!/bin/sh
 #|-*- mode:lisp -*-|#
@@ -133,58 +79,40 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(yubin) :silent t))
+  #+quicklisp(ql:quickload '(yubin) :silent t))   ; ⑤
+
 (defpackage :ros.script.yubin.3761982565
   (:use :cl))
 (in-package :ros.script.yubin.3761982565)
 
-(defun main (zipcode &rest argv)
+(defun main (zipcode &rest argv) ; ⑥
   (declare (ignorable argv))
-  (yubin/main:get-place zipcode))
-```
- 
-### qlfile
-
-このプロジェクトでは、外部ライブラリとしてDexadorとJonathanを用いています。yubinのプロジェクト内にqlfileを作成して、各ライブラリのバージョンを固定します。次のように、qlfileを作成して編集します。
-
-```
-git dexador https://github.com/fukamachi/dexador.git
-ql jonathan 2018-12-10
+  (format t "~&~A~%" (yubin:get-place zipcode)))
 ```
 
-Lemの起動後、`M-x slime`でREPLを起動します。`ql:quickload`でQlotの読み込み後、`qlot:install`でプロジェクトをインストールします。
+⑤では、デフォルトでコメントアウトされていますが、コメントアウトを解除してql:quickloadにyubinを指定します。⑥では、main関数を定義しています。yubinコマンドが呼ばれるとき、このmain関数が実行されます。
+
+#### プロジェクトの共有
+
+プロジェクトの完成後は、プロジェクトをGitHubのリポジトリにpushすることで、プロジェクトを他者と共有することができます。
 
 ```
-CL-USER> (ql:quickload :qlot)
-CL-USER> (qlot:install :yubin)
-```
-
-インストール後、プロジェクト内のquicklispフォルダにライブラリがダウンロードされ、qlfile.lockファイルが作成されます。qlfile.lockは、インストールした内容をスナップショットとして記録したものです。このファイルがあると`qlot:install`は`qlfile.lock`を優先します。開発者間でqlfile.lockを共有し、各環境で`qlot:install`を実行することで、依存ライブラリのバージョンを統一することができます。
-
-#### プロジェクトをロードする
-
-`qlot:quickload`を使うと、プロジェクト内のquicklispからライブラリをロードします。
-
-```
-CL-USER> (qlot:quickload :yubin)
-CL-USER> (yubin/main:get-place 6380321)
+$ git push -u origin master
+$ ros install clfreaks/yubin
+$ yubin 6390321
 奈良県吉野郡天川村坪内
 ```
 
-#### ライブラリをアップデートする
+//embed[latex]{
+\clearpage
+//}
 
-ライブラリのバージョンを更新するためにqlfileを変更したときは`qlot:update`を実行します。
+## package-inferred-system
 
-```
-CL-USER> (qlot:update :yubin)
-```
+`package-inferred-system`は、ASDFのオプションとして提供されているパッケージ管理方法です。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、`one package per file`(1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
 
-これで、プロジェクト内の`quicklisp`以下とqlfile.lockが更新されます。
+この手法を用いたパッケージ管理方の利用法については、四章と八章の実例を参照してください。
 
 ## まとめ
 
-* オープンソースで公開されているライブラリの多くは、ASDFを用いて構成されている。
-
-* `package-inferred-system`を用いたパッケージ管理では、ファイルごとにパッケージを管理する。
-
-* Qlotを使うと、複数人で開発するときに、各々の環境で依存ライブラリのバージョンをあわせることができる。
+本章では、cl-projectで生成されたプロジェクトを元にプロジェクトを作成して、Roswellで作成したプロジェクトを共有する方法を紹介しました。Roswellとcl-projectを合わせて使うと、小さなプロジェクトであれば、プロジェクトの作成から公開がこんなに早くできるのかと思っていただけたら幸いです。
