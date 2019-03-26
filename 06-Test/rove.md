@@ -2,15 +2,9 @@
 
 ## Common Lispのテストライブラリ
 
-Common Lispには数多くのテストライブラリがあります。長い歴史の中でメンテナンスされていないものも含めると三十近くもあります。
+Common Lispには数多くのテストライブラリがあります。長い歴史の中でメンテナンスされていないものも含めると三十近くもあります。その中でも最も多く使われているものがFiveAMとProveです。FiveAMはシンプルなテストライブラリです。Common Lispライブラリで古くから使われており、ファンも多くいます。一方でProveはテスト結果の色付けやコマンドラインインターフェイスなどテスト実行環境周辺にも目を向けて作られたものです。
 
-その中で最も多く使われているものがFiveAMとProveです。
-
-FiveAMはシンプルなテストライブラリです。Common Lispライブラリで古くから使われており、ファンも多くいます。一方でProveはテスト結果の色付けやコマンドラインインターフェイスなどテスト実行環境周辺にも目を向けて作られたものです。
-
-この章ではProveの後継テストフレームワークであるRoveを紹介します。Roveは現代のCommon LispプログラムのトレンドにフィットするようにProveを再構成したものです。
-
-たとえば、ASDF 3.1から取り入れられたpackage-inferred-systemというファイル単位でのプログラム分割機能を使えるように改良されています。また、非同期なプログラムのテストのためのスレッドサポートや、テスト実行前後のフック、一定時間以上テストの実行にかかったものを色付けして表示するなどの機能も含まれます。
+この章ではProveの後継テストフレームワークであるRoveを紹介します。Roveは現代のCommon LispプログラムのトレンドにフィットするようにProveを再構成したものです。たとえば、ASDF 3.1から取り入れられたpackage-inferred-systemというファイル単位でのプログラム分割機能を使えるように改良されています。また、非同期なプログラムのテストのためのスレッドサポートや、テスト実行前後のフック、一定時間以上テストの実行にかかったものを色付けして表示するなどの機能も含まれます。
 
 初めてCommon Lispプログラムを書く人も、今までProveを使っていた人も、これを機会にRoveを使っていただければと思います。
 
@@ -220,60 +214,28 @@ Roveではパッケージごとに暗黙的にテストスイートが作られ�
   (format t "~&Done.~%"))
 ```
 
-## テストシステムの作成
+## 実践: yubinのテストを追加する
 
-### ASDFの設定
+### テストを書く
 
-ASDFシステムにRoveを組み込むにはASDファイルにテストシステムを定義します。
-
-以下では src に本体コード、 tests にテストコードがあるときのASDFシステム定義例です。本体のシステム名は `"my-project"`、テストシステム名は `"my-project/tests"` です。
-
-```
-;; my-project.asd
-(defsystem "my-project"
-  :class :package-inferred-system
-  :version "0.1.0"
-  :author "Eitaro Fukamachi"
-  :description "My sample project for Rove"
-  :license "BSD 2-Clause"
-  :pathname "src"
-  :components ((:file "file1")
-               (:file "file2"))
-  :in-order-to ((test-op (test-op "my-project/tests"))))
-
-(defsystem "my-project/tests"
-  :depends-on ("my-project"
-               "rove")
-  :pathname "tests"
-  :components ((:file "file1")
-               (:file "file2"))
-  :perform (test-op (o c) (symbol-call :rove '#:run c)))
-```
-
-本体システムに追加している `:in-order-to` は `asdf:test-system` したときにテストシステムを走らせるための設定です。テストシステムにある `:perform` はそのときにRoveのテストを走らせるための記述です。
+TODO: 書く
 
 ### テストの実行
 
 テストシステムをREPLで走らせるには `asdf:test-system` を使います。
 
 ```
-(asdf:test-system :my-project)
+(asdf:test-system :yubin)
 
 ;; テストシステムに対して rove:run を使っても同じ
-(rove:run :my-project/tests)
+(rove:run :yubin/tests)
 ```
 
 
-コマンドラインから実行するには「rove」コマンドを使います。roveコマンドはRoswellでRoveをインストールすると ~/.roswell/bin/rove にコピーされます。
+コマンドラインから実行するには「rove」コマンドを使います。roveコマンドは第一章の終わりでインストール方法を紹介しています。roveコマンドの引数にASDファイルを渡すとそのシステムの `asdf:test-system` を呼び出し、テストが実行されます。
 
 ```
-$ ros install rove
-```
-
-roveコマンドの引数にASDファイルを渡すとそのシステムの `asdf:test-system` を呼び出し、テストが実行されます。
-
-```
-$ rove my-project.asd
+$ rove yubin.asd
 ```
 
 ### レポートスタイルの変更
@@ -284,43 +246,21 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 
 ```
 ;; デフォルトのレポートスタイル
-(rove:run :my-project/tests :style :spec)
+(rove:run :yubin/tests :style :spec)
 
 ;; よりミニマルな表示。アサーションの結果を一つのドットで表現する
-(rove:run :my-project/tests :style :dot)
+(rove:run :yubin/tests :style :dot)
 
 ;; 何も出力せず返り値のみ
-(rove:run :my-project/tests :style :none)
+(rove:run :yubin/tests :style :none)
 ```
 
 デフォルトのレポートスタイルは `:spec` です。これを変更するには `rove:*default-reporter*` に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は `cl-user:*rove-default-reporter*` に設定します。
 
-### Emacs/SLIMEでの色付け設定
-
-Roveはコマンドラインでは、成功したテストを緑、失敗したテストを赤で色付けして出力します。一方でEmacsで実行している人はSLIMEで実行するとバッファに色がつかないことに気づくかもしれません。これは、EmacsのSLIMEバッファではANSIエスケープシーケンスを認識せずそのままメタ文字が表示されてしまうため、RoveではEmacsでの実行では色付けをデフォルトでオフにしているためです。
-
-Emacs/SLIMEのREPLバッファでもテスト結果の色付けを行うためには多少の設定が必要です。
-
-SLIMEの拡張ライブラリ「slime-repl-ansi-color」 (https://github.com/enriquefernandez/slime-repl-ansi-color) をからslime-repl-ansi-color.elをダウンロードし、SLIMEのcontribディレクトリに置きます。RoswellでSLIMEをセットアップした場合には ~/.roswell/lisp/slime/*/contrib です。
-
-そしてEmacsの設定ファイル (~/.emacs.d/init.el) に以下のコードを追加します。
-
 ```
-;; ~/.emacs.d/init.el
-;; slime-repl-ansi-colorを追加
-(setq slime-contribs
-      '(slime-fancy slime-banner slime-indentation slime-repl-ansi-color))
-(slime-setup slime-contribs)
+;; .roswell/init.lisp
+(defvar *rove-default-reporter* :dot)
 ```
-
-さらにLispの初期化ファイル (~/.roswell/init.lisp) に以下のコードを追記します。
-
-```
-;; CL-USERパッケージ
-(defvar *rove-enable-colors* t)
-```
-
-これで再度Emacsを再起動し、SLIMEを起動すればRoveの色付けが有効になります。
 
 ## テストに便利なユーティリティ群
 
