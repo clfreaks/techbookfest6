@@ -4,8 +4,10 @@ echo "converting 00-Preface/preface.md"
 md2review ./00-Preface/preface.md         > ./src/00-Preface.re
 echo "converting 01-Roswell/roswell.md"
 md2review ./01-Roswell/roswell.md         > ./src/01-Roswell.re
-echo "converting 02-Lem/mode.md"
-md2review ./02-Lem/lem.md                > ./src/02-Lem.re
+echo "converting 02-Lem/lem.md"
+md2review ./02-Lem/lem.md                 > ./src/02-Lem.re
+echo "converting 02-Lem/lem-short.md"
+md2review ./02-Lem/lem-short.md           > ./src/02-Lem-short.re
 echo "converting 03-Library-Investigation/library-investigation.md"
 md2review ./03-Library-Investigation/library-investigation.md > ./src/03-library-investigation.re
 echo "converting 04-Make-Project/make-project.md"
