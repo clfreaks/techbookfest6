@@ -1,4 +1,4 @@
-# Roswell
+# 環境構築「Roswell」
 
 本章はRoswellについて解説します。Roswellは複数のCommon Lispの処理系のインストール、管理、切り替え、異なるコマンドラインオプションの共通化等を行なう処理系マネージャです。2014年から開発を開始した、比較的新しいツールであるため、ツールの作者としては悲しいことに、Common Lispのコミュニティの中にはこんなものは不要だろうという意見もあります。Roswellの使い方の一通りがCommon Lispの使い方の説明になるため、他の章に入る前にRoswellの使いかたについて説明します。
 
@@ -11,6 +11,12 @@ LinuxとmacOSではHomebrewでインストールすることができます。
 ```shell-session
 $ brew install roswell
 ```
+
+#### windowsでのインストール
+
+windows環境でのインストール用にはバイナリファイルを準備している。
+
+(TBD)
 
 #### ソースからインストールする
 
@@ -45,7 +51,7 @@ Roswellは、複数の処理系から特定のバージョンをインストー�
 最新版のSBCLをインストールするには`sbcl-bin`、ソースコードからビルドするには`-bin`をとります。
 
 ```
-# SBCL(最新版)をインストールする
+# SBCL(アーキテクチャ向けに配布されている最新のバイナリバージョン)をインストールする
 $ ros install sbcl-bin
 
 # SBCL(最新版)をソースからビルドしてインストールする
@@ -87,7 +93,7 @@ hello, world
 ```
 ## REPLの起動
 
-`ros run`でREPLを起動、`C-d`もしくは`(quit)`で終了することができます。
+`ros run`でREPLを起動、`(quit)`で終了することができます。
 
 ```
 $ ros run
@@ -203,7 +209,9 @@ Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
 
 `ros install <GitHubアカウント名/レポジトリ名>`とすると、GitHubのレポジトリからダウンロードされます。　
 
-試しにClackをインストールします。
+(TBD)clack->roveに差し替え。(GitHubアカウント名/レポジトリ名である必要が無いのでvectoと入れ替えか？)
+
+試しにclackをインストールします。
 
 ```
 $ ros install fukamachi/clack
@@ -235,6 +243,8 @@ $
 `ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされます。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれます。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とします。
 
 ## .roswell/bin
+
+(TBD) windowsの場所の確認
 
 `ros install <ライブラリ名>`としてライブラリをインストールすると、プロジェクトの`roswell`フォルダにあるRoswell Scriptが`~/.roswell/bin`にコピーされます。`~/.bashrc`等で次のようにPATHを通しておくことで、`~/.roswell/bin`内にあるRoswell Scriptをターミナルのコマンドとして使うことができます。
 
