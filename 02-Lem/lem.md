@@ -1,7 +1,7 @@
 # Lem
 LemはCommon Lispが動作するランタイム上のエディタです。
 
-Common Lispでの拡張を想定しており、Common Lispの開発環境を主に提供しています。  それ以外にもLemの開発者が主に使う言語を中心にサポートしています。
+Common Lispでの拡張を想定しており、Common Lispの開発環境を主に提供しています。  それ以外にもLemの開発者が使う言語を中心にサポートしています。
 操作体系は作者がemacsを使っていたこともあり、emacsによく似ていますが他のエディタにある機能も取り込むようにしており、vi(vim)のモードが用意されています。
 
 また、メジャーなCommon Lisp処理系にあるイメージダンプ機能の利点を活かして、ライブラリの読み込み、メモリへのデータの配置状態を実行ファイルの形にしていて、高速に起動できる特徴もあります。
@@ -805,12 +805,11 @@ define-major-modeのシンタックスは次のとおりです。
 
 `:name` `:keymap` `:syntax-table` は省略可能です。
 本体はモードが有効になったタイミングで使われます。
-
 今回は`:name`と`:keymap`を使います。
 `:keymap`には`*posts-list-mode-keymap*`を指定しています。
 :keymapを指定すると自動的にキーマップが作られ、指定した名前のスペシャル変数が定義されます。
-
 また投稿一覧が表示されているバッファをユーザーが変更できないようにしたいので読み込み専用にします。
+
 本体に
 
 ```lisp
@@ -836,20 +835,85 @@ attributeの定義は`define-attribute`を使います。
 author-attributeは投稿者に対応するattributeでforegroundをredにしています。
 title-attributeはタイトルに対応し、Lemで設定している背景色が明るい色ならforegroundをblue、暗い色ならcyanにします。
 
-### コマンドの定義
-
-コマンドは`define-command`で定義できます。
+文字列を挿入するときにattributeを指定すると、色の付いた文字列になります。
 
 ```lisp
-(define-command コマンド (引数) (引数記述子)
-  本体...)
+(insert-string (current-point) "Hello World" :attribute 'attribute-name)
 ```
 
-定義したコマンドは関数としても呼び出すことができます。
+### 投稿一覧バッファを作る
 
-基本的にはdefunと同じですが引数記述子というものを指定します。
-コマンドが引数を取る場合に引数記述子にどうやって受け取るかを記述します。  
-"p"とした場合、コマンド実行の前に(C-u 数値)を入力したときの値が入り、デフォルトでは1が渡されます。  
-"P"だとデフォルト値がnilになります。
-"s文字列"とした場合コマンドを実行したときにミニバッファで入力を行い、入力した文字列が引数の値になります。
-ほかにもいくつかありますが、ここでは使わないので割愛します。
+fetch-postsで得たpostのリストをバッファに書き込む関数を作ります。
+
+```lisp
+(defun write-post (point post)
+  (with-point ((start point :right-inserting))
+    (insert-string point
+                   (format nil "[~A]" (post-author post))
+                   :attribute 'author-attribute)
+    (insert-string point " ")
+    (insert-string point
+                   (post-title post)
+                   :attribute 'title-attribute)
+    (insert-character point #\newline)
+    (put-text-property start point :post post)))
+
+(defun write-posts (point posts)
+  (dolist (post posts)
+    (write-post point post)))
+```
+
+write-postは一つのpostを受け取り、それを一行の内容としてattributeを指定して色を付けながらバッファに書き込んでいます。
+write-postsはfetch-postsから返ってくる値に合わせ、postのリストを受け取りバッファに書き込みます。
+次は投稿一覧バッファを作る処理です。
+
+```lisp
+(defun make-posts-list-buffer (subreddit)
+  (let ((posts (fetch-posts subreddit))
+        (buffer (make-buffer (format nil "*Reddit ~A*" subreddit))))
+    (with-buffer-read-only buffer nil
+      (erase-buffer buffer)
+      (let ((point (buffer-point buffer)))
+        (write-posts point posts)
+        (buffer-start point)))
+    buffer))
+```
+
+引数にsubreddit名を受け取り、返り値は投稿一覧が書き込まれたバッファです。
+make-bufferは既に同じ名前のバッファがあるならそれを返し、無ければ作ります。
+with-buffer-read-onlyのシンタックスは次のとおりです。
+
+```lisp
+(with-buffer-read-only buffer read-only-p
+  &body body)
+```
+
+bufferのread-onlyフラグを引数の値に変更した後body内を実行し終わったら元に戻します。
+普段は読込専用のバッファを一時的に編集するためのイディオムです。
+
+### コマンドの定義
+
+最後に見たいsubredditを入力し、その投稿一覧バッファを表示するコマンドを作ります。
+
+```lisp
+(define-command posts-list (subreddit) ("sSubreddit: ")
+  (let ((buffer (make-posts-list-buffer subreddit)))
+    (switch-to-buffer buffer)
+    (change-buffer-mode buffer 'posts-list-mode)))
+```
+
+これで`M-x posts-list`で呼び出せるようになります。
+define-commandのシンタックスは次のとおりです。
+
+```lisp
+(define-command command (&rest arguments) (&optional arg-descriptor)
+  &body body)
+```
+
+基本的にはdefunと同じですが、三つ目の引数のarg-descriptorを追加で指定する必要があります。
+"p"を渡した場合、コマンド実行前に(C-u 数字)を入力した値が引数に渡され、デフォルト値は1になります。
+"P"だと"p"と同じですが、デフォルト値がnilになります。
+"sプロンプト"はコマンドを実行前にミニバッファで入力が促され、入力した文字列が引数に渡されます。
+define-commandでコマンドを追加するとM-xで呼び出せるようになり、キーにも束縛できるようになります。
+
+### キーバインドとコマンドの追加

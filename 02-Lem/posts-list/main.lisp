@@ -35,18 +35,18 @@
     (insert-character point #\newline)
     (put-text-property start point :post post)))
 
-(defun write-posts (buffer posts)
-  (with-buffer-read-only buffer nil
-    (erase-buffer buffer)
-    (let ((point (buffer-point buffer)))
-      (dolist (post posts)
-        (write-post point post))
-      (buffer-start point))))
+(defun write-posts (point posts)
+  (dolist (post posts)
+    (write-post point post)))
 
 (defun make-posts-list-buffer (subreddit)
   (let ((posts (fetch-posts subreddit))
         (buffer (make-buffer (format nil "*Reddit ~A*" subreddit))))
-    (write-posts buffer posts)
+    (with-buffer-read-only buffer nil
+      (erase-buffer buffer)
+      (let ((point (buffer-point buffer)))
+        (write-posts point posts)
+        (buffer-start point)))
     buffer))
 
 (define-command posts-list (subreddit) ("sSubreddit: ")
