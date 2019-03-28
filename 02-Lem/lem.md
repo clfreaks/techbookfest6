@@ -1,84 +1,4 @@
 # Lem
-LemはCommon Lispが動作するランタイム上のエディタです。
-
-Common Lispでの拡張を想定しており、Common Lispの開発環境を主に提供しています。  
-それ以外にもLemの開発者が主に使う言語を中心にサポートしています。
-
-操作体系は作者がemacsを使っていたこともあり、emacsによく似ていますが
-他のエディタにある機能も取り込むようにしており、vi(vim)のモードが用意されています。
-
-また、メジャーなCommon Lisp処理系にあるイメージダンプ機能の利点を活かして、ライブラリの読み込み、メモリへのデータの配置状態を実行ファイルの形にしていて、高速に起動できる特徴もあります。
- 
-## Lemのインストール
-
-LemをインストールするにはRoswellを使うのが簡単です。  
-次のコマンドでインストールできます。
-
-```
-$ ros install cxxxr/lem
-```
-
-パスの設定は次のとおりです。
-
-```
-export PATH=$PATH:~/.roswell/bin
-```
-
-次のコマンドでlemを最新の状態に更新できます。
-
-```
-$ ros update lem
-```
-
-## Lemで使う用語
-
-LemではEmacsと同じようにControlやMetaをプリフィクスとするコマンドを使います。
-
-*C-* コントロールキーを押しっぱなしにして別のキーを打つことを意味します。  
-
-*M-* メタキーを押しっぱなしにして別のキーを打つことを意味します。メタキーはAltキーを使い、Macのターミナルでは設定でOptionキーに割り当てられます。
-
-たとえば  
-`C-x o`はControlを押しながらxを押したあと、Controlを離してoを押します。  
-`C-x C-o`だとControlを押しながらxを押し、更にControlを押しながらoを押します。
-
-### ミニバッファ
-画面の一番下で入力が出来る空間のことです。
-
-### バッファ
-バッファはファイルと関連付けられたデータ構造を表します。
-
-### ウィンドウ
-ウィンドウは一つのバッファを画面に表示するデータ構造を表します。
-
-### コマンド
-コマンドはエディタを操作する機能です。
- カーソルを動かしたり文字を挿入する処理は一つのコマンドとして定義されます。
-コマンドはキーに割り当てられたり`M-x`の後、ミニバッファでコマンド名を入力することでも実行できます。
-以後`(M-x コマンド名)` と表記します。
-
-## Lemの起動と終了
-コマンドラインからLemを起動するにはlemコマンドを使います。
-lemコマンドはRoswellからインストールしている場合に使えます。
-
-```
-$ lem [ファイル名]
-```
-
-コマンドラインで起動したCommon LispのREPLから使うには次のとおりです。
-
-```
-* (ql:quickload :lem-ncurses)
-* (lem:lem) ;; sbclの場合は(ed)でも可能
-```
-
-起動時の画面は次のようになります。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-startup.png)
-
-Lemでは起動時にREPLが始まります。
-REPLについては後述します。
-
-終了するには`C-x C-c`と入力してください。
 
 ## 初期化ファイルについて
 
@@ -177,108 +97,7 @@ viに合わせたい場合は`M-x vi-mode`と入力することで切り替え�
 (lem-vi-mode:vi-mode)
 ```
 
-## SLIME
-SLIME(Superior Lisp Interaction Mode for Emacs)は元はEmacs上でCommon Lispの開発を行えるようにするEmacs用のプロダクトでした。
-Common Lispランタイム上で動作するswnakサーバがあり、Emacs上のslimeとクライアントサーバ方式でswank rpcという独自プロトコルでやりとりを行い、パワルルなREPL、補完、デバッガ、インスペクタなどを提供します。
-今もよく使われていますが、vimやatomなどのエディタでもslimeの実装が開発されていて、lemも同様にslimeを実装し、デフォルトでサポートしています。
-
-### lisp-mode
-LemではCommon Lispの開発に便利な機能をlisp-modeとして提供し、内部でSLIMEを使っています。
-lispファイルを開くか、明示的に`M-x lisp-mode`とするかREPLが開かれるとlisp-modeが有効化されます。
-
-### SWANKサーバへの接続
-lisp-modeが有効化されたときにSWANKサーバに接続していない場合は、自動でLemランタイム上でサーバを起動し、接続します。
-LemはCommon Lispで書いているのでLemとSWANKサーバを同じランタイム上で動かせ、それをすることでLem自身の状態の変更をSLIMEの機能を介して行うことが出来ます。
-
-起動時にはREPLが開かれていますが、明示的にREPLを開くには`start-lisp-repl`コマンドを使います。
-
-```
-M-x start-lisp-repl
-```
-
-lemとは別のプロセスを起動してSLIMEで接続するにはslimeコマンドを使います。
-このコマンドはREPLも同時に開きます。
-
-```
-M-x slime
-```
-
-`C-u`を前に入力してslimeコマンドを使うと起動する処理系を選べます。
-
-```
-C-u M-x slime
-```
-
-### REPL
-
-ためしに何か入力してみます。
-
-```
-CL-USER> (loop :for i :from 0 :below 100 :sum i)
-5050
-```
-
-REPLは基本的にコマンドラインからの使用と同じですがSLIMEで追加された機能があります。
-
-履歴を辿るには`M-p` `M-n`で行えます。
-
-現在のパッケージを切り替えるには`(in-package パッケージ名)`を入力することでも出来ますが`C-c M-p (M-x lisp-set-package)`でもREPLのパッケージを切り替えられます。
-
-`C-c M-o (M-x listener-clear-buffer)`でバッファをクリアできます。
-
-`C-c C-u (M-x listener-clear-input)`で現在の入力を消去します。
-
-実行を中断したい場合は`C-c C-c (M-x lisp-repl-interrupt)`です。
-
-```
-CL-USER> (loop)
-;; C-c C-cで中断 デバッガでqを押してreplに戻る
-CL-USER>
-```
-
-中断すると割り込みエラーでデバッガが表示されます。
-デバッガの使い方については後述します
-
 ### インデント
-カーソルの行を字下げするにはTabを入力します。
-一つの式をまとめてインデントするには`C-M-q`です。
-
-```lisp
-(defun fact (n)
-(if (= n 0)
-1
-(* n (fact (1- n)))))
-```
-
-ここで`(defun`の先頭にカーソルを合わせて`C-M-q`とすると次のようにインデントされます。
-
-```lisp
-(defun fact (n)
-  (if (= n 0)
-      1
-      (* n (fact (1- n)))))
-```
-
-あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロをSWANKサーバ側で定義さていると出来ます。
-例えばcl-ppcreにregister-groups-bindというマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
-
-```lisp
-(ppcre:register-groups-bind (key value)
-                            ("(\\w+):(\\w+)" "foo:bar")
-                            (cons key value))
-```
-
-cl-ppcreを読み込むと正しくインデントできます。
-
-```
-CL-USER> (ql:quickload :cl-ppcre)
-```
-
-```lisp
-(ppcre:register-groups-bind (key value)
-    ("(\\w+):(\\w+)" "foo:bar")
-  (cons key value))
-```
 
 静的にインデントを設定したい場合は`lem-lisp-syntax:set-indentation`を使います。
 `~/.lem.d/init.lisp`に次の式を追加してみます。
@@ -297,72 +116,17 @@ Lemでは入力中にTabを押すことで補完が出来ます。
 
 ![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-completion.png)
 
-このときに`C-n`や`M-n`、カーソルキーの下を入力すれば一つ下の候補を選べます。  
-上にするには`C-p` `M-p` カーソルキーの上を入力します。  
+このときに`C-n`や`M-n`、カーソルキーの下を入力すれば一つ下の候補を選べます。
+上にするには`C-p` `M-p` カーソルキーの上を入力します。
 Enterを押すことでその補完候補を選択できます。
-
-lisp-modeではあいまい補完を使っているので並びがあっていれば補完候補に表示されます。  
+`lisp-modeではあいまい補完を使っているので並びがあっていれば補完候補に表示されます。
 補完機能はミニバッファでの入力などでも出来るので、例えばファイルを開く(`C-x C-f`)場合はファイル名が補完されます。
-
-### 式の評価とコンパイル
-
-lispファイル上の式を評価してみます。
-例としてfoo.lispというファイルを開きます。
-
-```lisp
-;;; foo.lisp
-
-(defun foo (x)
-  (1+ x))
-```
-
-関数fooの中で`C-M-x`とすると、そのdefunが評価され、定義されます。
-
-REPLで定義した関数を呼びだしてみます。
-
-```lisp
-CL-USER> (foo 0)
-1
-```
-
-`C-M-x`の代わりに`C-c C-c`を使うと評価ではなくコンパイルされロードされます。
-コンパイルするとコンパイル時の警告部分が赤線で引かれます。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-compile.png)
-
-コンパイル時に出てきたウィンドウにの指定箇所にカーソルを合わせてEnterを押すことで特定箇所にジャンプすることが出来ます。
-`C-x C-n` `C-x C-p`を使って順番に特定箇所にジャンプすることも可能です。
-
-赤線を消すには警告箇所を修正して再度`C-c C-c`します。
-`C-c M-c`をしてもバッファ内の全ての赤線を消すことが出来ます。
-
-ファイル自体を読み込むには`C-c C-l`をします。
-コンパイルし、その結果を読み込むには`C-c C-k`をします。
-
-カーソルの前の式を評価するには`C-c C-e`をします。
-
-```lisp
-(progn
-  (foo)
-  (bar) ; <- (bar)だけ評価するにはここでC-c C-e
-  (baz))
-```
-
-ミニバッファに式を入力し、評価するには`C-c M-:`とします。
-
-評価中の式が無限ループをして終わらない場合などはREPLでの中断とは別に`C-c g`をして中断ができます。
-
-評価は基本的に現在接続しているSWANKサーバで行いますが、その接続しているプロセスとは別にLemのカスタマイズをしたいなどの理由でLemのプロセス内で評価するコマンドも用意しています。
-カーソルの前の式をLemプロセス内で評価する場合は`C-c C-e`の代わりに`C-x C-e`、
-ミニバッファで入力した式をLemプロセス内で評価する場合は`C-c M-:`の代わりに`M-:`を使います。
 
 ### マクロ展開
 Common Lispではマクロ展開をするための関数としてmacroexpandがあり、一段階だけ展開したい場合の関数としてmacroexpand-1があります。
-
 lemからマクロ展開をするには`C-c C-m (M-x lisp-macroexpand)`を使います。
 このコマンドは一段階だけマクロを展開します。
-
 マクロ展開にはSWANKサーバ側でそのマクロを定義されている必要があるため、事前にマクロを評価しておく必要があります。
-
 例としてhttp://clhs.lisp.se/Body/f_mexp_.htm のExamplesで定義されているマクロ`alpha`, `beta`でマクロ展開してみます。
 
 ```lisp
@@ -375,26 +139,6 @@ lemからマクロ展開をするには`C-c C-m (M-x lisp-macroexpand)`を使い
 
 試してみると展開結果がTypeoutウィンドウに出力されます。
 この展開結果で更にマクロ展開したい場合は同じようにカーソルを展開したいマクロの開き括弧に合わせて`C-c C-m`とします。
-
-### 定義へのジャンプ
-ある関数や変数、クラスなどの定義位置を参照する機能があります。
-`M-. (M-x find-definitions)`を使うことでソースコードの適当箇所にジャンプすることができます。
-カーソル位置にシンボルがある場合はその定義位置へジャンプし、無ければミニバッファからシンボル名を入力します。
-元の位置に戻るには`M-, (M-x pop-definition-stack)`を使います。
-
-この機能はSWANKサーバ側でシンボルを参照するので、事前にそのシンボルが定義されているようにシステムを読み込んでおかなければなりません。
-
-```
-CL-USER> (ql:quickload システム名)
-```
-
-適当する定義が複数ある場合は定義箇所にジャンプする前に一覧が別ウィンドウに表示されます。
-次の画像はcl-ppcre:scanを対象にした例です。
-![](https://raw.githubusercontent.com/clfreaks/techbookfest6/master/images/02-lem-jump-to-definitions.png)
-
-この場合は`C-x C-n` `C-x C-p`で定義箇所に順番にジャンプできます。
-一覧が表示されたウィンドウに移動して見たい定義にカーソルを合わせてEnterを押すことでも定義位置にジャンプできます。
-この操作方法はコンパイラの警告の一覧と同じす。この機能は他にもgrepなどで使われています。
 
 ### シンボルが使われている場所の一覧
 ある関数や変数、クラスなどがどこで使われているかを参照したい場合があります。
@@ -836,12 +580,11 @@ define-major-modeのシンタックスは次のとおりです。
 
 `:name` `:keymap` `:syntax-table` は省略可能です。
 本体はモードが有効になったタイミングで使われます。
-
 今回は`:name`と`:keymap`を使います。
 `:keymap`には`*posts-list-mode-keymap*`を指定しています。
 :keymapを指定すると自動的にキーマップが作られ、指定した名前のスペシャル変数が定義されます。
-
 また投稿一覧が表示されているバッファをユーザーが変更できないようにしたいので読み込み専用にします。
+
 本体に
 
 ```lisp
@@ -867,20 +610,85 @@ attributeの定義は`define-attribute`を使います。
 author-attributeは投稿者に対応するattributeでforegroundをredにしています。
 title-attributeはタイトルに対応し、Lemで設定している背景色が明るい色ならforegroundをblue、暗い色ならcyanにします。
 
-### コマンドの定義
-
-コマンドは`define-command`で定義できます。
+文字列を挿入するときにattributeを指定すると、色の付いた文字列になります。
 
 ```lisp
-(define-command コマンド (引数) (引数記述子)
-  本体...)
+(insert-string (current-point) "Hello World" :attribute 'attribute-name)
 ```
 
-定義したコマンドは関数としても呼び出すことができます。
+### 投稿一覧バッファを作る
 
-基本的にはdefunと同じですが引数記述子というものを指定します。
-コマンドが引数を取る場合に引数記述子にどうやって受け取るかを記述します。  
-"p"とした場合、コマンド実行の前に(C-u 数値)を入力したときの値が入り、デフォルトでは1が渡されます。  
-"P"だとデフォルト値がnilになります。
-"s文字列"とした場合コマンドを実行したときにミニバッファで入力を行い、入力した文字列が引数の値になります。
-ほかにもいくつかありますが、ここでは使わないので割愛します。
+fetch-postsで得たpostのリストをバッファに書き込む関数を作ります。
+
+```lisp
+(defun write-post (point post)
+  (with-point ((start point :right-inserting))
+    (insert-string point
+                   (format nil "[~A]" (post-author post))
+                   :attribute 'author-attribute)
+    (insert-string point " ")
+    (insert-string point
+                   (post-title post)
+                   :attribute 'title-attribute)
+    (insert-character point #\newline)
+    (put-text-property start point :post post)))
+
+(defun write-posts (point posts)
+  (dolist (post posts)
+    (write-post point post)))
+```
+
+write-postは一つのpostを受け取り、それを一行の内容としてattributeを指定して色を付けながらバッファに書き込んでいます。
+write-postsはfetch-postsから返ってくる値に合わせ、postのリストを受け取りバッファに書き込みます。
+次は投稿一覧バッファを作る処理です。
+
+```lisp
+(defun make-posts-list-buffer (subreddit)
+  (let ((posts (fetch-posts subreddit))
+        (buffer (make-buffer (format nil "*Reddit ~A*" subreddit))))
+    (with-buffer-read-only buffer nil
+      (erase-buffer buffer)
+      (let ((point (buffer-point buffer)))
+        (write-posts point posts)
+        (buffer-start point)))
+    buffer))
+```
+
+引数にsubreddit名を受け取り、返り値は投稿一覧が書き込まれたバッファです。
+make-bufferは既に同じ名前のバッファがあるならそれを返し、無ければ作ります。
+with-buffer-read-onlyのシンタックスは次のとおりです。
+
+```lisp
+(with-buffer-read-only buffer read-only-p
+  &body body)
+```
+
+bufferのread-onlyフラグを引数の値に変更した後body内を実行し終わったら元に戻します。
+普段は読込専用のバッファを一時的に編集するためのイディオムです。
+
+### コマンドの定義
+
+最後に見たいsubredditを入力し、その投稿一覧バッファを表示するコマンドを作ります。
+
+```lisp
+(define-command posts-list (subreddit) ("sSubreddit: ")
+  (let ((buffer (make-posts-list-buffer subreddit)))
+    (switch-to-buffer buffer)
+    (change-buffer-mode buffer 'posts-list-mode)))
+```
+
+これで`M-x posts-list`で呼び出せるようになります。
+define-commandのシンタックスは次のとおりです。
+
+```lisp
+(define-command command (&rest arguments) (&optional arg-descriptor)
+  &body body)
+```
+
+基本的にはdefunと同じですが、三つ目の引数のarg-descriptorを追加で指定する必要があります。
+"p"を渡した場合、コマンド実行前に(C-u 数字)を入力した値が引数に渡され、デフォルト値は1になります。
+"P"だと"p"と同じですが、デフォルト値がnilになります。
+"sプロンプト"はコマンドを実行前にミニバッファで入力が促され、入力した文字列が引数に渡されます。
+define-commandでコマンドを追加するとM-xで呼び出せるようになり、キーにも束縛できるようになります。
+
+### キーバインドとコマンドの追加

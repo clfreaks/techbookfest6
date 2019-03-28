@@ -1,10 +1,10 @@
-# Roswell
+# 環境構築「Roswell」
 
 本章はRoswellについて解説します。Roswellは複数のCommon Lispの処理系のインストール、管理、切り替え、異なるコマンドラインオプションの共通化等を行なう処理系マネージャです。2014年から開発を開始した、比較的新しいツールであるため、ツールの作者としては悲しいことに、Common Lispのコミュニティの中にはこんなものは不要だろうという意見もあります。Roswellの使い方の一通りがCommon Lispの使い方の説明になるため、他の章に入る前にRoswellの使いかたについて説明します。
 
-### Roswellのインストール
+## Roswellのインストール
 
-#### Homebrewを利用したインストール
+### Homebrewを利用したインストール
 
 LinuxとmacOSではHomebrewでインストールすることができます。
 
@@ -12,7 +12,18 @@ LinuxとmacOSではHomebrewでインストールすることができます。
 $ brew install roswell
 ```
 
-#### ソースからインストールする
+### windowsでのインストール
+
+windows環境でのインストール用にはバイナリファイルを準備しています。
+
+```
+https://github.com/roswell/roswell/wiki/Installation#windows
+```
+
+解凍したディレクトリ下に`ros shell`を実行すると長いセットアップ時間の後にmsysが含まれた環境が提供されます。
+本書の内容がwindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
+
+### ソースからインストールする
 
 Homebrewが使えない環境での、Roswellのインストールには
 
@@ -42,10 +53,10 @@ $ ros setup
 
 Roswellは、複数の処理系から特定のバージョンをインストールできる。ここでは、SBCL(Steel Bank Common Lisp)をインストールします。
 
-最新版のSBCLをインストールするには`sbcl-bin`、ソースコードからビルドするには`-bin`をとります。
+配布されている最新のSBCLをインストールするには`sbcl-bin`、ビルドをするには`sbcl`です。
 
 ```
-# SBCL(最新版)をインストールする
+# SBCL(アーキテクチャ向けに配布されている最新のバイナリバージョン)をインストールする
 $ ros install sbcl-bin
 
 # SBCL(最新版)をソースからビルドしてインストールする
@@ -55,10 +66,10 @@ $ ros install sbcl
 バージョンを指定してインストールするには、スラッシュの後にバージョンを指定します。
 
 ```
-# SBCL(1.4.1)をインストールする
+# SBCL(1.4.1)のバイナリをインストールする
 $ ros install sbcl-bin/1.4.1
 
-# SBCL(1.4.1)をソースからビルドしてインストールする
+# SBCL(1.4.1)をビルドしてインストールする
 $ ros install sbcl/1.4.1
 ```
 
@@ -87,7 +98,7 @@ hello, world
 ```
 ## REPLの起動
 
-`ros run`でREPLを起動、`C-d`もしくは`(quit)`で終了することができます。
+`ros run`でREPLを起動、`(quit)`で終了することができます。
 
 ```
 $ ros run
@@ -187,50 +198,45 @@ sys	0m0.026s
 `ros install`でライブラリのインストールを行います。
 
 `ros install <ライブラリ名>`とすると、Quicklispのアーカイブからダウンロードされます。
+ここでは、テストの章で利用するroveをインストールしましょう。
+
 
 ```
-$ ros install vecto
-To load "vecto":
-  Load 3 ASDF systems:
-    cl-vectors zpb-ttf zpng
+$ ros install rove
+To load "rove":
+  Load 1 ASDF system:
+    asdf
   Install 1 Quicklisp release:
-    vecto
-Downloading http://beta.quicklisp.org/archive/vecto/2017-12-27/vecto-1.5.tgz
+    rove
+Downloading http://beta.quicklisp.org/archive/rove/2019-03-07/rove-20190307-git.tgz
 ##########################################################################
-; Loading "vecto"
-(以下、省略)
+; Loading "rove"
+[package rove/core/result]........................
+(中略)
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+Found 1 scripts: rove
+/home/snmsts/.roswell/bin/rove
+up to date. stop
+
 ```
 
 `ros install <GitHubアカウント名/レポジトリ名>`とすると、GitHubのレポジトリからダウンロードされます。　
 
-試しにClackをインストールします。
+ここでroveをgithubからインストールします。
 
 ```
-$ ros install fukamachi/clack
-Installing from github fukamachi/clack
-To load "clack":
+$ ros install fukamachi/rove
+Installing from github fukamachi/rove
+To load "rove":
   Load 1 ASDF system:
-    clack
-; Loading "clack"
-..................................................
-[package lack.component]..........................
-[package nibbles].................................
-[package ironclad]................................
-[package ironclad-vm].............................
-[package lack.util]...............................
-[package lack.builder]............................
-[package lack]....................................
-[package lack.middleware.backtrace]...............
-[package alexandria.0.dev]........................
-[package bordeaux-threads]........................
-[package clack.util]..............................
-[package clack.handler]...........................
-　(省略)
-Found 1 scripts: clackup
-/Users/t-cool/.roswell/bin/clackup
+    rove
+; Loading "rove"
+[package rove/core/result]........................
+(中略)
+Found 1 scripts: rove
+/home/snmsts/.roswell/bin/rove
 up to date. stop
-$ 
-``` 
+```
 
 `ros install`でライブラリをインストールすると、ローカル環境の`~/.roswell/local-projects/`以下にソースコードがダウンロードされてインストールされます。デフォルトでは`~/.roswell/local-projects/`からライブラリが読み込まれます。RoswellのREPLでライブラリを読み込むには、`(ql:quickload :ライブラリ名`)とします。
 
@@ -242,28 +248,22 @@ $
 export PATH=$PATH:~/.roswell/bin
 ```
 
-Clackのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`clackup.ros`が入っています。`ros install fukamachi/clack`とすることで、`clackup.ros`が`~/.roswell/bin/clackup`にコピーされます。インストール後は`clackup`コマンドが使えるようになります。試しに、次のコードを`app.lisp`に保存して、`clackup`コマンドを実行してみます。
+roveのプロジェクトでは、プロジェクト・トップの`roswell`フォルダの中に`rove.ros`が入っています。`ros install fukamachi/rove`とすることで、`rove.ros`が`~/.roswell/bin/rove`にコピーされます。インストール後は`rove`コマンドが使えるようになります。
 
 ```
-(lambda (env)
-  (declare (ignore env))
-  '(200 (:content-type "text/plain") ("Hello, Clack!")))
-```
+$ rove
+Usage: rove [option...] test-file
 
+Options:
+    -r, --reporter REPORTER-NAME    Reporter style (one of "spec", "dot", or "none")
 ```
-$ clackup app.lisp
-Hunchentoot server is going to start.
-Listening on localhost:5000.
-```
-
-ブラウザから http://localhost:5000 にアクセスすると、Clackサーバーが起動したのが確認できます。
 
 ### ライブラリの更新
 
 `ros update <ライブラリ名>`とすることで、ライブラリをGitHub上の最新版に更新することができます。
  
 ```
-$ ros update clack
+$ ros update rove
 ```
 
 ## まとめ
