@@ -42,27 +42,33 @@ $ yubin 6380321
 cl-projectで生成されるシステム定義ファイルでは、main.lispを最初に読み込むように設定されています。`main.lisp`を次のように編集します。
 
 ```
-(defpackage #:yubin  ; ①
+(defpackage #:yubin
   (:use #:cl)
-  (:import-from #:jonathan)
+  (:import-from #:quri
+                #:make-uri)
+  (:import-from #:jonathan
+                #:parse)
   (:import-from #:dexador)
-  (:export #:get-place)) 
+  (:export #:get-place))
 (in-package #:yubin)
 
 (defun get-place (zipcode)
-  (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))  ; ②
-         (data (reverse (car (fourth (jonathan:parse (dex:get url)))))))  ; ③
-    (when data
-      (concatenate 'string (first data) (third data) (fifth data)))))  ; ④
+  (let* ((url (quri:make-uri :defaults "http://zipcloud.ibsnet.co.jp/api/search"
+                             :query `(("zipcode" . ,zipcode))))  ; ① URLを作る
+         (response (parse (dex:get url)))                        ; ② HTTPリクエスト
+         (result (first (getf response :|results|))))
+    (if result
+        (concatenate 'string                                     ; ③ 結果を返す
+                     (getf result :|address1|)
+                     (getf result :|address2|)
+                     (getf result :|address3|))
+        (error (format nil "~A: ~S (Code=~A)"                    ; ④ エラーにする
+                       (getf response :|message|)
+                       zipcode
+                       (getf response :|status|))))))
 ```
 
-①では、yubinパッケージを定義しています。JSONのパースとHTTPのGETメソッドのために、jonathanパッケージとdexadorパッケージをimport-fromで指定します。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
-
-yubinパッケージにin-packageした後、郵便番号(zipcode)から地名を返す関数`get-place`を定義します。②では、zipcloudのURLと引数zipcodeの値を連結して、GETメソッドのリクエスト先をurlに設定します。③では、リクエストした結果から必要な情報をdataに設定します。④では、③で設定したdataから文字列を抜き出した値を連結して、値を返します。
-
-//embed[latex]{
-\clearpage
-//}
+引数 `zipcode` からURLを作り、HTTPリクエストをして結果のJSONをパースし、結果を住所として文字列で返します。もし結果が返ってこなかった場合にはエラーを投げます。
 
 インストール後にyubinコマンドが使えるように、プロジェクト内のroswellフォルダ内にRoswell Scriptを作成します。Roswell Scriptは、`ros init`コマンドで生成される雛形を元に作成します。
 
@@ -82,21 +88,22 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(:yubin) :silent t))   ; ⑤
+  #+quicklisp (ql:quickload '(:yubin) :silent t))  ; ⑤
 
 (defpackage :ros.script.yubin.3761982565
   (:use :cl))
 (in-package :ros.script.yubin.3761982565)
 
-(defun main (zipcode &rest argv) ; ⑥
+(defun main (zipcode &rest argv)  ; ⑥
   (declare (ignorable argv))
-  (let ((place (yubin:get-place zipcode)))
-    (if place
-        (format t "~&~A~%" place)
-        (format t "~&見つかりませんでした~%"))))
+  (handler-case
+      (format t "~&~A~%" (yubin:get-place zipcode))
+    (error (e)
+      (format *standard-output* "~&Error: ~A~%" e)
+      (uiop:quit -1))))
 ```
 
-⑤では、デフォルトでコメントアウトされていますが、コメントアウトを解除してql:quickloadにyubinを指定します。⑥では、main関数を定義しています。yubinコマンドが呼ばれるとき、このmain関数が実行されます。
+⑤では、デフォルトでコメントアウトされていますが、コメントアウトを解除して `ql:quickload` に `:yubin` を指定します。⑥では、`main` 関数を定義しています。yubinコマンドが呼ばれるとき、この `main` 関数が実行されます。
 
 ### プロジェクトの共有
 
@@ -108,10 +115,6 @@ $ ros install clfreaks/yubin
 $ yubin 6390321
 奈良県吉野郡天川村坪内
 ```
-
-//embed[latex]{
-\clearpage
-//}
 
 ## package-inferred-system
 
