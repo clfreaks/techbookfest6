@@ -58,7 +58,7 @@ Common Lispの言語について説明している本はけっこうあるが、
 $ docker pull nuitsjp/mdview:2.5
 $ cd ~/techbookfest6
 $ docker run -v `pwd`:/work -it nuitsjp/mdview:2.5 /bin/bash
-# cd /work
-# ./make-review.sh
+# cd /work/src
+# review-pdfmaker config.yml
 ```
-これで `techbookfest6/src/book.pdf` ができます。この状態でDockerのシェルを起動させっぱなしにして、mdファイルを編集しては `./make-review.sh` を実行するというサイクルを回すのがいいかと思います。
+これで `techbookfest6/src/book.pdf` ができます。この状態でDockerのシェルを起動させっぱなしにして、reファイルを編集しては `review-pdfmaker config.yml` を実行するというサイクルを回すのがいいかと思います。

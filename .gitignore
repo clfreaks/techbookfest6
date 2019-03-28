@@ -8,5 +8,4 @@ yarn.lock
 .texmf-var
 book-pdf/
 book.pdf
-*.re
 .DS_Store

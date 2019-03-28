@@ -1,17 +1,17 @@
 PREDEF:
-  - 00-Preface.re
+  - Preface.re
 
 CHAPS:
-  - 01-Roswell.re
-  - 02-Lem-short.re
-  - 04-Make-Project.re
-  - 06-Test.re
-  - 08-Deploy.re
-  - 05-Web-Scraping.re
-  - 02-Lem.re
-  - 09-RaspberryPi.re
+  - Roswell.re
+  - Lem-short.re
+  - Make-Project.re
+  - Test.re
+  - Deploy.re
+  - Web-Scraping.re
+  - Lem.re
+  - RaspberryPi.re
 
 APPENDIX:
 
 POSTDEF:
-  - 99-Postface.re
+  - Postface.re
