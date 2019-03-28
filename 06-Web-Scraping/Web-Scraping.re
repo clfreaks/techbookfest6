@@ -261,7 +261,7 @@ Chromeなどの最近のWebブラウザにはインスペクタが搭載され�
 
 
 
-//image[06-clojure][Chrome上でインスペクタを起動した画面]{
+//image[06-clojure][Chrome上でインスペクタを起動した画面][scale=2.0]{
 //}
 
 
@@ -328,7 +328,7 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
 
 
 
-//image[06-hatena-login-network][DevTools上でNetworkタブを選択しPOSTメソッドのHTTPリクエストを表示した画面]{
+//image[06-hatena-login-network][DevTools上でNetworkタブを選択しPOSTメソッドのHTTPリクエストを表示した画面][scale=2.1]{
 //}
 
 
@@ -340,6 +340,9 @@ DevToolsのNetworkタブを開いた状態で、Webページ上のログイン�
 
 次のコードでは、まず@<tt>{cl-cookie:make-cookie-jar}でCookieオブジェクトを生成し、それを@<tt>{dex:post}に渡してユーザ名とパスワードとともに送る。そうすると@<tt>{*cookie-jar*}に値が設定されるので、それを@<tt>{dex:get}に渡して先程のマイホットエントリーのページを取得すると、今度はHTMLデータが得られるようになっている。
 
+//embed[latex]{
+\clearpage
+//}
 
 //emlist{
 (defparameter *hatena-login-url* "https://www.hatena.ne.jp/login")
@@ -429,7 +432,7 @@ RoswellからインストールできるようにGitHubにミラーを作った�
 
 
 //emlist{
-ros install masatoi/charseq masatoi/cl-igo
+$ ros install masatoi/charseq masatoi/cl-igo
 //}
 
 ==== cl-igoの辞書を用意する
@@ -447,9 +450,9 @@ ros install masatoi/charseq masatoi/cl-igo
 
 
 //emlist{
-tar xzvf mecab-ipadic-2.7.0-20070801.tar.gz
+$ tar xzvf mecab-ipadic-2.7.0-20070801.tar.gz
 
-java -cp ./igo-0.4.5.jar net.reduls.igo.bin.BuildDic ~/igo/ipadic \
+$ java -cp ./igo-0.4.5.jar net.reduls.igo.bin.BuildDic ~/igo/ipadic \
 mecab-ipadic-2.7.0-20070801 EUC-JP
 //}
 
@@ -532,7 +535,7 @@ TF-IDFでも文書中に出現していない単語に対する値は0となる�
 
 
 //emlist{
-ros install masatoi/cl-docclass
+$ ros install masatoi/cl-docclass
 //}
 
 
@@ -669,11 +672,9 @@ AROWの場合、メタパラメータとして1つの正則化パラメータを
 
 
 
-訓練を実行するには、@<tt>{clol:train}関数に学習器オブジェクトと訓練データセットを与える。これにより、@<tt>{*leaner*}内のパラメータが破壊的に変更される。
+訓練を実行するには、@<code>{clol:train}関数に学習器オブジェクトと訓練データセットを与える。これにより、@<code>{*learner*}内のパラメータが破壊的に変更される。
 
-
-
-cl-online-learningは計算のボトルネックになる部分で型宣言などの最適化がなされており、学習スピードは非常に速い。同様の処理をするC++プログラムより速いこともある。
+cl-online-learningは計算のボトルネックになる部分で型宣言などの最適化がなされており、学習スピードは非常に速い。
 
 
 //emlist{
