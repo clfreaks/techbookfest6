@@ -218,7 +218,38 @@ Roveではパッケージごとに暗黙的にテストスイートが作られ�
 
 ### テストを書く
 
-TODO: 書く
+tests/main.lisp に関数 `get-place` のテストを追加します。この関数が正常に動作するケースと、動作しないケースの両方を含めます。たとえば以下のようなケースをテストしてみましょう。
+
+* 郵便番号を数値で渡して、正しい住所が返ってくるか
+* 郵便番号をハイフン入りの文字列で渡して、正しい住所が返ってくるか
+* 存在しない郵便番号を渡して、`nil` が返ってくるか
+* 郵便番号ではない文字列を渡して、`nil` が返ってくるか
+
+これをテストコードとしたものが以下です。
+
+```
+;; tests/main.lisp
+(defpackage #:yubin/tests/main
+  (:use #:cl
+        #:yubin
+        #:rove))
+(in-package #:yubin/tests/main)
+
+;; NOTE: To run this test file, execute `(asdf:test-system :yubin)' in your Lisp.
+
+(deftest get-place
+  (testing "should return the address for a given postal code in a number"
+    (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内"))
+    (ok (equal (yubin:get-place 1500000) "東京都渋谷区")))
+  (testing "should return the address for a given postal code in a string"
+    (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内"))
+    (ok (equal (yubin:get-place "150-0000") "東京都渋谷区")))
+  (testing "should return nil for an unknown postal code"
+    (ok (null (yubin:get-place 6068501))))
+  (testing "should return nil for non postal code"
+    (ok (null (yubin:get-place nil)))
+    (ok (null (yubin:get-place "clfreaks")))))
+```
 
 ### テストの実行
 
@@ -226,11 +257,9 @@ TODO: 書く
 
 ```
 (asdf:test-system :yubin)
-
 ;; テストシステムに対して rove:run を使っても同じ
 (rove:run :yubin/tests)
 ```
-
 
 コマンドラインから実行するには「rove」コマンドを使います。roveコマンドは第一章の終わりでインストール方法を紹介しています。roveコマンドの引数にASDファイルを渡すとそのシステムの `asdf:test-system` を呼び出し、テストが実行されます。
 
@@ -320,5 +349,7 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてみてください。
 
-- Safety-Params (https://github.com/fukamachi/safety-params)
-- jsonrpc (https://github.com/fukamachi/jsonrpc)
+- Safety-Params
+  * https://github.com/fukamachi/safety-params
+- jsonrpc
+  * https://github.com/fukamachi/jsonrpc

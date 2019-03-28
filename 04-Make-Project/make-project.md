@@ -51,8 +51,9 @@ cl-projectで生成されるシステム定義ファイルでは、main.lispを�
 
 (defun get-place (zipcode)
   (let* ((url (format nil "http://zipcloud.ibsnet.co.jp/api/search?zipcode=~A" zipcode))  ; ②
-         (data (reverse (car (fourth (jonathan:parse (dex:get url)))))))　; ③
-    (concatenate 'string (first data) (third data) (fifth data))))  ; ④
+         (data (reverse (car (fourth (jonathan:parse (dex:get url)))))))  ; ③
+    (when data
+      (concatenate 'string (first data) (third data) (fifth data)))))  ; ④
 ```
 
 ①では、yubinパッケージを定義しています。JSONのパースとHTTPのGETメソッドのために、jonathanパッケージとdexadorパッケージをimport-fromで指定します。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
@@ -81,7 +82,7 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(yubin) :silent t))   ; ⑤
+  #+quicklisp (ql:quickload '(:yubin) :silent t))   ; ⑤
 
 (defpackage :ros.script.yubin.3761982565
   (:use :cl))
@@ -89,7 +90,10 @@ exec ros -Q -- $0 "$@"
 
 (defun main (zipcode &rest argv) ; ⑥
   (declare (ignorable argv))
-  (format t "~&~A~%" (yubin:get-place zipcode)))
+  (let ((place (yubin:get-place zipcode)))
+    (if place
+        (format t "~&~A~%" place)
+        (format t "~&見つかりませんでした~%"))))
 ```
 
 ⑤では、デフォルトでコメントアウトされていますが、コメントアウトを解除してql:quickloadにyubinを指定します。⑥では、main関数を定義しています。yubinコマンドが呼ばれるとき、このmain関数が実行されます。
@@ -111,7 +115,7 @@ $ yubin 6390321
 
 ## package-inferred-system
 
-`package-inferred-system`は、ASDFのオプションとして提供されているパッケージ管理方法です。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、`one package per file`(1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
+`package-inferred-system`は、ASDFのオプションとして提供されているパッケージ管理方法です。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、one package per file (1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
 
 この手法を用いたパッケージ管理方の利用法については、四章と八章の実例を参照してください。
 
