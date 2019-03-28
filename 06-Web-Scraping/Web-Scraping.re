@@ -637,7 +637,7 @@ $ ros install masatoi/cl-docclass
 //}
 
 
-cl-online-learningにはいくつか学習アルゴリズムが実装されているが、ここではAROW (Adaptive Regularization of Weight Vectors)というアルゴリズムを使う。AROWは予測性能がよく、収束も速く、頑健な学習ができるオンラインアルゴリズム(データを逐次処理するアルゴリズムのこと。リアルタイム処理に組込みやすいなどのメリットがある)で、メタパラメータが1つしかない上にそのパラメータに対しても過敏に反応しないので扱いやすい。
+cl-online-learningにはいくつか学習アルゴリズムが実装されているが、ここではAROW (Adaptive Regularization of Weight Vectors)というアルゴリズムを使う。AROWは予測性能がよく、収束も速く、頑健な学習ができるオンラインアルゴリズム@<fn>{online-algorithm}で、メタパラメータが1つしかない上にそのパラメータに対しても過敏に反応しないので扱いやすい。
 
 
 ==== マルチクラス分類について
@@ -737,3 +737,5 @@ cl-online-learningは計算のボトルネックになる部分で型宣言な�
 //footnote[362459e05c60f4343ce7be949d5fa564][http://igo.osdn.jp/cl-igo.html]
 
 //footnote[4f5a1a80dde58a84dd94cd0d038c5891][https://www.rondhuit.com/download.html#ldcc]
+
+//footnote[online-algorithm][データを逐次処理するアルゴリズムのこと。リアルタイム処理に組込みやすいなどのメリットがある。]
