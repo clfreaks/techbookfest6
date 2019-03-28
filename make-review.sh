@@ -20,6 +20,8 @@ echo "converting 08-Deploy/deploy.md"
 md2review --render-link-in-footnote ./08-Deploy/deploy.md           > ./src/08-Deploy.re
 echo "converting 09-RaspberryPi/RaspberryPi.md"
 md2review ./09-RaspberryPi/RaspberryPi.md > ./src/09-RaspberryPi.re
+echo "converting 99-Postface/postface.md"
+md2review ./99-Postface/postface.md > ./src/99-Postface.re
 
 cd ./src
 review-pdfmaker config.yml
