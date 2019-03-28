@@ -93,7 +93,7 @@ LEDをつないだGPIOピン番号を`defconstant`で定数定義します(今�
 
 ### 実行
 
-プログラムはGithub上にあるので、Roswellでインストールして実行してみて下さい。
+プログラムはGitHub上にあるので、Roswellでインストールして実行してみて下さい。
 
 ```
 ros install fireflower0/cl-raspi
@@ -189,7 +189,7 @@ sudo i2cdetect -y 1
 
 ### 実行
 
-プログラムはGithub上にあるので、Roswellでインストールして実行してみて下さい。
+プログラムはGitHub上にあるので、Roswellでインストールして実行してみて下さい。
 
 ```
 ros install fireflower0/cl-raspi
@@ -262,7 +262,7 @@ LCDの制御を入れるとコードが長くなるので`cl-raspi/bo1602dgrnjb`
 
 ### 実行
 
-プログラムはGithub上にあるので、Roswellでインストールして実行してみて下さい。
+プログラムはGitHub上にあるので、Roswellでインストールして実行してみて下さい。
 
 ```
 ros install fireflower0/cl-raspi

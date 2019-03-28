@@ -12,16 +12,16 @@ LinuxとmacOSではHomebrewでインストールすることができます。
 $ brew install roswell
 ```
 
-### windowsでのインストール
+### Windowsでのインストール
 
-windows環境でのインストール用にはバイナリファイルを準備しています。
+Windows環境でのインストール用にはバイナリファイルを準備しています。
 
 ```
 https://github.com/roswell/roswell/wiki/Installation#windows
 ```
 
 解凍したディレクトリ下に`ros shell`を実行すると長いセットアップ時間の後にmsysが含まれた環境が提供されます。
-本書の内容がwindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
+本書の内容がWindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、Windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
 
 ### ソースからインストールする
 
@@ -276,7 +276,7 @@ $ ros update rove
 
 * ros buildでは、Roswell Scriptをビルドして実行ファイルを生成することができる。
 
-* ライブラリをGithubからインストールするには`ros install Githubアカウント名/レポジトリ名`とする。
+* ライブラリをGitHubからインストールするには`ros install GitHubアカウント名/レポジトリ名`とする。
 
 * プロジェクト・トップのroswellフォルダにRoswell Scriptを入れておくと、Roswell Scriptをターミナルのコマンドとして使うことができる。
 
