@@ -92,9 +92,20 @@ QlotではQuicklispだけでなくgitリポジトリを指定してライブラ�
 
 ```
 # qlfile例
-ql :all 2018-02-28                             # Quicklispの2018-02-28のdistを利用する
-ql clack :latest                               # Clackのみ最新のQuicklisp登録バージョンを利用する
-git lsx https://github.com/fukamachi/lsx       # LSXはgitリポジトリからダウンロードする
+ql :all 2018-02-28                          # Quicklispの2018-02-28のdistを利用する
+ql clack :latest                            # Clackのみ最新の登録バージョンを利用する
+git lsx https://github.com/fukamachi/lsx    # LSXはgitリポジトリからダウンロードする
+```
+
+Qlotが有効な状態でCommon Lisp環境を起動するにはプロジェクトルートに移動し、実行コマンドの前に `qlot exec` をつけます。たとえばREPLを起動するには `qlot exec ros run` のようにします。LemでSLIMEを起動するときには `C-u M-x slime` を実行して `qlot/sbcl/1.4.8` のように処理系名の前に `qlot/` がついたものを選択します。
+
+QlotではRoswellスクリプトの対応もしています。qlfileによりインストールされる依存ライブラリのRoswellスクリプトは `quicklisp/bin/` の下にインストールされます。たとえば `clack` の場合は `quicklisp/bin/clackup` がインストールされます。このスクリプトの実行に限り `qlot exec` を省略してもQlotが有効な状態で実行されます。
+
+```
+# REPLを起動
+$ qlot exec ros run
+# Roswellスクリプトの実行
+$ quicklisp/bin/clackup app.lisp
 ```
 
 依存ライブラリのバージョンを更新するには `qlot update` が使えます。実行すると `qlfile.lock` の内容が更新されます。
