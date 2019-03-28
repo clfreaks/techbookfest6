@@ -2,9 +2,9 @@
 
 本章はRoswellについて解説します。Roswellは複数のCommon Lispの処理系のインストール、管理、切り替え、異なるコマンドラインオプションの共通化等を行なう処理系マネージャです。2014年から開発を開始した、比較的新しいツールであるため、ツールの作者としては悲しいことに、Common Lispのコミュニティの中にはこんなものは不要だろうという意見もあります。Roswellの使い方の一通りがCommon Lispの使い方の説明になるため、他の章に入る前にRoswellの使いかたについて説明します。
 
-### Roswellのインストール
+## Roswellのインストール
 
-#### Homebrewを利用したインストール
+### Homebrewを利用したインストール
 
 LinuxとmacOSではHomebrewでインストールすることができます。
 
@@ -12,7 +12,7 @@ LinuxとmacOSではHomebrewでインストールすることができます。
 $ brew install roswell
 ```
 
-#### windowsでのインストール
+### windowsでのインストール
 
 windows環境でのインストール用にはバイナリファイルを準備しています。
 
@@ -23,7 +23,7 @@ https://github.com/roswell/roswell/wiki/Installation#windows
 解凍したディレクトリ下に`ros shell`を実行すると長いセットアップ時間の後にmsysが含まれた環境が提供されます。
 本書の内容がwindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
 
-#### ソースからインストールする
+### ソースからインストールする
 
 Homebrewが使えない環境での、Roswellのインストールには
 
