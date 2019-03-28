@@ -232,12 +232,96 @@
 ;; 単語の文字列をキー、単語の通しインデックスと出現回数のドット対をバリューとするハッシュテーブル
 (defparameter *word-hash* (make-hash-table :test 'equal))
 
-;; *word-hash*に値を設定する
+;; *word-hash*に値を設定する(数秒かかる)
 (dolist (file *livedoor-data-files*)
   (docclass:add-words-to-hash-from-file! file *word-hash*))
 
 ;; 頻度の小さい単語を除いてハッシュテーブルを作り直す
-(setf *word-hash* (remove-infrequent-words *word-hash* 10))
+(setf *word-hash* (docclass:remove-infrequent-words *word-hash* 10))
 
-(defparameter *tf-idf-sparse-vector-list*
+;; テキストファイルのリストと*word-hash*から疎ベクトルのリストを作る(十数秒かかる)
+(defparameter *text-sparse-vectors*
   (docclass:make-tf-idf-list-from-files *livedoor-data-files* *word-hash*))
+
+(length *text-sparse-vectors*) ; => 7367 (文書数)
+(hash-table-count *word-hash*) ; => 18372 (単語数)
+
+(car *text-sparse-vectors*)
+;; #S(CL-ONLINE-LEARNING.VECTOR::SPARSE-VECTOR
+;;    :LENGTH 114
+;;    :INDEX-VECTOR #(0 12 13 ...)
+;;    :VALUE-VECTOR #(0.021566820323196546d0 0.02112624939291653d0 0.027720820546932805d0 ...))
+
+;; 各テキストファイルの入っているディレクトリからクラスラベルをつける
+(defparameter *class-labels*
+  (alexandria:flatten
+   (loop for class-id from 0 to (1- (length *livedoor-data*))
+         for dir-length in (mapcar #'length *livedoor-data*)
+         collect (make-list dir-length :initial-element class-id))))
+
+(defparameter *dataset*
+  (alexandria:shuffle (mapcar #'cons *class-labels* *text-sparse-vectors*)))
+
+(defparameter *train-set* (subseq *dataset* 0 6367))
+(defparameter *test-set* (nthcdr 6367 *dataset*))
+
+(ql:quickload :cl-online-learning)
+
+(defparameter *learner* (clol:make-one-vs-one 18372 9 'sparse-arow 0.1d0))
+(defparameter *learner* (clol:make-one-vs-rest 18372 9 'sparse-arow 0.1d0))
+
+(time (clol:train *learner* *train-set*))
+;; Evaluation took:
+;;   0.073 seconds of real time
+;;   0.072121 seconds of total run time (0.072117 user, 0.000004 system)
+;;   98.63% CPU
+;;   143,653,754 processor cycles
+;;   425,984 bytes consed
+
+(clol:test *learner* *train-set*)
+;; Accuracy: 99.79582%, Correct: 6354, Total: 6367
+(clol:test *learner* *test-set*)
+;; Accuracy: 95.700005%, Correct: 957, Total: 1000
+
+(clol:one-vs-rest-predict *learner* (cdr (car *test-set*)))
+
+(dotimes (i 10)
+  (clol:train *learner* *train-set*)
+  (format t "cycle: ~2D (train) " i)
+  (clol:test *learner* *train-set*)
+  (format t "cycle: ~2D (test)  " i)
+  (clol:test *learner* *test-set*))
+
+(defparameter result0.001
+  (loop repeat 50
+        collect (progn
+                  (clol:train *learner* *train-set*)
+                  (cons (clol:test *learner* *train-set*)
+                        (clol:test *learner* *test-set*)))))
+
+(ql:quickload :clgplot)
+(clgp:plots (list (mapcar #'car result0.01)
+                  (mapcar #'cdr result0.01)
+                  (mapcar #'car result0.1)
+                  (mapcar #'cdr result0.1)
+                  (mapcar #'car result1)
+                  (mapcar #'cdr result1)
+                  (mapcar #'car result10)
+                  (mapcar #'cdr result10))
+            :y-range '(80 105))
+
+'((89.853935 . 86.7) (92.68101 . 88.9) (94.565735 . 91.399994)
+ (95.790794 . 92.299995) (96.544685 . 93.0) (97.15722 . 93.3)
+ (97.534164 . 94.0) (98.05246 . 94.2) (98.30376 . 94.4) (98.6807 . 94.4)
+ (98.88487 . 94.4) (99.04193 . 94.6) (99.23041 . 94.6) (99.324646 . 94.700005)
+ (99.41888 . 94.700005) (99.497406 . 94.700005) (99.544525 . 94.8)
+ (99.591644 . 94.8) (99.63876 . 95.0) (99.685875 . 95.0) (99.71729 . 95.1)
+ (99.7487 . 95.1) (99.76441 . 95.1) (99.78012 . 95.200005)
+ (99.78012 . 95.200005) (99.79582 . 95.200005) (99.82723 . 95.200005)
+ (99.85865 . 95.200005) (99.89006 . 95.200005) (99.89006 . 95.200005)
+ (99.90576 . 95.200005) (99.92147 . 95.200005) (99.93718 . 95.200005)
+ (99.95288 . 95.200005) (99.96859 . 95.3) (99.96859 . 95.3) (99.96859 . 95.3)
+ (99.96859 . 95.4) (99.96859 . 95.4) (99.96859 . 95.4) (99.98429 . 95.200005)
+ (99.98429 . 95.200005) (99.98429 . 95.200005) (99.98429 . 95.3)
+ (99.98429 . 95.3) (99.98429 . 95.3) (99.98429 . 95.3) (99.98429 . 95.3)
+ (99.98429 . 95.3) (99.98429 . 95.3))
