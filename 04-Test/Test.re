@@ -300,7 +300,7 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 マクロのテストをするには @<code>{expands} を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
 
-単純に @<code>{macroexpand-1} して @<code>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<code>{equal} で比較することができません。一方で @<code>{expands} はパッケージにインターンされていないシンボル、 @<code>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
+単純に @<code>{macroexpand-1} して @<code>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<code>{equalp} で比較することができません。一方で @<code>{expands} はパッケージにインターンされていないシンボル、 @<code>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
 
 
 //emlist{
@@ -410,11 +410,22 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 (defvar *default-reporter* :dot)
 //}
 
-== まとめ
+===[column] 初期化ファイルでの設定
 
-この章ではRoveを紹介し、Common Lispのテストを行う流れを説明しました。Roveではアサーションを最小単位として、テスト、テストスイート、テストシステムに分割してテストを定義します。
+REPLを起動したときに常にこれらのRoveの設定を適用したいときには、Roswellの初期化ファイルに追記します。@<tt>{~/.roswell/init.lisp} に書くとCommon Lispプロセスが起動するときに実行されます。以下が一例です。
 
-最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてみてください。
+//emlist{
+;; デフォルトのレポートスタイルを dot にする
+(setf *rove-default-reporter* :dot)
+;; エラー発生時にデバッガを起動させる
+(setf *rove-debug-on-error* t)
+//}
 
- * Safety-Params@<br>{}https://github.com/fukamachi/safety-params
- * jsonrpc@<br>{}https://github.com/fukamachi/jsonrpc
+===[/column]
+
+== おわりに
+
+この章では一通りRoveの使い方を解説しました。最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてください。
+
+ * Safety-Params@<embed>{|latex|\quad}@<tt>{https://github.com/fukamachi/safety-params}
+ * jsonrpc@<embed>{|latex|\qquad}@<tt>{https://github.com/fukamachi/jsonrpc}
