@@ -115,9 +115,54 @@ Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単�
 ;=> NIL
 //}
 
-テスト内で失敗したアサーションがあると最後に失敗したアサーションの詳細情報を表示します。エラーが発生した場合はスタックトレースを表示します。
+テスト内で失敗したアサーションがあると最後に失敗したアサーションの詳細情報を表示します。
 
-テスト内で複数のテストをまとめるには @<code>{testing} が使えます。アサーションを機能別に適切な説明文をつけてまとめることで関心が分離でき、メンテナンス性の高いテストコードが書けます。また、 @<code>{testing} は自由にネストすることができます。
+Roveはテスト中にエラーが発生した場合でもすべてのテストを続行し、最後にエラーのスタックトレースを表示します。たとえば、引数の数が足りないときのエラーを発生させた例が@<list>{rove-run-test-stacktrace}です。
+
+//list[rove-run-test-stacktrace][エラーが発生したときの結果例][]{
+(run-test 'integerp)
+;-> integerp
+;     ✓ Expect (INTEGERP 1) to be true.
+;     ✓ Expect (INTEGERP 1.0) to be false.
+;     × 0) Expect (INTEGERP "1") to be true.
+;     × 1) Expect (INTEGERP) to be true.
+;   
+;   × 1 of 1 test failed
+;   
+;   0) integerp
+;      Expect (INTEGERP "1") to be true.
+;        (INTEGERP "1")
+;   
+;   1) integerp
+;      Expect (INTEGERP) to be true.
+;      SIMPLE-PROGRAM-ERROR: invalid number of arguments: 0
+;        (INTEGERP)
+;   
+;        1: ((FLET "H0" :IN #:MAIN1) invalid number of arguments: 0)
+;        2: (SB-KERNEL::%SIGNAL invalid number of arguments: 0)
+;        3: (ERROR invalid number of arguments: 0)
+;        4: (SB-INT:%PROGRAM-ERROR invalid number of arguments: ~S 0)
+;        5: ("INVALID-ARG-COUNT-ERROR" 0)
+;        6: (SB-KERNEL:INTERNAL-ERROR <error printing arg> #<unused argument>)
+;        7: ("foreign function: call_into_lisp")
+;        8: ("foreign function: funcall2")
+;        9: ("foreign function: interrupt_internal_error")
+;        10: ("foreign function: signal_emulation_wrapper")
+;        11: (INTEGERP)
+;        12: ((LABELS ROVE/CORE/ASSERTION::MAIN :IN #:MAIN1))
+;        13: ((FLET "MAIN141" :IN #:MAIN1))
+;        14: ((FLET "MAIN1"))
+;        15: ((FLET "MAIN1" :IN RUN-TEST))
+;=> NIL
+//}
+
+エラーが発生した時点でテストを中断し、Common Lispのデバッガを起動するためには @<code>{rove:*debug-on-error*} に @<code>{t} を設定します。
+
+//emlist{
+(setf *debug-on-error* t)
+//}
+
+テスト内にアサーションが増えてくると、何をテストしたいのかがわかりづらくテストコードのメンテナンス性が落ちてしまいます。テスト内で複数のアサーションをまとめるには @<code>{testing} が使えます。アサーションを機能別に適切な説明文をつけてまとめることで関心が分離でき、テスト結果もわかりやすくなります。
 
 //emlist{
 (deftest integerp
@@ -152,9 +197,10 @@ Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単�
 
 一般的な規模のプロジェクトでは、関数は一つではありません。複数のファイル・パッケージに分割された関数があり、それぞれの関数に正常系・異常系の単体テストを書く必要があります。テストも複数の @<code>{deftest} に分割して定義する必要があります。
 
-それらの複数のテストをまとめたものを「@<b>{テストスイート}」と呼びます。Roveではパッケージごとに暗黙的にテストスイートが作られるため、テストをそれぞれのパッケージに分割して記述するだけでテストをひとまとめに扱えます。
+それらの複数のテストをまとめたものを「@<b>{テストスイート}」と呼びます。Roveではパッケージごとに暗黙的にテストスイートが作られるため、テストをそれぞれのパッケージに分割して記述するだけでテストをひとまとめに扱えます。@<list>{test-suite-example}は二つのファイル・パッケージに分割されたテストの例です。
 
-//list[my-project/tests/file1][tests/file1.lisp][common-lisp]{
+//list[test-suite-example][パッケージごとに分割したテストスイート例][common-lisp]{
+;; tests/file1.lisp
 (defpackage #:my-project/tests/file1
   (:use #:cl
         #:rove
@@ -163,9 +209,8 @@ Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単�
 
 (deftest func1
   (ok (equal (func1 "A") "a")))
-//}
 
-//list[my-project/tests/file2][tests/file2.lisp][common-lisp]{
+;; tests/file2.lisp
 (defpackage #:my-project/tests/file2
   (:use #:cl
         #:rove
@@ -177,7 +222,6 @@ Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単�
 //}
 
 テストスイート内のすべてのテストを実行するには @<code>{rove:run-suite} を使います。
-
 
 //emlist{
 (run-suite :my-project/tests/file1)
@@ -203,7 +247,7 @@ Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単�
   (uiop:delete-directory-tree #P"/tmp/my-project/" :validate t))
 //}
 
-これらの定義はパッケージ内であれば先頭でも末尾でも構いません。通常は最初の @<code>{deftest} の前に記述することが多いです。
+これらの定義はパッケージ内であれば先頭でも末尾でも構いませんが、一般的に最初の @<code>{deftest} の前に記述することが多いです。
 
 @<code>{setup} と @<code>{teardown} はテストスイートの実行前と後のそれぞれ一回ずつしか実行されませんが、それぞれのテストの前後で実行させる機能もあります。これは @<code>{defhook} で定義します。
 
@@ -308,9 +352,7 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
 
 === テストの実行
 
-
 テストシステムをREPLで走らせるには @<code>{asdf:test-system} を使います。
-
 
 //emlist{
 (asdf:test-system :yubin)
@@ -318,9 +360,7 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
 (rove:run :yubin/tests)
 //}
 
-
 コマンドラインから実行するには「@<tt>{rove}」コマンドを使います。@<tt>{rove}コマンドは第一章の終わりでインストール方法を紹介しています。@<tt>{rove}コマンドの引数にASDファイルを渡すとそのシステムの @<code>{asdf:test-system} を呼び出し、テストが実行されます。
-
 
 //cmd{
 $ @<b>{rove yubin.asd}

@@ -54,9 +54,9 @@ Common LispでWebアプリを作るためにはいくつかの方法がありま
 
 //cmd{
 # インストール
-$ ros install clack
+$ @<b>{ros install clack}
 # Webサーバー起動
-$ clackup app.lisp
+$ @<b>{clackup app.lisp}
 Hunchentoot server is going to start.
 Listening on localhost:5000.
 //}
@@ -70,24 +70,24 @@ Qlotは、プロジェクトごとにライブラリを管理するためのツ�
 まずはいつも通りRoswellでQlotをインストールします。執筆時点のQlotのバージョンは0.9.9です。
 
 //cmd{
-$ ros install qlot
-$ qlot --version
+$ @<b>{ros install qlot}
+$ @<b>{qlot --version}
 Qlot 0.9.9
 //}
 
 利用するには @<tt>{qlfile} を追加します。まずは空の @<tt>{qlfile} を作り、 @<tt>{qlot install} で依存ライブラリのセットアップをしましょう。
 
 //cmd{
-$ touch qlfile
-$ qlot install
+$ @<b>{touch qlfile}
+$ @<b>{qlot install}
 //}
 
 完了すると新しく @<tt>{qlfile.lock} と @<tt>{quicklisp/} ディレクトリが作られます。 @<tt>{qlfile.lock} は @<tt>{qlfile} を元に必要なライブラリバージョンを解決した情報が含まれているので、必ずリポジトリに含めてください。 @<tt>{quicklisp/} ディレクトリは依存ライブラリのソースコードがダウンロードされているため、リポジトリに含める必要はありません。以下はgitリポジトリを使う場合の利用例です。
 
 //cmd{
-$ echo quicklisp/ >> .gitignore
-$ git add qlfile qlfile.lock
-$ git commit -m 'Start using Qlot.'
+$ @<b>{echo quicklisp/ >> .gitignore}
+$ @<b>{git add qlfile qlfile.lock}
+$ @<b>{git commit -m 'Start using Qlot.'}
 //}
 
 以降、 @<tt>{qlot install} をするとどの環境でも同じバージョンの依存ライブラリ群がインストールできます。
@@ -106,9 +106,9 @@ QlotではRoswellスクリプトの対応もしています。qlfileによりイ
 
 //cmd{
 # REPLを起動
-$ qlot exec ros run
+$ @<b>{qlot exec ros run}
 # Roswellスクリプトの実行
-$ quicklisp/bin/clackup app.lisp
+$ @<b>{quicklisp/bin/clackup app.lisp}
 //}
 
 
@@ -116,9 +116,9 @@ $ quicklisp/bin/clackup app.lisp
 
 //cmd{
 # すべての依存ライブラリを更新する (qlfile.lockを作り直す)
-$ qlot update
+$ @<b>{qlot update}
 # 特定のライブラリのみ更新する場合は --project を指定する
-$ qlot update --project clack
+$ @<b>{qlot update --project clack}
 //}
 
 == Dockerイメージとしてデプロイする場合
@@ -173,8 +173,8 @@ exec ros -Q -- $0 "$@"
 DockerfileからDockerイメージを作って実行するためには @<tt>{docker build} と @<tt>{docker run} を行います。 @<tt>{Listening on localhost:5000} と表示されたら起動完了です。
 
 //cmd{
-$ docker build . -t yubin
-$ docker run -it -p 5000:5000 yubin
+$ @<b>{docker build . -t yubin}
+$ @<b>{docker run -it -p 5000:5000 yubin}
 //}
 
 実際にクラウドホスティングサービスへデプロイする手順はCommon Lispに限定されないため割愛します。利用したいそれぞれのサービスのドキュメントをご覧ください。
@@ -184,25 +184,19 @@ $ docker run -it -p 5000:5000 yubin
 
 == Herokuにデプロイする場合
 
-
 もう一つの例として代表的なPaaSの一つであるHeroku@<fn>{45152b661534ef52c557094b671f9876}にデプロイする方法について説明します。Herokuのアカウント作成やコマンドインストールに関しては、言語に関わらず共通のため省略します。
-
 
 === 使い方
 
-
 Herokuでは標準でCommon Lispをサポートしていないため、カスタムビルドパックとして@<tt>{heroku-buildpack-roswell}を使用します。
 
-
-//emlist{
-$ heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswell
+//cmd{
+$ @<b>{heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswell}
 //}
-
 
 実行するとEmailとPasswordを要求されるので、事前にアカウント作成した時のものを入力してください。
 
-
-//emlist{
+//cmd{
 heroku-cli: migrating plugins
 heroku-cli: done migrating plugins
 Creating app... !
@@ -215,22 +209,17 @@ Setting buildpack to https://github.com/gos-k/heroku-buildpack-roswell... done
 https://dry-ridge-44891.herokuapp.com/ | https://git.heroku.com/dry-ridge-44891.git
 //}
 
-
 ここで作成されたアプリケーション名は@<tt>{dry-ridge-44891}で
 (heroku createの度に変わるはずですので、それぞれの環境に合わせて適宜読み替えてください)、
 Webサービスが公開されるアドレスが@<tt>{https://dry-ridge-44891.herokuapp.com}となり、
 自分が開発したWebサービスを登録するためのgitリポジトリが@<tt>{https://git.heroku.com/dry-ridge-44891.git}となります。
 
-
-//emlist{
-$ git clone https://git.heroku.com/dry-ridge-44891.git sample
+//cmd{
+$ @<b>{git clone https://git.heroku.com/dry-ridge-44891.git sample}
 //}
-
 
 @<tt>{sample}ディレクトリが作成されるので、ここにWebサービスを開発します。
 今回はWebフレームワークとしてClackを使用し、そのサンプルにある文字列を返すだけのWebサービスを作成します。
-
-
 
 最低限必要なファイルは次の4つです。
 
@@ -239,30 +228,23 @@ $ git clone https://git.heroku.com/dry-ridge-44891.git sample
  * @<tt>{app.lisp}
  * @<tt>{Procfile}
 
-
-
 @<tt>{.roswell-install-list}の内容は次の通りです。
 これはclackupコマンドを使用するために、対象のパッケージをインストールします。
-
 
 //emlist{
 clack
 //}
-
 
 @<tt>{.roswell-load-system-list}の内容は次の通りです。
 これは対象のパッケージをロードを行いキャッシュファイルを生成します。
 ここで必要なパッケージが指定されていない場合、起動時にコンパイルが発生した結果、タイムアウトエラーとなる場合があります。
 
-
 //emlist{
 clack
 //}
 
-
 @<tt>{app.lisp}の内容は次の通りです。
 ここにはclackで実行される文字列を返す関数を定義します。
-
 
 //emlist{
 (lambda (env)
@@ -270,31 +252,25 @@ clack
   '(200 (:content-type "text/plain") ("Hello, Clack!")))
 //}
 
-
 @<tt>{Procfile}の内容は次の通りです。
 ここにはサービス起動時に実行されるclackupコマンドを記述します。
 @<tt>{$PORT}はHeroku側から渡されるポート番号で、Heroku内部での通信に使用されます。
 
-
-//emlist{
-web clackup --port $PORT app.lisp
+//cmd{
+$ @<b>{web clackup --port $PORT app.lisp}
 //}
-
 
 これらのファイルを追加およびプッシュすると、コンパイルが行われサービスがデプロイされます。
 
-
-//emlist{
-git add .roswell-install-list .roswell-load-system-list app.lisp Procfile
-git commit -m "Initial commit"
-git push
+//cmd{
+$ @<b>{git add .roswell-install-list .roswell-load-system-list app.lisp Procfile}
+$ @<b>{git commit -m "Initial commit"}
+$ @<b>{git push}
 //}
-
 
 初回は処理系やQuicklispのダウンロードも行われるので、プッシュに伴うHeroku側でのリモート実行により、終わるまでに数分を要します。
 
-
-//emlist{
+//cmd{
 Counting objects: 5, done.
 Delta compression using up to 4 threads.
 Compressing objects: 100% (3/3), done.
@@ -328,16 +304,12 @@ To https://git.heroku.com/dry-ridge-44891.git
 (この例では@<tt>{https://dry-ridge-44891.herokuapp.com})
 Webブラウザでアクセスし@<tt>{Hello Clack!}が表示されればデプロイ成功です。
 
-
-
 動作しなかった場合には、@<tt>{heroku logs --tail}とするとHeroku側のログを見る事が出来ます。
-
 
 === 関連リンク
  * https://devcenter.heroku.com/start
  * https://dashboard.heroku.com
  * https://github.com/gos-k/heroku-buildpack-roswell
-
 
 //footnote[qlot-readme][https://github.com/fukamachi/qlot]
 
