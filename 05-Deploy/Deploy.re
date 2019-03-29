@@ -1,24 +1,16 @@
-
 = Webアプリの本番環境へのデプロイ
 
-
 この章では第三章で作った地名検索アプリ「yubin」をWebアプリケーションとして本番環境にデプロイする方法を紹介します。一つ目は仮想コンテナツール「Docker」を使ったデプロイ、もう一つはメジャーなPaaS (Platform as a Service) であるHerokuへのデプロイについて説明します。
-
 
 == Webアプリの開発
 
 === Clack
 
-
 Common LispでWebアプリを作るためにはいくつかの方法がありますが、現在ではClackを使うのが主流です。ClackとはさまざまなWebサーバーのインターフェイスを統一し、ソフトウェアのコードを変更することなく複数のWebサーバー上で動かすことができます。たとえば、開発環境ではピュアCommon LispのHunchentootを使い、本番環境ではより高速なWooを使うといったことが可能となります。
 
+このClackをベースとしてWebフレームワークにはningleやCaveman2、Utopianなどがあります。長くなるためここではWebアプリの作り方は紹介しませんが、興味がある方はぜひ調べてみてください。この章では@<list>{app.lisp}のような一ファイルのClackアプリケーションを使います。
 
-
-このClackをベースとしてWebフレームワークにはningleやCaveman2、Utopianなどがあります。長くなるためここではWebアプリの作り方は紹介しませんが、興味がある方はぜひ調べてみてください。この章では仮に以下のような一ファイルのClackアプリケーションを使います。
-
-
-//emlist{
-;; app.lisp
+//list[app.lisp][app.lisp][common-lisp]{
 (ql:quickload '(:ningle :cl-mustache :yubin) :silent t)
 
 (defun render (template &optional context)
@@ -53,11 +45,9 @@ Common LispでWebアプリを作るためにはいくつかの方法がありま
 *app*
 //}
 
+このClackアプリを動かすには「@<tt>{clackup}」コマンドを使います。 @<tt>{clackup} コマンドがない場合は @<tt>{ros install clack} をしてClackをインストールしてください。@<tt>{clackup} を実行してしばらく待ち @<tt>{Listening on localhost:5000} と表示されれば起動完了です。ブラウザで @<tt>{http://localhost:5000} を開くと郵便番号の入力フォームが表示されます。
 
-このClackアプリを動かすには @<tt>{clackup} コマンドを使います。 @<tt>{clackup} コマンドがない場合は @<tt>{ros install clack} をしてClackをインストールしてください。@<tt>{clackup} を実行してしばらく待ち @<tt>{Listening on localhost:5000} と表示されれば起動完了です。ブラウザで http://localhost:5000 を開くと郵便番号の入力フォームが表示されます。
-
-
-//emlist{
+//cmd{
 # インストール
 $ ros install clack
 # Webサーバー起動
@@ -68,67 +58,48 @@ Listening on localhost:5000.
 
 === Qlot
 
-
 Webアプリを本番環境にデプロイするときに問題となりうるのが、依存ライブラリのバージョン管理です。開発環境と本番環境で同じバージョンのライブラリを使わなければ環境によって挙動の一貫性を保つことができません。また、複数人で開発する場合にも各人の環境でのバージョン統一が必要となりますし、自分一人の開発であったとしても同じマシンで複数のプロジェクトを扱うときには、同じライブラリでもプロジェクトごとに異なるバージョンを使わなければならないケースがよくあります。
-
-
 
 Qlotは、プロジェクトごとにライブラリを管理するためのツールです。Qlotでは依存ライブラリの情報を @<tt>{qlfile} に記載することでどの環境でも同じバージョンの依存ライブラリ群をインストールすることができます。
 
-
-
 まずはいつも通りRoswellでQlotをインストールします。執筆時点のQlotのバージョンは0.9.9です。
 
-
-//emlist{
+//cmd{
 $ ros install qlot
 $ qlot --version
 Qlot 0.9.9
 //}
 
-
 利用するには @<tt>{qlfile} を追加します。まずは空の @<tt>{qlfile} を作り、 @<tt>{qlot install} で依存ライブラリのセットアップをしましょう。
 
-
-//emlist{
+//cmd{
 $ touch qlfile
 $ qlot install
 //}
 
-
 完了すると新しく @<tt>{qlfile.lock} と @<tt>{quicklisp/} ディレクトリが作られます。 @<tt>{qlfile.lock} は @<tt>{qlfile} を元に必要なライブラリバージョンを解決した情報が含まれているので、必ずリポジトリに含めてください。 @<tt>{quicklisp/} ディレクトリは依存ライブラリのソースコードがダウンロードされているため、リポジトリに含める必要はありません。以下はgitリポジトリを使う場合の利用例です。
 
-
-//emlist{
+//cmd{
 $ echo quicklisp/ >> .gitignore
 $ git add qlfile qlfile.lock
 $ git commit -m 'Start using Qlot.'
 //}
 
-
 以降、 @<tt>{qlot install} をするとどの環境でも同じバージョンの依存ライブラリ群がインストールできます。
 
+QlotではQuicklispだけでなくgitリポジトリを指定してライブラリをインストールすることもできます。@<list>{qlfile-example}に @<tt>{qlfile} の一例を示します。ブランチやタグを指定したり特定のコミットを指定したりもできます。詳しくはQlotのREADME@<fn>{qlot-readme}を参照してください。
 
-
-QlotではQuicklispだけでなくgitリポジトリを指定してライブラリをインストールすることもできます。以下に @<tt>{qlfile} の一例を示します。ブランチやタグを指定したり特定のコミットを指定したりもできます。詳しくはQlotのREADME@<fn>{e3ea61d554c754aac0afb844664b4c37}を参照してください。
-
-
-//emlist{
-# qlfile例
+//list[qlfile-example][qlfile例][]{
 ql :all 2018-02-28                          # Quicklispの2018-02-28のdistを利用する
 ql clack :latest                            # Clackのみ最新の登録バージョンを利用する
 git lsx https://github.com/fukamachi/lsx    # LSXはgitリポジトリからダウンロードする
 //}
 
-
 Qlotが有効な状態でCommon Lisp環境を起動するにはプロジェクトルートに移動し、実行コマンドの前に @<tt>{qlot exec} をつけます。たとえばREPLを起動するには @<tt>{qlot exec ros run} のようにします。LemでSLIMEを起動するときには @<tt>{C-u M-x slime} を実行して @<tt>{qlot/sbcl/1.4.8} のように処理系名の前に @<tt>{qlot/} がついたものを選択します。
-
-
 
 QlotではRoswellスクリプトの対応もしています。qlfileによりインストールされる依存ライブラリのRoswellスクリプトは @<tt>{quicklisp/bin/} の下にインストールされます。たとえば @<tt>{clack} の場合は @<tt>{quicklisp/bin/clackup} がインストールされます。このスクリプトの実行に限り @<tt>{qlot exec} を省略してもQlotが有効な状態で実行されます。
 
-
-//emlist{
+//cmd{
 # REPLを起動
 $ qlot exec ros run
 # Roswellスクリプトの実行
@@ -138,8 +109,7 @@ $ quicklisp/bin/clackup app.lisp
 
 依存ライブラリのバージョンを更新するには @<tt>{qlot update} が使えます。実行すると @<tt>{qlfile.lock} の内容が更新されます。
 
-
-//emlist{
+//cmd{
 # すべての依存ライブラリを更新する (qlfile.lockを作り直す)
 $ qlot update
 # 特定のライブラリのみ更新する場合は --project を指定する
@@ -148,15 +118,11 @@ $ qlot update --project clack
 
 == Dockerイメージとしてデプロイする場合
 
-
 それでは仮想コンテナツールDockerを使ってマシンイメージを作る場合を説明します。Dockerを使えば同じマシンイメージをAWSやGCP、Azureのようなクラウドホスティングサービスにデプロイすることができます。
 
+まずはDockerを利用するためにはDockerfileというファイルを作ります(@<list>{dockerfile-example})。このファイルはマシンイメージを作るための手順を記述したものです。ベースとなるDockerイメージを @<tt>{FROM} に指定しています。Roswellが利用可能なDockerイメージは多くの人が独自に作ったものがいくつも乱立している状況で、どれを使うべきかは将来的に変わる可能性があります。ここでは40antsが提供するDockerイメージ@<fn>{40ants-docker-image}を使います。
 
-
-まずはDockerを利用するためにはDockerfileというファイルを作ります。このファイルはマシンイメージを作るための手順を記述したものです。ベースとなるDockerイメージを @<tt>{FROM} に指定しています。Roswellが利用可能なDockerイメージは多くの人が独自に作ったものがいくつも乱立している状況で、どれを使うべきかは将来的に変わる可能性があります。ここでは40antsが提供するDockerイメージを使います。
-
-
-//emlist{
+//list[dockerfile-example][Dockerfile][]{
 FROM 40ants/base-lisp-image:0.6.0-sbcl-bin as base
 
 COPY . /app
@@ -168,11 +134,9 @@ ENTRYPOINT ["qlot", "exec"]
 CMD ["roswell/yubin-server"]
 //}
 
+起動を早くするためにDockerイメージの作成時にアプリもビルドしてしまうよう、新たに @<tt>{roswell/yubin-server.ros} というファイルを追加しています。内容を@<list>{roswell/yubin-server.ros}に示します。
 
-起動を早くするためにDockerイメージの作成時にアプリもビルドしてしまうよう、新たに @<tt>{roswell/yubin-server.ros} というファイルを追加しています。内容を以下に示します。
-
-
-//emlist{
+//list[roswell/yubin-server.ros][roswell/yubin-server.ros][common-lisp]{
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
@@ -201,23 +165,17 @@ exec ros -Q -- $0 "$@"
 ;;; vim: set ft=lisp lisp:
 //}
 
-
 DockerfileからDockerイメージを作って実行するためには @<tt>{docker build} と @<tt>{docker run} を行います。 @<tt>{Listening on localhost:5000} と表示されたら起動完了です。
 
-
-//emlist{
+//cmd{
 $ docker build . -t yubin
 $ docker run -it -p 5000:5000 yubin
 //}
 
-
 実際にクラウドホスティングサービスへデプロイする手順はCommon Lispに限定されないため割愛します。利用したいそれぞれのサービスのドキュメントをご覧ください。
 
- * AWS Elastic Beanstalk
- ** https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/single-container-docker.html
- * Google Compute Engine
- ** https://cloud.google.com/compute/docs/instance-groups/deploying-docker-containers?hl=ja
-
+ * AWS Elastic Beanstalk@<br>{}https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/single-container-docker.html
+ * Google Compute Engine@<br>{}https://cloud.google.com/compute/docs/instance-groups/deploying-docker-containers?hl=ja
 
 == Herokuにデプロイする場合
 
@@ -376,6 +334,8 @@ Webブラウザでアクセスし@<tt>{Hello Clack!}が表示されればデプ�
  * https://github.com/gos-k/heroku-buildpack-roswell
 
 
-//footnote[e3ea61d554c754aac0afb844664b4c37][https://github.com/fukamachi/qlot]
+//footnote[qlot-readme][https://github.com/fukamachi/qlot]
+
+//footnote[40ants-docker-image][https://github.com/40ants/base-lisp-image]
 
 //footnote[45152b661534ef52c557094b671f9876][https://jp.heroku.com]
