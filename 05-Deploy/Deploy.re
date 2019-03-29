@@ -228,6 +228,12 @@ $ git clone https://git.heroku.com/dry-ridge-44891.git sample
 @<tt>{sample}ディレクトリが作成されるので、ここにWebサービスを開発します。
 今回はWebフレームワークとしてClackを使用し、そのサンプルにある文字列を返すだけのWebサービスを作成します。
 
+まず、Heroku側で日本語を扱うため、環境変数LANGを設定します。
+
+
+//emlist{
+$ heroku config:set LANG=ja_JP.UTF-8
+//}
 
 
 最低限必要なファイルは次の4つです。
@@ -245,6 +251,7 @@ $ git clone https://git.heroku.com/dry-ridge-44891.git sample
 
 //emlist{
 clack
+clfleaks/yubin
 //}
 
 
@@ -255,18 +262,13 @@ clack
 
 //emlist{
 clack
+ningle
+cl-mustache
+yubin
 //}
 
 
-@<tt>{app.lisp}の内容は次の通りです。
-ここにはclackで実行される文字列を返す関数を定義します。
-
-
-//emlist{
-(lambda (env)
-  (declare (ignore env))
-  '(200 (:content-type "text/plain") ("Hello, Clack!")))
-//}
+@<tt>{app.lisp}の内容は、先ほどの物と同様です。
 
 
 @<tt>{Procfile}の内容は次の通りです。
