@@ -1,33 +1,22 @@
-
 = テストフレームワーク「Rove」
 
-== Common Lispのテストライブラリ
-
-
-Common Lispには数多くのテストライブラリがあります。長い歴史の中でメンテナンスされていないものも含めると三十近くもあります。その中でも最も多く使われているものがFiveAMとProveです。FiveAMはシンプルなテストライブラリです。Common Lispライブラリで古くから使われており、ファンも多くいます。一方でProveはテスト結果の色付けやコマンドラインインターフェイスなどテスト実行環境周辺にも目を向けて作られたものです。
-
-
+//lead{
+Common Lispには数多くのテストライブラリがあります。その中でも最も多く使われているものがFiveAMとProveです。
 
 この章ではProveの後継テストフレームワークであるRoveを紹介します。Roveは現代のCommon LispプログラムのトレンドにフィットするようにProveを再構成したものです。たとえば、ASDF 3.1から取り入れられたpackage-inferred-systemというファイル単位でのプログラム分割機能を使えるように改良されています。また、非同期なプログラムのテストのためのスレッドサポートや、テスト実行前後のフック、一定時間以上テストの実行にかかったものを色付けして表示するなどの機能も含まれます。
 
-
-
 初めてCommon Lispプログラムを書く人も、今までProveを使っていた人も、これを機会にRoveを使っていただければと思います。
+//}
 
+== Roveのインストール
 
-== セットアップ
-
-
-まずはREPLでRoveをインストール・ロードしましょう。RoveはQuicklispに登録されているため、他のライブラリ同様に @<tt>{ql:quickload} でインストールとロードができます。
-
+まずはREPLでRoveをインストール・ロードしましょう。RoveはQuicklispに登録されているため、他のライブラリ同様に @<code>{ql:quickload} でインストールとロードができます。
 
 //emlist{
 (ql:quickload :rove)
 //}
 
-
 この本ではバージョン 0.9.1を前提としています。各環境のRoveのバージョン番号を確認し、古いバージョンの場合はQuicklispのdistをアップデートしてください。
-
 
 //emlist{
 (asdf:component-version (asdf:find-system :rove))
@@ -35,9 +24,7 @@ Common Lispには数多くのテストライブラリがあります。長い歴
 //}
 
 
-この章では読み進めながらREPLで試せるように説明と同時にコード実行例を多く挟んでいます。途中のコード例では特に言及がない限りcl-userパッケージで @<tt>{rove} パッケージをインポートした状態を前提としています。
-
-
+この章では読み進めながらREPLで試せるように説明と同時にコード実行例を多く挟んでいます。途中のコード例では特に言及がない限り @<code>{cl-user}パッケージで @<code>{rove} パッケージをインポートした状態を前提としています。
 
 同じ環境で実行するためには、REPLを起動して以下の二行を実行すれば準備完了です。
 
@@ -47,9 +34,7 @@ Common Lispには数多くのテストライブラリがあります。長い歴
 (use-package :rove)
 //}
 
-
 それではRoveの基本機能から見ていきましょう。
-
 
 == Roveの基本機能
 
@@ -58,10 +43,7 @@ Common Lispには数多くのテストライブラリがあります。長い歴
 
 まずはRoveを使って単純な値の比較をしてみます。
 
-
-
-Roveの基本的なマクロ @<tt>{ok} はフォームを受け取り、その返り値が真のときは成功、偽のときは失敗となるマクロです。
-
+Roveの基本的なマクロ @<code>{ok} はフォームを受け取り、その返り値が真のときは成功、偽のときは失敗となるマクロです。
 
 //emlist{
 ;; 成功
@@ -75,9 +57,7 @@ Roveの基本的なマクロ @<tt>{ok} はフォームを受け取り、その�
 ;=> NIL
 //}
 
-
-一方で @<tt>{ng} は、フォームの内容が偽のときは成功、真のときは失敗となります。
-
+一方で @<code>{ng} は、フォームの内容が偽のときは成功、真のときは失敗となります。
 
 //emlist{
 ;; 成功
@@ -91,9 +71,7 @@ Roveの基本的なマクロ @<tt>{ok} はフォームを受け取り、その�
 ;=> NIL
 //}
 
-
-ログに出力される @<tt>{Expect ...} の部分を変えることもできます。 @<tt>{ok} の第二引数に文字列として表示したい文字列を渡します。
-
+ログに出力される @<tt>{Expect ...} の部分を変えることもできます。 @<code>{ok} の第二引数に文字列として表示したい文字列を渡します。
 
 //emlist{
 (ok (= 1 1) "1 should be 1")
@@ -101,22 +79,15 @@ Roveの基本的なマクロ @<tt>{ok} はフォームを受け取り、その�
 ;=> T
 //}
 
-
-Roveを使ったテストではこの @<tt>{ok} や @<tt>{ng} を基本単位としてテストプログラムを構成します。この最小単位を「アサーション」と呼びます。
-
+Roveを使ったテストではこの @<code>{ok} や @<code>{ng} を基本単位としてテストプログラムを構成します。この最小単位を「@<b>{アサーション}」と呼びます。
 
 === テストの定義
 
-
 アサーションを並べるだけでもプログラムのテストはできますが、量が増えてくるとプログラムのコンポーネント単位や、機能単位での分割をしたほうが見通しがよくなります。また、失敗したときのログもわかりやすくなります。
 
+複数のアサーションをひとまとめにした単位をRoveでは「@<b>{テスト}」と呼びます。テストは @<code>{deftest} を使って定義します。
 
-
-複数のアサーションをひとまとめにした単位をRoveでは「テスト」と呼びます。テストは @<tt>{deftest} を使って定義します。
-
-
-
-たとえば関数 @<tt>{integerp} のテストをしたいとすると以下のようなテストが考えられます。引数にさまざまな値を与えてその返り値を @<tt>{ok} と @<tt>{ng} で検証します。例として一つだけ失敗するアサーションを混ぜています。
+たとえば関数 @<code>{integerp} のテストをしたいとすると以下のようなテストが考えられます。引数にさまざまな値を与えてその返り値を @<code>{ok} と @<code>{ng} で検証します。例として一つだけ失敗するアサーションを混ぜています。
 
 
 //emlist{
@@ -127,9 +98,7 @@ Roveを使ったテストではこの @<tt>{ok} や @<tt>{ng} を基本単位と
 ;=> INTEGERP
 //}
 
-
-定義されたテストの実行は @<tt>{rove:run-test} を使います。
-
+定義されたテストの実行は @<code>{rove:run-test} を使います。
 
 //emlist{
 (run-test 'integerp)
@@ -146,13 +115,54 @@ Roveを使ったテストではこの @<tt>{ok} や @<tt>{ng} を基本単位と
 ;=> NIL
 //}
 
+テスト内で失敗したアサーションがあると最後に失敗したアサーションの詳細情報を表示します。
 
-テスト内で失敗したアサーションがあると最後に失敗したアサーションの詳細情報を表示します。エラーが発生した場合はスタックトレースを表示します。
+Roveはテスト中にエラーが発生した場合でもすべてのテストを続行し、最後にエラーのスタックトレースを表示します。たとえば、引数の数が足りないときのエラーを発生させた例が@<list>{rove-run-test-stacktrace}です。
 
+//list[rove-run-test-stacktrace][エラーが発生したときの結果例][]{
+(run-test 'integerp)
+;-> integerp
+;     ✓ Expect (INTEGERP 1) to be true.
+;     ✓ Expect (INTEGERP 1.0) to be false.
+;     × 0) Expect (INTEGERP "1") to be true.
+;     × 1) Expect (INTEGERP) to be true.
+;   
+;   × 1 of 1 test failed
+;   
+;   0) integerp
+;      Expect (INTEGERP "1") to be true.
+;        (INTEGERP "1")
+;   
+;   1) integerp
+;      Expect (INTEGERP) to be true.
+;      SIMPLE-PROGRAM-ERROR: invalid number of arguments: 0
+;        (INTEGERP)
+;   
+;        1: ((FLET "H0" :IN #:MAIN1) invalid number of arguments: 0)
+;        2: (SB-KERNEL::%SIGNAL invalid number of arguments: 0)
+;        3: (ERROR invalid number of arguments: 0)
+;        4: (SB-INT:%PROGRAM-ERROR invalid number of arguments: ~S 0)
+;        5: ("INVALID-ARG-COUNT-ERROR" 0)
+;        6: (SB-KERNEL:INTERNAL-ERROR <error printing arg> #<unused argument>)
+;        7: ("foreign function: call_into_lisp")
+;        8: ("foreign function: funcall2")
+;        9: ("foreign function: interrupt_internal_error")
+;        10: ("foreign function: signal_emulation_wrapper")
+;        11: (INTEGERP)
+;        12: ((LABELS ROVE/CORE/ASSERTION::MAIN :IN #:MAIN1))
+;        13: ((FLET "MAIN141" :IN #:MAIN1))
+;        14: ((FLET "MAIN1"))
+;        15: ((FLET "MAIN1" :IN RUN-TEST))
+;=> NIL
+//}
 
+エラーが発生した時点でテストを中断し、Common Lispのデバッガを起動するためには @<code>{rove:*debug-on-error*} に @<code>{t} を設定します。
 
-テスト内で複数のテストをまとめるには @<tt>{testing} が使えます。アサーションを機能別に適切な説明文をつけてまとめることで関心が分離でき、メンテナンス性の高いテストコードが書けます。また、 @<tt>{testing} は自由にネストすることができます。
+//emlist{
+(setf *debug-on-error* t)
+//}
 
+テスト内にアサーションが増えてくると、何をテストしたいのかがわかりづらくテストコードのメンテナンス性が落ちてしまいます。テスト内で複数のアサーションをまとめるには @<code>{testing} が使えます。アサーションを機能別に適切な説明文をつけてまとめることで関心が分離でき、テスト結果もわかりやすくなります。
 
 //emlist{
 (deftest integerp
@@ -185,19 +195,11 @@ Roveを使ったテストではこの @<tt>{ok} や @<tt>{ng} を基本単位と
 
 === テストスイート
 
+一般的な規模のプロジェクトでは、関数は一つではありません。複数のファイル・パッケージに分割された関数があり、それぞれの関数に正常系・異常系の単体テストを書く必要があります。テストも複数の @<code>{deftest} に分割して定義する必要があります。
 
-一般的な規模のプロジェクトでは、関数は一つではありません。複数のファイル・パッケージに分割された関数があり、それぞれの関数に正常系・異常系の単体テストを書く必要があります。テストも複数の @<tt>{deftest} に分割して定義する必要があります。
+それらの複数のテストをまとめたものを「@<b>{テストスイート}」と呼びます。Roveではパッケージごとに暗黙的にテストスイートが作られるため、テストをそれぞれのパッケージに分割して記述するだけでテストをひとまとめに扱えます。@<list>{test-suite-example}は二つのファイル・パッケージに分割されたテストの例です。
 
-
-
-それらの複数のテストをまとめたものを「テストスイート」と呼びます。
-
-
-
-Roveではパッケージごとに暗黙的にテストスイートが作られるため、テストをそれぞれのパッケージに分割して記述するだけでテストをひとまとめに扱えます。
-
-
-//emlist{
+//list[test-suite-example][パッケージごとに分割したテストスイート例][common-lisp]{
 ;; tests/file1.lisp
 (defpackage #:my-project/tests/file1
   (:use #:cl
@@ -219,9 +221,7 @@ Roveではパッケージごとに暗黙的にテストスイートが作られ�
   (ok (equal (func2 1) "1")))
 //}
 
-
-テストスイート内のすべてのテストを実行するには @<tt>{rove:run-suite} を使います。
-
+テストスイート内のすべてのテストを実行するには @<code>{rove:run-suite} を使います。
 
 //emlist{
 (run-suite :my-project/tests/file1)
@@ -231,35 +231,25 @@ Roveではパッケージごとに暗黙的にテストスイートが作られ�
 ;   ✓ 1 test completed
 //}
 
-
 加えてテストスイートにはテスト実行前と終了前をフックする機能があります。
 
-
-
-たとえば、テスト実行前に特定のディレクトリが作られていることを保証したい場合は @<tt>{setup} を使って以下のように定義できます。
-
+たとえば、テスト実行前に特定のディレクトリが作られていることを保証したい場合は @<code>{setup} を使って以下のように定義できます。
 
 //emlist{
 (setup
   (ensure-direcctories-exist #P"/tmp/my-project/"))
 //}
 
-
-さらにテスト終了時にディレクトリを削除したいときには @<tt>{teardown} が使えます。
-
+さらにテスト終了時にディレクトリを削除したいときには @<code>{teardown} が使えます。
 
 //emlist{
 (teardown
   (uiop:delete-directory-tree #P"/tmp/my-project/" :validate t))
 //}
 
+これらの定義はパッケージ内であれば先頭でも末尾でも構いませんが、一般的に最初の @<code>{deftest} の前に記述することが多いです。
 
-これらの定義はパッケージ内であれば先頭でも末尾でも構いません。通常は最初の @<tt>{deftest} の前に記述することが多いです。
-
-
-
-@<tt>{setup} と @<tt>{teardown} はテストスイートの実行前と後のそれぞれ一回ずつしか実行されませんが、それぞれのテストの前後で実行させる機能もあります。これは @<tt>{defhook} で定義します。
-
+@<code>{setup} と @<code>{teardown} はテストスイートの実行前と後のそれぞれ一回ずつしか実行されませんが、それぞれのテストの前後で実行させる機能もあります。これは @<code>{defhook} で定義します。
 
 //emlist{
 ;; 毎テスト実行前に走らせるコード
@@ -273,15 +263,11 @@ Roveではパッケージごとに暗黙的にテストスイートが作られ�
 
 == テストに便利なユーティリティ群
 
-
 Roveではよくテストで使われる手法を簡便にするためのマクロがいくつか用意されています。
-
 
 === エラーの発生をテストする
 
-
-異常系のテストではエラーが発生することをテストしたいときには @<tt>{signals} が使えます。 @<tt>{signals} は与えられたフォーム内でエラーが発生すると真を返すマクロです。
-
+異常系のテストではエラーが発生することをテストしたいときには @<code>{signals} が使えます。 @<code>{signals} は与えられたフォーム内でエラーが発生すると真を返すマクロです。
 
 //emlist{
 (defun add (x y) (+ x y))
@@ -297,8 +283,7 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 === ストリームへの出力をテストする
 
-
-ストリームへの出力をテストするには @<tt>{outputs} を使います。
+ストリームへの出力をテストするには @<code>{outputs} を使います。
 
 
 //emlist{
@@ -313,12 +298,9 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 === マクロのテストをする
 
+マクロのテストをするには @<code>{expands} を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
 
-マクロのテストをするには @<tt>{expands} を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
-
-
-
-単純に @<tt>{macroexpand-1} して @<tt>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<tt>{equal} で比較することができません。一方で @<tt>{expands} はパッケージにインターンされていないシンボル、 @<tt>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
+単純に @<code>{macroexpand-1} して @<code>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<code>{equal} で比較することができません。一方で @<code>{expands} はパッケージにインターンされていないシンボル、 @<code>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
 
 
 //emlist{
@@ -337,21 +319,16 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 === テストを書く
 
-
-tests/main.lisp に関数 @<tt>{get-place} のテストを追加します。この関数が正常に動作するケースと、動作しないケースの両方を含めます。たとえば以下のようなケースをテストしてみましょう。
+tests/main.lisp に関数 @<code>{get-place} のテストを追加します。この関数が正常に動作するケースと、動作しないケースの両方を含めます。たとえば以下のようなケースをテストしてみましょう。
 
  * 郵便番号を数値で渡して、正しい住所が返ってくるか
  * 郵便番号をハイフン入りの文字列で渡して、正しい住所が返ってくるか
  * 存在しない郵便番号を渡して、エラーとなるか
  * 郵便番号ではない文字列を渡して、エラーとなるか
 
-
-
 これをテストコードとしたものが以下です。
 
-
-//emlist{
-;; tests/main.lisp
+//list[yubin/tests/main][tests/main.lisp][common-lisp]{
 (defpackage #:yubin/tests/main
   (:use #:cl
         #:yubin
@@ -375,9 +352,7 @@ tests/main.lisp に関数 @<tt>{get-place} のテストを追加します。こ�
 
 === テストの実行
 
-
-テストシステムをREPLで走らせるには @<tt>{asdf:test-system} を使います。
-
+テストシステムをREPLで走らせるには @<code>{asdf:test-system} を使います。
 
 //emlist{
 (asdf:test-system :yubin)
@@ -385,23 +360,34 @@ tests/main.lisp に関数 @<tt>{get-place} のテストを追加します。こ�
 (rove:run :yubin/tests)
 //}
 
+コマンドラインから実行するには「@<tt>{rove}」コマンドを使います。@<tt>{rove}コマンドは第一章の終わりでインストール方法を紹介しています。@<tt>{rove}コマンドの引数にASDファイルを渡すとそのシステムの @<code>{asdf:test-system} を呼び出し、テストが実行されます。
 
-コマンドラインから実行するには「rove」コマンドを使います。roveコマンドは第一章の終わりでインストール方法を紹介しています。roveコマンドの引数にASDファイルを渡すとそのシステムの @<tt>{asdf:test-system} を呼び出し、テストが実行されます。
+//cmd{
+$ @<b>{rove yubin.asd}
+;; testing 'yubin/tests/main'
+  get-place
+    should return the address for a given postal code in a number
+      ✓ Expect (EQUAL (YUBIN:GET-PLACE 6380321) "奈良県吉野郡天川村坪内") to be true. (685ms)
+      ✓ Expect (EQUAL (YUBIN:GET-PLACE 1500000) "東京都渋谷区") to be true. (406ms)
+    should return the address for a given postal code in a string
+      ✓ Expect (EQUAL (YUBIN:GET-PLACE "6380321") "奈良県吉野郡天川村坪内") to be true. (406ms)
+      ✓ Expect (EQUAL (YUBIN:GET-PLACE "150-0000") "東京都渋谷区") to be true. (405ms)
+    should raise an error for an unknown postal code
+      ✓ Expect (YUBIN:GET-PLACE 6068501) to signal ERROR. (408ms)
+    should raise an error for non postal code
+      ✓ Expect (YUBIN:GET-PLACE "clfreaks") to signal ERROR. (413ms)
 
+✓ 1 test completed
 
-//emlist{
-$ rove yubin.asd
+Summary:
+  All 1 test passed.
 //}
 
 === レポートスタイルの変更
 
-
 Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「レポートスタイル」と呼びます。
 
-
-
-レポートスタイルを変更するには @<tt>{rove:run} に @<tt>{:style} でスタイル名を指定します。
-
+レポートスタイルを変更するには @<code>{rove:run} に @<code>{:style} でスタイル名を指定します。
 
 //emlist{
 ;; デフォルトのレポートスタイル
@@ -414,9 +400,7 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 (rove:run :yubin/tests :style :none)
 //}
 
-
-デフォルトのレポートスタイルは @<tt>{:spec} です。これを変更するには @<tt>{rove:*default-reporter*} に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は @<tt>{cl-user:*rove-default-reporter*} に設定します。
-
+デフォルトのレポートスタイルは @<code>{:spec} です。これを変更するには @<code>{rove:*default-reporter*} に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は @<code>{cl-user:*rove-default-reporter*} に設定します。
 
 //emlist{
 ;; .roswell/init.lisp
@@ -425,15 +409,9 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 
 == まとめ
 
-
 この章ではRoveを紹介し、Common Lispのテストを行う流れを説明しました。Roveではアサーションを最小単位として、テスト、テストスイート、テストシステムに分割してテストを定義します。
-
-
 
 最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてみてください。
 
- * Safety-Params
- ** https://github.com/fukamachi/safety-params
- * jsonrpc
- ** https://github.com/fukamachi/jsonrpc
-
+ * Safety-Params@<br>{}https://github.com/fukamachi/safety-params
+ * jsonrpc@<br>{}https://github.com/fukamachi/jsonrpc
