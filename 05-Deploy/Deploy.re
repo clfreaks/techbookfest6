@@ -6,7 +6,7 @@
 
 == Webアプリの開発
 
-=== Clack
+=== ClackベースのWebアプリ
 
 Common LispでWebアプリを作るためにはいくつかの方法がありますが、現在ではClackを使うのが主流です。ClackとはさまざまなWebサーバーのインターフェイスを統一し、ソフトウェアのコードを変更することなく複数のWebサーバー上で動かすことができます。たとえば、開発環境ではピュアCommon LispのHunchentootを使い、本番環境ではより高速なWooを使うといったことが可能となります。
 
@@ -61,11 +61,17 @@ Hunchentoot server is going to start.
 Listening on localhost:5000.
 //}
 
-=== Qlot
+=== Qlotでの依存ライブラリ管理
 
-Webアプリを本番環境にデプロイするときに問題となりうるのが、依存ライブラリのバージョン管理です。開発環境と本番環境で同じバージョンのライブラリを使わなければ環境によって挙動の一貫性を保つことができません。また、複数人で開発する場合にも各人の環境でのバージョン統一が必要となりますし、自分一人の開発であったとしても同じマシンで複数のプロジェクトを扱うときには、同じライブラリでもプロジェクトごとに異なるバージョンを使わなければならないケースがよくあります。
+Webアプリを本番環境にデプロイするときに問題となるのが、依存ライブラリのバージョン管理です。開発環境と本番環境で同じバージョンのライブラリを使わなければ環境によって挙動の一貫性を保つことができません。複数人で開発する場合にも各人の環境でのバージョン統一が必要となりますし、自分一人の開発であったとしても同じマシンで複数のプロジェクトを扱うときにはプロジェクトごとに異なるバージョンを使うケースがよくあります。
 
-Qlotは、プロジェクトごとにライブラリを管理するためのツールです。Qlotでは依存ライブラリの情報を @<tt>{qlfile} に記載することでどの環境でも同じバージョンの依存ライブラリ群をインストールすることができます。
+Qlotは、プロジェクトごとにライブラリを管理するためのツールです。依存ライブラリの情報を @<tt>{qlfile} に記載することでどの環境でも同じバージョンの依存ライブラリ群をインストールすることができます。
+
+===[column] QlotとQuicklispの関係
+
+Quicklispはライブラリのダウンロードとインストールを行うツールとして広く使われていますが、ホームディレクトリにインストールされるのですべてのプロジェクトで共有されてしまいます。Qlotでは、このQuicklispをプロジェクトのディレクトリに個別にインストールして、それを切り替える仕組みとなっています。そういう意味では依存ライブラリの管理というより複数のQuicklispディレクトリの管理ツールと言えるかもしれません。
+
+===[/column]
 
 まずはいつも通りRoswellでQlotをインストールします。執筆時点のQlotのバージョンは0.9.9です。
 
@@ -125,6 +131,8 @@ $ @<b>{qlot update --project clack}
 
 それでは仮想コンテナツールDockerを使ってマシンイメージを作る場合を説明します。Dockerを使えば同じマシンイメージをAWSやGCP、Azureのようなクラウドホスティングサービスにデプロイすることができます。
 
+=== Dockerfileを書く
+
 まずはDockerを利用するためにはDockerfileというファイルを作ります(@<list>{dockerfile-example})。このファイルはマシンイメージを作るための手順を記述したものです。ベースとなるDockerイメージを @<tt>{FROM} に指定しています。Roswellが利用可能なDockerイメージは多くの人が独自に作ったものがいくつも乱立している状況で、どれを使うべきかは将来的に変わる可能性があります。ここでは40antsが提供するDockerイメージ@<fn>{40ants-docker-image}を使います。
 
 //list[dockerfile-example][Dockerfile][]{
@@ -170,17 +178,21 @@ exec ros -Q -- $0 "$@"
 ;;; vim: set ft=lisp lisp:
 //}
 
-DockerfileからDockerイメージを作って実行するためには @<tt>{docker build} と @<tt>{docker run} を行います。 @<tt>{Listening on localhost:5000} と表示されたら起動完了です。
+これらのファイルをyubinのリポジトリに作ります。このDockerfileからDockerイメージを作るにはDockerfileがあるディレクトリ――ここではリポジトリルート――で @<tt>{docker build} を行います。コンパイルがあるためやや時間がかかります。しばらく待ちプロセスが終了したら準備完了です。@<tt>{docker run} を行うとDockerイメージを起動できます。
 
 //cmd{
 $ @<b>{docker build . -t yubin}
 $ @<b>{docker run -it -p 5000:5000 yubin}
 //}
 
+@<tt>{Listening on localhost:5000} と表示されたら起動完了です。
+
+　
+
 実際にクラウドホスティングサービスへデプロイする手順はCommon Lispに限定されないため割愛します。利用したいそれぞれのサービスのドキュメントをご覧ください。
 
- * AWS Elastic Beanstalk@<br>{}https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/single-container-docker.html
- * Google Compute Engine@<br>{}https://cloud.google.com/compute/docs/instance-groups/deploying-docker-containers?hl=ja
+ * AWS Elastic Beanstalk：@<br>{}https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/single-container-docker.html
+ * Google Compute Engine：@<br>{}https://cloud.google.com/compute/docs/instance-groups/deploying-docker-containers?hl=ja
 
 == Herokuにデプロイする場合
 
@@ -221,11 +233,11 @@ $ @<b>{git clone https://git.heroku.com/dry-ridge-44891.git sample}
 @<tt>{sample}ディレクトリが作成されるので、ここにWebサービスを開発します。
 今回はWebフレームワークとしてClackを使用し、そのサンプルにある文字列を返すだけのWebサービスを作成します。
 
-まず、Heroku側で日本語を扱うため、環境変数LANGを設定します。
+まず、Heroku側で日本語を扱うため、環境変数 @<tt>{LANG} を設定します。
 
 
-//emlist{
-$ heroku config:set LANG=ja_JP.UTF-8
+//cmd{
+$ @<b>{heroku config:set LANG=ja_JP.UTF-8}
 //}
 
 
@@ -237,7 +249,7 @@ $ heroku config:set LANG=ja_JP.UTF-8
  * @<tt>{Procfile}
 
 @<tt>{.roswell-install-list}の内容は次の通りです。
-これはclackupコマンドを使用するために、対象のパッケージをインストールします。
+これは @<tt>{clackup} コマンドを使用するために、対象のパッケージをインストールします。
 
 //emlist{
 clack
