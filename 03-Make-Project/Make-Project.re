@@ -1,7 +1,9 @@
 
 = プロジェクトの作成
 
+//lead{
 本章では、Common Lisp製ライブラリcl-projectを用いて、小さなCommon Lispプロジェクトを作成する方法を紹介します。
+//}
 
 == cl-project
 
