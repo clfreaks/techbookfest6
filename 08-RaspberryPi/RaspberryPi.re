@@ -88,14 +88,14 @@ $ ros install fireflower0/cl-raspi
 //image[09-circuit-diagram-blink][LEDと抵抗の配線図][scale=0.5]{
 //}
 
-プログラムは、@<tt>{cl-raspi/src}ディレクトリ下に@<tt>{blink.lisp}という名前で作成してあります。
+プログラムは、@<tt>{cl-raspi/examples}ディレクトリ下に@<tt>{blink.lisp}という名前で作成してあります。
 
 //emlist{
-(defpackage :cl-raspi/src/blink
+(defpackage :cl-raspi/examples/blink
   (:use :cl
         :cl-raspi/lib-wiring-pi) ; ラッパーをインポート
   (:export :main))               ; main関数をエクスポート
-(in-package :cl-raspi/src/blink)
+(in-package :cl-raspi/examples/blink)
 
 (defconstant +pin+ 11)           ; GPIOピン番号(今回はGPIO11)を定数定義
 
@@ -110,10 +110,10 @@ $ ros install fireflower0/cl-raspi
 //}
 
 
-@<tt>{cl-raspi/src/blink}の@<tt>{main}関数を実行して下さい。
+@<tt>{cl-raspi/examples/blink}の@<tt>{main}関数を実行して下さい。
 
 //emlist{
-(cl-raspi/src/blink:main)
+(cl-raspi/examples/blink:main)
 //}
 
 === I2C 温度センサー
@@ -133,14 +133,14 @@ $ ros install fireflower0/cl-raspi
 
 @<tt>{ADT7410}は@<tt>{I2C}と呼ばれる通信規格を採用しているので、データを送受信する@<tt>{SDA}、通信の同期を取る@<tt>{SCL}、電源@<tt>{VDD}、@<tt>{GND}の4本ケーブルを繋ぐだけで動作します。
 
-プログラムは、@<tt>{cl-raspi/src}ディレクトリ下に@<tt>{i2c-temperature-sensor.lisp}という名前で作成してあります。
+プログラムは、@<tt>{cl-raspi/examples}ディレクトリ下に@<tt>{i2c-temperature-sensor.lisp}という名前で作成してあります。
 
 //emlist{
-(defpackage :cl-raspi/src/i2c-temperature-sensor
+(defpackage :cl-raspi/examples/i2c-temperature-sensor
   (:use :cl
         :cl-raspi/lib-wiring-pi) ; ラッパーをインポート
   (:export :main))               ; main関数をエクスポート
-(in-package :cl-raspi/src/i2c-temperature-sensor)
+(in-package :cl-raspi/examples/i2c-temperature-sensor)
 
 (defconstant +i2c-addr+ #X48)    ; I2C温度センサーのアドレスを定数定義
 
@@ -167,7 +167,7 @@ $ ros install fireflower0/cl-raspi
 @<tt>{i2c-temperature-sensor}の@<tt>{main}関数を実行して下さい。
 
 //emlist{
-(cl-raspi/src/i2c-temperature-sensor:main)
+(cl-raspi/examples/i2c-temperature-sensor:main)
 //}
 
 
@@ -191,15 +191,15 @@ LCDの一行目に日時、二行目に温度が表示されるようにプロ�
 LCDの制御を入れるとコードが長くなるので@<tt>{cl-raspi/bo1602dgrnjb}としてまとめました。
 使い方は@<tt>{bo1602dgrnjb-init}で初期化して、@<tt>{bo1602dgrnjb-text}で何行目に文字列を表示するか指定します。
 
-プログラムは、@<tt>{cl-raspi/src}ディレクトリ下に@<tt>{simple-temperature.lisp}という名前で作成してあります。
+プログラムは、@<tt>{cl-raspi/examples}ディレクトリ下に@<tt>{simple-temperature.lisp}という名前で作成してあります。
 
 //emlist{
-(defpackage :cl-raspi/src/simple-temperature
+(defpackage :cl-raspi/examples/simple-temperature
   (:use :cl
         :cl-raspi/lib-wiring-pi
         :cl-raspi/bo1602dgrnjb)
   (:export :main))
-(in-package :cl-raspi/src/simple-temperature)
+(in-package :cl-raspi/examples/simple-temperature)
 
 ;; I2C device address (0x48)
 (defconstant +i2c-addr-adt7410+ #X48)
@@ -234,7 +234,7 @@ LCDの制御を入れるとコードが長くなるので@<tt>{cl-raspi/bo1602dg
 @<tt>{simple-temperature}の@<tt>{main}関数を実行して下さい。
 
 //emlist{
-(cl-raspi/src/simple-temperature:main)
+(cl-raspi/examples/simple-temperature:main)
 //}
 
 実行すると以下のようになります。
