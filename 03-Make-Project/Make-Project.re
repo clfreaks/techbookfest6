@@ -7,7 +7,7 @@ Common Lispでライブラリやアプリケーションを開発して他者に
 本章では、cl-projectで生成された雛形を編集しながら、小さなCommon Lispプロジェクトを開発する方法を紹介します。
 //}
 
-== cl-project
+== cl-projectのインストール
 
 まず、Roswellでcl-projectをインストールします。インストール後は、プロジェクトの雛形を生成するmake-projectコマンドが使えるようになります。
 
