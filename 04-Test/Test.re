@@ -300,7 +300,7 @@ Roveではよくテストで使われる手法を簡便にするためのマク�
 
 マクロのテストをするには @<code>{expands} を使います。第一引数に展開前のフォームを、第二引数に展開後のフォームを渡します。
 
-単純に @<code>{macroexpand-1} して @<code>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<code>{equal} で比較することができません。一方で @<code>{expands} はパッケージにインターンされていないシンボル、 @<code>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
+単純に @<code>{macroexpand-1} して @<code>{equalp} で比較することもできますが、マクロのテストで厄介なのは、展開されるフォームに gensym が含まれるときです。gensymが含まれると単純な @<code>{equalp} で比較することができません。一方で @<code>{expands} はパッケージにインターンされていないシンボル、 @<code>{#:} で始まるシンボルをgensymとして緩いマッチングを行います。
 
 
 //emlist{
@@ -339,11 +339,15 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
 
 (deftest get-place
   (testing "should return the address for a given postal code in a number"
-    (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内"))
-    (ok (equal (yubin:get-place 1500000) "東京都渋谷区")))
+    (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内")
+        "6380321 -> 奈良県吉野郡天川村坪内")
+    (ok (equal (yubin:get-place 1500000) "東京都渋谷区"
+        "1500000 -> 東京都渋谷区")))
   (testing "should return the address for a given postal code in a string"
-    (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内"))
-    (ok (equal (yubin:get-place "150-0000") "東京都渋谷区")))
+    (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内")
+        "\"6380321\" -> 奈良県吉野郡天川村坪内")
+    (ok (equal (yubin:get-place "150-0000") "東京都渋谷区")
+        "\"150-0000\" -> 東京都渋谷区"))
   (testing "should raise an error for an unknown postal code"
     (ok (signals (yubin:get-place 6068501))))
   (testing "should raise an error for non postal code"
@@ -367,15 +371,15 @@ $ @<b>{rove yubin.asd}
 ;; testing 'yubin/tests/main'
   get-place
     should return the address for a given postal code in a number
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE 6380321) "奈良県吉野郡天川村坪内") to be true. (685ms)
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE 1500000) "東京都渋谷区") to be true. (406ms)
+      ✓ 6380321 -> 奈良県吉野郡天川村坪内 (347ms)
+      ✓ 1500000 -> 東京都渋谷区 (405ms)
     should return the address for a given postal code in a string
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE "6380321") "奈良県吉野郡天川村坪内") to be true. (406ms)
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE "150-0000") "東京都渋谷区") to be true. (405ms)
+      ✓ "6380321" -> 奈良県吉野郡天川村坪内 (406ms)
+      ✓ "150-0000" -> 東京都渋谷区 (406ms)
     should raise an error for an unknown postal code
-      ✓ Expect (YUBIN:GET-PLACE 6068501) to signal ERROR. (408ms)
+      ✓ Expect (YUBIN:GET-PLACE 6068501) to signal ERROR. (404ms)
     should raise an error for non postal code
-      ✓ Expect (YUBIN:GET-PLACE "clfreaks") to signal ERROR. (413ms)
+      ✓ Expect (YUBIN:GET-PLACE "clfreaks") to signal ERROR. (405ms)
 
 ✓ 1 test completed
 
@@ -385,7 +389,7 @@ Summary:
 
 === レポートスタイルの変更
 
-Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「レポートスタイル」と呼びます。
+Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「@<b>{レポートスタイル}」と呼びます。
 
 レポートスタイルを変更するには @<code>{rove:run} に @<code>{:style} でスタイル名を指定します。
 
@@ -400,18 +404,28 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 (rove:run :yubin/tests :style :none)
 //}
 
-デフォルトのレポートスタイルは @<code>{:spec} です。これを変更するには @<code>{rove:*default-reporter*} に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は @<code>{cl-user:*rove-default-reporter*} に設定します。
+デフォルトのレポートスタイルは @<code>{:spec} です。これを変更するには @<code>{rove:*default-reporter*} に好きなスタイルを設定します。
 
 //emlist{
-;; .roswell/init.lisp
-(defvar *rove-default-reporter* :dot)
+(defvar *default-reporter* :dot)
 //}
 
-== まとめ
+===[column] 初期化ファイルでの設定
 
-この章ではRoveを紹介し、Common Lispのテストを行う流れを説明しました。Roveではアサーションを最小単位として、テスト、テストスイート、テストシステムに分割してテストを定義します。
+REPLを起動したときに常にこれらのRoveの設定を適用したいときには、Roswellの初期化ファイルに追記します。@<tt>{~/.roswell/init.lisp} に書くとCommon Lispプロセスが起動するときに実行されます。以下が一例です。
 
-最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてみてください。
+//emlist{
+;; デフォルトのレポートスタイルを dot にする
+(setf *rove-default-reporter* :dot)
+;; エラー発生時にデバッガを起動させる
+(setf *rove-debug-on-error* t)
+//}
 
- * Safety-Params@<br>{}https://github.com/fukamachi/safety-params
- * jsonrpc@<br>{}https://github.com/fukamachi/jsonrpc
+===[/column]
+
+== おわりに
+
+この章では一通りRoveの使い方を解説しました。最後にRoveによってテストされているOSSライブラリを紹介します。ぜひ参考にしてください。
+
+ * Safety-Params@<embed>{|latex|\quad}@<tt>{https://github.com/fukamachi/safety-params}
+ * jsonrpc@<embed>{|latex|\qquad}@<tt>{https://github.com/fukamachi/jsonrpc}

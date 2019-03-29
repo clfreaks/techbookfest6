@@ -1,7 +1,9 @@
 
 = プロジェクトの作成
 
+//lead{
 本章では、Common Lisp製ライブラリcl-projectを用いて、小さなCommon Lispプロジェクトを作成する方法を紹介します。
+//}
 
 == cl-project
 
@@ -44,7 +46,7 @@ $ make-project yubin --depends-on dexador jonathan quri rove
 
 Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。では、make-projectコマンドで生成されたシステム定義ファイル(yubin.asd)を見てみましょう。
 
-//list[yubin.asd][common-lisp]{
+//emlist{
 (defsystem "yubin"
   :version "0.1.0"
   :author ""
@@ -69,7 +71,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 
 === メインファイル(main.lisp)
 
-//list[main.lisp][common-lisp]{
+//emlist{
 (defpackage #:yubin ; ①
   (:use #:cl)
   (:import-from #:quri
@@ -116,7 +118,7 @@ $ ros init yubin.ros
 
 生成された雛形を次のように編集します。
 
-//list[yubin.ros][common-lisp]{
+//emlist{
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
