@@ -9,7 +9,7 @@ cl-projectは、Common Lispプロジェクトの雛形を生成するライブ�
 
 まず、Roswellでcl-projectをインストールします。インストール後は、プロジェクトの雛形を生成するmake-projectコマンドが使えるようになります。
 
-//emlist{
+//cmd{
 $ ros install fukamachi/cl-project
 //}
 
@@ -17,7 +17,7 @@ $ ros install fukamachi/cl-project
 
 zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。完成後は、次のように利用できます。
 
-//emlist{
+//cmd{
 $ ros install clfreaks/yubin
 $ yubin 6380321
 奈良県吉野郡天川村坪内
@@ -27,7 +27,7 @@ $ yubin 6380321
 
 まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
 
-//emlist{
+//cmd{
 $ cd ~/.roswell/local-projects
 $ make-project yubin --depends-on dexador jonathan quri rove
 //}
@@ -44,7 +44,7 @@ $ make-project yubin --depends-on dexador jonathan quri rove
 
 Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。では、make-projectコマンドで生成されたシステム定義ファイル(yubin.asd)を見てみましょう。
 
-//emlist{
+//list[yubin.asd][common-lisp]{
 (defsystem "yubin"
   :version "0.1.0"
   :author ""
@@ -69,7 +69,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 
 === メインファイル(main.lisp)
 
-//emlist{
+//list[main.lisp][common-lisp]{
 (defpackage #:yubin ; ①
   (:use #:cl)
   (:import-from #:quri
@@ -109,14 +109,14 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 \vspace{-1\Cvs}
 //}
 
-//emlist{
+//cmd{
 $ mkdir roswell && cd roswell
 $ ros init yubin.ros
 //}
 
 生成された雛形を次のように編集します。
 
-//emlist{
+//list[yubin.ros][common-lisp]{
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
@@ -145,7 +145,7 @@ exec ros -Q -- $0 "$@"
 
 プロジェクトの完成後は、プロジェクトをGitHubのリポジトリにpushすることで、プロジェクトを他者と共有することができます。
 
-//emlist{
+//cmd{
 $ git push -u origin master
 $ ros install clfreaks/yubin
 $ yubin 6390321
