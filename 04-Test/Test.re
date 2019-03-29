@@ -389,7 +389,7 @@ Summary:
 
 === レポートスタイルの変更
 
-Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「レポートスタイル」と呼びます。
+Roveのもう一つの特徴は、テストの定義と出力スタイルが分離されていることです。これによりテストの結果出力の形式をテストコードを変更することなく変えることができます。これをRoveでは「@<b>{レポートスタイル}」と呼びます。
 
 レポートスタイルを変更するには @<code>{rove:run} に @<code>{:style} でスタイル名を指定します。
 
@@ -404,11 +404,10 @@ Roveのもう一つの特徴は、テストの定義と出力スタイルが分�
 (rove:run :yubin/tests :style :none)
 //}
 
-デフォルトのレポートスタイルは @<code>{:spec} です。これを変更するには @<code>{rove:*default-reporter*} に好きなスタイルを設定します。Lispの初期化ファイルに記述する場合は @<code>{cl-user:*rove-default-reporter*} に設定します。
+デフォルトのレポートスタイルは @<code>{:spec} です。これを変更するには @<code>{rove:*default-reporter*} に好きなスタイルを設定します。
 
 //emlist{
-;; .roswell/init.lisp
-(defvar *rove-default-reporter* :dot)
+(defvar *default-reporter* :dot)
 //}
 
 == まとめ
