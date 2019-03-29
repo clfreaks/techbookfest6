@@ -59,7 +59,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 )
 //}
 
-:depends-on と :components に注目してください。:depends-on には、make-projectで指定した依存ライブラリが挿入されます。ここに記入されたライブラリが、Quicklispのアーカイブからダウンロードされて読み込まれます。 :components 内には、:depends-on で指定されたライブラリの読み込み後に読み込むファイルを指定します。ここでは :file "main" と指定されていますが、これはsrcフォルダ内のmain.lispを指します。
+:depends-on と :components に注目してください。:depends-on には、make-projectで指定した依存ライブラリが挿入されます。ここに記入されたライブラリが、Quicklispのアーカイブからダウンロードされて読み込まれます。 :components 内には、:depends-on で記されたライブラリのロード後に読み込むファイルを指定します。ここでは :file "main" と指定されていますが、これはsrcフォルダ内のmain.lispを指します。
 
 //embed[latex]{
 \vspace{1\Cvs}
@@ -96,7 +96,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
                        (getf response :|status|))))))
 //}
 
-①では、yubinパッケージを定義しています。依存するパッケージを`(:import-from #:ライブラリ名)`の形式で指定します。依存ライブラリから特定のシンボルを取り込むときは、`(:import-from #:ライブラリ名 #:シンボル名)`とします。
+①では、yubinパッケージを定義しています。依存するパッケージを (:import-from #:ライブラリ名) の形式で指定します。依存ライブラリから特定のシンボルを取り込むときは、(:import-from #:ライブラリ名 #:シンボル名) とします。
 例えば (:import-from #:jonathan #:parse) という箇所は、jonathanのparse関数を取り込むという意味です。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
 
 ②では、get-place関数を定義しています。get-place関数は、引数 @<tt>{zipcode} からURLを作り、HTTPリクエストをして結果のJSONをパースし、結果を住所として文字列で返します。もし結果が返ってこなかった場合にはエラーを投げます。
