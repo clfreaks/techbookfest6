@@ -111,6 +111,10 @@
 (clss:select "div.clj-intro-message" *clojure-root-node*)
 ;; #(#<PLUMP-DOM:ELEMENT div {101A9D53F3}>)
 
+(clss:select "body > div.w-nav.clj-navbar > div.w-container > a > img"
+             *clojure-root-node*)
+;; #(#<PLUMP-DOM:ELEMENT img {10169ACD33}>)
+
 (concat-node-text *clj-intro-message*)
 
 (clss:select "p" *clj-intro-message*)
