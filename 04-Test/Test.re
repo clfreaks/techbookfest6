@@ -339,11 +339,15 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
 
 (deftest get-place
   (testing "should return the address for a given postal code in a number"
-    (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内"))
-    (ok (equal (yubin:get-place 1500000) "東京都渋谷区")))
+    (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内")
+        "6380321 -> 奈良県吉野郡天川村坪内")
+    (ok (equal (yubin:get-place 1500000) "東京都渋谷区"
+        "1500000 -> 東京都渋谷区")))
   (testing "should return the address for a given postal code in a string"
-    (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内"))
-    (ok (equal (yubin:get-place "150-0000") "東京都渋谷区")))
+    (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内")
+        "\"6380321\" -> 奈良県吉野郡天川村坪内")
+    (ok (equal (yubin:get-place "150-0000") "東京都渋谷区")
+        "\"150-0000\" -> 東京都渋谷区"))
   (testing "should raise an error for an unknown postal code"
     (ok (signals (yubin:get-place 6068501))))
   (testing "should raise an error for non postal code"
@@ -367,15 +371,15 @@ $ @<b>{rove yubin.asd}
 ;; testing 'yubin/tests/main'
   get-place
     should return the address for a given postal code in a number
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE 6380321) "奈良県吉野郡天川村坪内") to be true. (685ms)
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE 1500000) "東京都渋谷区") to be true. (406ms)
+      ✓ 6380321 -> 奈良県吉野郡天川村坪内 (347ms)
+      ✓ 1500000 -> 東京都渋谷区 (405ms)
     should return the address for a given postal code in a string
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE "6380321") "奈良県吉野郡天川村坪内") to be true. (406ms)
-      ✓ Expect (EQUAL (YUBIN:GET-PLACE "150-0000") "東京都渋谷区") to be true. (405ms)
+      ✓ "6380321" -> 奈良県吉野郡天川村坪内 (406ms)
+      ✓ "150-0000" -> 東京都渋谷区 (406ms)
     should raise an error for an unknown postal code
-      ✓ Expect (YUBIN:GET-PLACE 6068501) to signal ERROR. (408ms)
+      ✓ Expect (YUBIN:GET-PLACE 6068501) to signal ERROR. (404ms)
     should raise an error for non postal code
-      ✓ Expect (YUBIN:GET-PLACE "clfreaks") to signal ERROR. (413ms)
+      ✓ Expect (YUBIN:GET-PLACE "clfreaks") to signal ERROR. (405ms)
 
 ✓ 1 test completed
 
