@@ -2,12 +2,12 @@
 = プロジェクトの作成
 
 //lead{
-本章では、Common Lisp製ライブラリcl-projectを用いて、小さなCommon Lispプロジェクトを作成する方法を紹介します。
+Common Lispでライブラリやアプリケーションを開発して他者に配布するには、規定の方法でシステムを構築する必要があります。プロジェクトに必要なファイルを1つずつ書くのは手間がかかりますが、Common Lisp製ライブラリのcl-projectを用いると、プロジェクトに必要なファイル群を生成することができます。
+
+本章では、cl-projectで生成された雛形を編集しながら、小さなCommon Lispプロジェクトを開発する方法を紹介します。
 //}
 
 == cl-project
-
-cl-projectは、Common Lispプロジェクトの雛形を生成するライブラリです。プロジェクトのシステム定義ファイル、メインファイル、テストファイル、READMEファイルを生成します。
 
 まず、Roswellでcl-projectをインストールします。インストール後は、プロジェクトの雛形を生成するmake-projectコマンドが使えるようになります。
 
@@ -67,10 +67,14 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 \vspace{1\Cvs}
 //}
 
-このように、cl-projectで生成されるシステム定義ファイルでは、依存ライブラリの読み込みが終了後、main.lispを最初に読み込むように設定されています。では、@<tt>{main.lisp}を次のように編集しましょう。
+//embed[latex]{
+\clearpage
+//}
 
 === メインファイル(main.lisp)
 
+では、@<tt>{main.lisp}を次のように編集しましょう。
+  
 //emlist{
 (defpackage #:yubin ; ①
   (:use #:cl)
@@ -106,10 +110,6 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 === Roswell Script
 
 インストール後にyubinコマンドが使えるように、プロジェクト内のroswellフォルダ内にRoswell Scriptを作成します。Roswell Scriptは、@<tt>{ros init}コマンドで生成される雛形を元に作成します。
-
-//embed[latex]{
-\vspace{-1\Cvs}
-//}
 
 //cmd{
 $ mkdir roswell && cd roswell
