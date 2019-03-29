@@ -27,7 +27,7 @@ $ yubin 6380321
 
 === プロジェクトの雛形生成
 
-まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
+プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
 
 //cmd{
 $ cd ~/.roswell/local-projects
@@ -73,7 +73,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 
 === メインファイル(main.lisp)
 
-では、@<tt>{main.lisp}を次のように編集しましょう。
+@<tt>{main.lisp}を次のように編集します。
   
 //emlist{
 (defpackage #:yubin ; ①
