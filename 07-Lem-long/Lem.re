@@ -197,7 +197,15 @@ CL-USER>
                             (cons key value))
 //}
 
+//embed[latex]{
+\clearpage
+//}
+
 cl-ppcreを読み込むと正しくインデントできます。
+
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 //emlist{
 CL-USER> (ql:quickload :cl-ppcre)
@@ -213,8 +221,16 @@ CL-USER> (ql:quickload :cl-ppcre)
   (cons key value))
 //}
 
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
+
 静的にインデントを設定したい場合は@<tt>{lem-lisp-syntax:set-indentation}を使います。
 @<tt>{~/.lem.d/init.lisp}に次の式を追加してみます。
+
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 //emlist[][lisp]{
 (lem-lisp-syntax:set-indentation
@@ -234,12 +250,12 @@ Lemでは入力中にTabを押すことで補完が出来ます。
 //embed[latex]{
 \vspace{-1\Cvs}
 //}
-          
+
 このときに@<tt>{C-n}や@<tt>{M-n}、カーソルキーの下を入力すれば一つ下の候補を選べます。
 上にするには@<tt>{C-p} @<tt>{M-p} カーソルキーの上を入力します。
 Enterを押すことでその補完候補を選択できます。
 @<tt>{lisp-mode}ではあいまい補完を使っているので並びがあっていれば補完候補に表示されます。
-補完機能はミニバッファでの入力などでも出来るので、例えばファイルを開く(}C-x C-f`)場合はファイル名が補完されます。
+補完機能はミニバッファでの入力などでも出来るので、例えばファイルを開く(C-x C-f)場合はファイル名が補完されます。
 
 === 式の評価とコンパイル
 
