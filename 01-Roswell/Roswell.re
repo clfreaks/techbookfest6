@@ -1,7 +1,7 @@
 
 = 環境構築「Roswell」
 
-本章はRoswellについて解説します。
+本章は@<b>{Roswell}について解説します。
 Roswellは複数のCommon Lispの処理系のインストール、管理、切り替えや、処理系によって異なるコマンドラインオプションの共通化等を行なう処理系マネージャです。
 Roswellの使い方はCommon Lisp処理系を使う上での導入になるため、他の章に入る前に説明します。
 
@@ -25,10 +25,10 @@ Windows環境でのインストール用にバイナリファイルを用意し�
 本書の内容はWindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、Windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
 
 
-=== ソースからインストールする
+=== ソースコードからのインストール
 
 Homebrewが使えない環境では、Roswellをソースコードからコンパイルすることでインストールできます。
-ソースコードからのコンパイルには、以下の環境を揃えたLinux/FreeBSD/macOSが必要です。
+ソースコードからのコンパイルには、以下の環境を備えたLinux/FreeBSD/macOSが必要です。
 
  * Cのコンパイル環境
  * libcurlと、そのヘッダ
@@ -48,27 +48,27 @@ $ sudo make install
 $ ros setup
 //}
 
-詳細は@<tt>{https://github.com/roswell/roswell/wiki/Installation}で確認できます。
+詳細は@<tt>{https://github.com/roswell/roswell/wiki/Installation}を参照してください。
 
 == Common Lisp処理系のインストール
 
+ターミナル上で@<tt>{ros install <処理系>}とすることで、処理系を指定してインストールできます。
 
-Roswellは、複数のCommon Lisp処理系から特定のバージョンを選んでインストールすることができます。
-ここでは、SBCL(Steel Bank Common Lisp)@<fn>{sbcl}をインストールします。
+ここでは、@<b>{SBCL}(Steel Bank Common Lisp)@<fn>{sbcl}をインストールします。
+最新のビルド済みバイナリとして配布されているSBCLをインストールするには@<tt>{sbcl-bin}を、ソースコードからビルドするには@<tt>{sbcl}を指定します。
 
 //footnote[sbcl][http://www.sbcl.org/]
 
-各アーキテクチャ向けにビルド済みのバイナリとして配布されている最新のSBCLをインストールするには@<tt>{sbcl-bin}を、ソースコードからビルドするには@<tt>{sbcl}を指定します。
-
 //cmd{
-# SBCLのビルド済みのバイナリをインストールする
+# SBCLの最新のビルド済みバイナリをインストールする
 $ ros install sbcl-bin
 
 # SBCLを最新のソースコードからビルドしてインストールする
 $ ros install sbcl
 //}
 
-バージョンを指定してインストールするには、スラッシュの後にバージョンを指定します。
+処理系のバージョンを指定してインストールすることもできます。
+バージョンを指定してインストールするには、@<tt>{ros install <処理系>/<バージョン>}のようにスラッシュの後にバージョン番号を指定します。
 
 //cmd{
 # SBCL(1.4.1)のバイナリをインストールする
@@ -112,12 +112,12 @@ $
 
 == Roswell Script
 
-Roswell Scriptを用いると、Common Lispでコマンドラインから利用できるスクリプトを書くことができます。
-
+@<b>{Roswell Script}を用いると、Common Lispでコマンドラインから利用できるスクリプトを書くことができます。
+各処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収することができます。また、Roswell Scriptをビルドして実行ファイルを作ることもできます。
 
 === 雛形からRoswell Scriptを作成する
 
-ターミナルで@<tt>{ros init <スクリプト名.ros>}とすると、Roswell Scriptの雛形が生成されます。
+ターミナル上で@<tt>{ros init <スクリプト名.ros>}とすると、Roswell Scriptの雛形が生成されます。
 
 //cmd{
 $ ros init fact.ros
@@ -163,7 +163,7 @@ Factorial 10 = 3628800
 
 === ros build (実行ファイルの作成)
 
-@<tt>{ros build <Roswell Script名>}とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。
+@<tt>{ros build <スクリプト名>}とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。
 
 //cmd{
 $ ros build fact.ros
@@ -174,7 +174,7 @@ compressed 2097152 bytes into 562396 at level -1
 compressed 12910592 bytes into 3890295 at level -1
 //}
 
-ビルド前後の実行時間を比較すると、ビルド後は5倍ほど高速化したことが分かります。
+ビルド前後の実行時間を比較すると、ビルド後は5倍ほど高速化していることが分かります。
 
 //cmd{
 # ビルド前
@@ -196,13 +196,13 @@ sys 0m0.026s
 
 == ライブラリのインストール
 
-@<tt>{ros install}でライブラリのインストールを行います。
+Roswellには、処理系のインストールだけでなく、ライブラリをインストールする機能もあります。
+ライブラリのインストールには、@<b>{Quicklisp}のアーカイブからインストールする方法と、GitHubのレポジトリからインストールする方法があります。
+Quicklispは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたソフトウェアです。
 
-Roswellは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたQuicklispというソフトウェアを利用し、
-コマンドラインからライブラリをインストールするインターフェースを提供します。
-
-@<tt>{ros install <ライブラリ名>}とすると、Quicklispのアーカイブからダウンロードされます。
-ここでは、テストの章で利用するroveをインストールしましょう。
+ライブラリのインストールには@<tt>{ros install}コマンドを使用します。
+@<tt>{ros install <ライブラリ名>}とすることで、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。
+ここでは、第4章で仕様するテストフレームワークライブラリ@<b>{Rove}をインストールしてみましょう。
 
 //cmd{
 $ ros install rove
@@ -222,10 +222,10 @@ Found 1 scripts: rove
 up to date. stop
 //}
 
-@<tt>{ros install <GitHubアカウント名/レポジトリ名>}とすると、Quicklispとは別に、GitHubのレポジトリからダウンロードすることもできます。　
+@<tt>{ros install <GitHubアカウント名>/<レポジトリ名>}とすると、Quicklispからではなく、GitHubのレポジトリからインストールできます。　
 
-ここでroveをGitHubからインストールします。
-Quicklispの更新とテストは毎月一度手作業で行なわれている為、同じライブラリを指定した場合でも、githubの方が(更新されていればですが)より新しいバージョンがインストールできます。
+ここでは、先程インストールしたRoveをGitHubからインストールし直してみます。
+Quicklispの更新とテストは毎月一度手作業で行なわれています。そのため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。
 
 //cmd{
 $ ros install fukamachi/rove
@@ -241,20 +241,33 @@ Found 1 scripts: rove
 up to date. stop
 //}
 
-@<tt>{ros install}でライブラリをインストールすると、ローカル環境の@<tt>{~/.roswell/local-projects/}以下にソースコードがダウンロードされてインストールされます。
-デフォルトでは@<tt>{~/.roswell/local-projects/}からライブラリが読み込まれます。
-RoswellのREPLでライブラリを読み込むには、@<tt>{(ql:quickload :ライブラリ名)}とします。
+@<tt>{ros install}でGitHubからライブラリをインストールすると、ローカル環境の@<tt>{~/.roswell/local-projects/}以下にソースコードがダウンロードされてインストールされます。
+デフォルトではこの@<tt>{~/.roswell/local-projects/}からライブラリが読み込まれます。
 
-== .roswell/bin
+インストールしたライブラリをRoswellのREPLで読み込むには、@<tt>{(ql:quickload :<ライブラリ名>)}とします。
 
-@<tt>{ros install <ライブラリ名>}としてライブラリをインストールすると、プロジェクトの@<tt>{roswell}フォルダにあるRoswell Scriptが@<tt>{~/.roswell/bin}にコピーされます。
-@<tt>{~/.bashrc}等で次のようにPATHを通しておくことで、@<tt>{~/.roswell/bin}内にあるRoswell Scriptをターミナルのコマンドとして使うことができます。
+//cmd{
+$ ros run
+* (ql:quickload :rove)
+To load "rove":
+  Load 1 ASDF system:
+    rove
+; Loading "rove"
+
+(:ROVE)
+*
+//}
+
+=== 実行ファイルがインストールされるディレクトリ: @<tt>{~/.roswell/bin}
+
+@<tt>{ros install <ライブラリ名>}としてライブラリをインストールすると、ライブラリのソースディレクトリ直下にある@<tt>{roswell}ディレクトリ内のRoswell Scriptが@<tt>{~/.roswell/bin}にコピーされます。
+このディレクトリを@<tt>{~/.bashrc}等で環境変数@<tt>{PATH}に設定しておくことで、@<tt>{~/.roswell/bin}内にあるRoswell Scriptをコマンドとして使うことができます。
 
 //emlist{
 export PATH=$PATH:~/.roswell/bin
 //}
 
-例えばroveでは、プロジェクト直下のの@<tt>{roswell}フォルダの中に@<tt>{rove.ros}が入っています。
+例えばRoveの場合、ソースディレクトリ直下の@<tt>{roswell}フォルダ内に@<tt>{rove.ros}が入っています。
 @<tt>{ros install fukamachi/rove}とすることで、@<tt>{rove.ros}が@<tt>{~/.roswell/bin/rove}にコピーされます。
 インストール後は@<tt>{rove}コマンドが使えるようになります。
 
@@ -275,10 +288,9 @@ $ ros update rove
 //}
 
 == まとめ
- * Roswellで処理系をインストールするには@<tt>{ros install <処理系>}とする。
- * RoswellでREPLを起動するには@<tt>{ros run}とする。
- * Roswell Scriptを用いると、Common Lispでシェルコマンドを書くことができる。
- * ros buildでは、Roswell Scriptをビルドして実行ファイルを生成することができる。
- * ライブラリをGitHubからインストールするには@<tt>{ros install GitHubアカウント名/レポジトリ名}とする。
- * プロジェクト・トップのroswellフォルダにRoswell Scriptを入れておくと、Roswell Scriptをターミナルのコマンドとして使うことができる。
- * ライブラリを最新版に更新するには、ros update <ライブラリ名>とする。
+この章では、Common Lispの環境構築ソフトウェアとしてのRoswellを紹介しました。
+
+ * Roswell自体のインストール方法
+ * RoswellによるCommon Lisp処理系のインストール方法とREPLの起動方法
+ * Roswell Scriptの雛形の生成とスクリプトの書き方、実行ファイルのビルドについて
+ * Roswellを利用したCommon Lispのライブラリのインストール方法
