@@ -194,13 +194,16 @@ $ @<b>{docker run -it -p 5000:5000 yubin}
  * AWS Elastic Beanstalk：@<br>{}https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/single-container-docker.html
  * Google Compute Engine：@<br>{}https://cloud.google.com/compute/docs/instance-groups/deploying-docker-containers?hl=ja
 
+
+
 == Herokuにデプロイする場合
 
-もう一つの例として代表的なPaaSの一つであるHeroku@<fn>{45152b661534ef52c557094b671f9876}にデプロイする方法について説明します。Herokuのアカウント作成やコマンドインストールに関しては、言語に関わらず共通のため省略します。
+もう一つの例として代表的なPaaSの一つであるHeroku@<fn>{45152b661534ef52c557094b671f9876}にデプロイする方法について説明します。
+Herokuのアカウント作成@<fn>{heroku-signup}やコマンドインストール@<fn>{heroku-cli}に関しては、言語に関わらず共通のため省略します。
 
 === 使い方
 
-Herokuでは標準でCommon Lispをサポートしていないため、カスタムビルドパックとして@<tt>{heroku-buildpack-roswell}を使用します。
+Herokuでは標準でCommon Lispをサポートしていないため、カスタムビルドパックとして@<tt>{heroku-buildpack-roswell}@<fn>{git-buildpack-roswell}を使用します。
 
 //cmd{
 $ @<b>{heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswell}
@@ -208,26 +211,20 @@ $ @<b>{heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswe
 
 実行するとEmailとPasswordを要求されるので、事前にアカウント作成した時のものを入力してください。
 
-//cmd{
-heroku-cli: migrating plugins
-heroku-cli: done migrating plugins
-Creating app... !
- ▸    Invalid credentials provided.
-Enter your Heroku credentials:
-Email: xxxxxxxxxx@yyyyyyyyyy.com
-Password: **********
-Creating app... done, ⬢ dry-ridge-44891
-Setting buildpack to https://github.com/gos-k/heroku-buildpack-roswell... done
-https://dry-ridge-44891.herokuapp.com/ | https://git.heroku.com/dry-ridge-44891.git
+//image[05-heroku-create][heroku createの実行結果例]{
 //}
 
-ここで作成されたアプリケーション名は@<tt>{dry-ridge-44891}で
-(heroku createの度に変わるはずですので、それぞれの環境に合わせて適宜読み替えてください)、
-Webサービスが公開されるアドレスが@<tt>{https://dry-ridge-44891.herokuapp.com}となり、
-自分が開発したWebサービスを登録するためのgitリポジトリが@<tt>{https://git.heroku.com/dry-ridge-44891.git}となります。
+ここで作成されたアプリケーション名は@<tt>{glacial-temple-78277}で
+Webサービスが公開されるアドレスが@<tt>{https://glacial-temple-78277.herokuapp.com}となり、
+自分が開発したWebサービスを登録するためのgitリポジトリが@<tt>{https://git.heroku.com/glacial-temple-78277.git}となります。
+
+これらはheroku createの度に変わりますので、それぞれの環境に合わせて適宜読み替えてください。
 
 //cmd{
-$ @<b>{git clone https://git.heroku.com/dry-ridge-44891.git sample}
+$ @<b>{git clone https://git.heroku.com/glacial-temple-78277.git sample}
+Cloning into 'sample'...
+warning: You appear to have cloned an empty repository.
+$ @<b>{cd sample}
 //}
 
 @<tt>{sample}ディレクトリが作成されるので、ここにWebサービスを開発します。
@@ -253,7 +250,7 @@ $ @<b>{heroku config:set LANG=ja_JP.UTF-8}
 
 //emlist{
 clack
-clfleaks/yubin
+clfreaks/yubin
 //}
 
 @<tt>{.roswell-load-system-list}の内容は次の通りです。
@@ -273,8 +270,8 @@ yubin
 ここにはサービス起動時に実行されるclackupコマンドを記述します。
 @<tt>{$PORT}はHeroku側から渡されるポート番号で、Heroku内部での通信に使用されます。
 
-//cmd{
-$ @<b>{web clackup --port $PORT app.lisp}
+//emlist{
+web clackup --port $PORT app.lisp
 //}
 
 これらのファイルを追加およびプッシュすると、コンパイルが行われサービスがデプロイされます。
@@ -288,17 +285,13 @@ $ @<b>{git push}
 初回は処理系やQuicklispのダウンロードも行われるので、プッシュに伴うHeroku側でのリモート実行により、終わるまでに数分を要します。
 
 //cmd{
-Counting objects: 5, done.
+Counting objects: 3, done.
 Delta compression using up to 4 threads.
 Compressing objects: 100% (3/3), done.
-Writing objects: 100% (5/5), 449 bytes | 449.00 KiB/s, done.
-Total 5 (delta 0), reused 0 (delta 0)
+Writing objects: 100% (3/3), 276 bytes | 276.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0)
 remote: Compressing source files... done.
 remote: Building source:
-remote: 
-remote: -----> https://github.com/gos-k/heroku-buildpack-roswell app detected
-remote: Build roswell
-remote: Cloning into 'roswell'...
 
 ... (中略) ...
 
@@ -306,27 +299,30 @@ remote: -----> Discovering process types
 remote:        Procfile declares types -> web
 remote: 
 remote: -----> Compressing...
-remote:        Done: 63M
+remote:        Done: 66.6M
 remote: -----> Launching...
-remote:        Released v3
-remote:        https://dry-ridge-44891.herokuapp.com/ deployed to Heroku
+remote:        Released v6
+remote:        https://glacial-temple-78277.herokuapp.com/ deployed to Heroku
 remote: 
 remote: Verifying deploy... done.
-To https://git.heroku.com/dry-ridge-44891.git
- * [new branch]      master -> master
+To https://git.heroku.com/glacial-temple-78277.git
+   9b50d39..2adaacd  master -> master
 //}
 
 
 @<tt>{deployed to Heroku}にあるアドレスからWebサービスにアクセスできます。
-(この例では@<tt>{https://dry-ridge-44891.herokuapp.com})
-Webブラウザでアクセスし@<tt>{Hello Clack!}が表示されればデプロイ成功です。
+(この例では@<tt>{https://glacial-temple-78277.herokuapp.com/})
+Webブラウザでアクセスし、郵便番号を入力するページが表示されればデプロイ成功です。
 
 動作しなかった場合には、@<tt>{heroku logs --tail}とするとHeroku側のログを見る事が出来ます。
 
-=== 関連リンク
- * https://devcenter.heroku.com/start
- * https://dashboard.heroku.com
- * https://github.com/gos-k/heroku-buildpack-roswell
+
+
+//footnote[heroku-signup][https://signup.heroku.com]
+
+//footnote[heroku-cli][https://devcenter.heroku.com/articles/heroku-cli]
+
+//footnote[git-buildpack-roswell][https://github.com/gos-k/heroku-buildpack-roswell]
 
 //footnote[qlot-readme][https://github.com/fukamachi/qlot]
 
