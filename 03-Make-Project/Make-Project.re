@@ -1,13 +1,11 @@
 
 = プロジェクトの作成
 
-//lead{
 Common Lispでライブラリやアプリケーションを開発して他者に配布するには、規定の方法でシステムを構築する必要があります。プロジェクトに必要なファイルを1つずつ書くのは手間がかかりますが、Common Lisp製ライブラリのcl-projectを用いると、プロジェクトに必要なファイル群を生成することができます。
 
 本章では、cl-projectで生成された雛形を編集しながら、小さなCommon Lispプロジェクトを開発する方法を紹介します。
-//}
 
-== cl-projectのインストール
+== cl-project
 
 まず、Roswellでcl-projectをインストールします。インストール後は、プロジェクトの雛形を生成するmake-projectコマンドが使えるようになります。
 
@@ -25,9 +23,13 @@ $ yubin 6380321
 奈良県吉野郡天川村坪内
 //}
 
+//embed[latex]{
+\clearpage
+//}
+
 === プロジェクトの雛形生成
 
-プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
+まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
 
 //cmd{
 $ cd ~/.roswell/local-projects
@@ -73,7 +75,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 
 === メインファイル(main.lisp)
 
-@<tt>{main.lisp}を次のように編集します。
+では、@<tt>{main.lisp}を次のように編集しましょう。
   
 //emlist{
 (defpackage #:yubin ; ①
