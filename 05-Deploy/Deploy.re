@@ -322,7 +322,7 @@ To https://git.heroku.com/glacial-temple-78277.git
 
 @<tt>{deployed to Heroku}にあるアドレスからWebサービスにアクセスできます。
 (この例では@<tt>{https://glacial-temple-78277.herokuapp.com/})
-Webブラウザでアクセスし@<tt>{Hello Clack!}が表示されればデプロイ成功です。
+Webブラウザでアクセスし、郵便番号を入力するページが表示されればデプロイ成功です。
 
 動作しなかった場合には、@<tt>{heroku logs --tail}とするとHeroku側のログを見る事が出来ます。
 
