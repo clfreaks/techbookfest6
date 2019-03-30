@@ -300,7 +300,7 @@ Dexadorには@<tt>{dex:get}の他にも、@<tt>{dex:post}や@<tt>{dex:request}�
 DevToolsのNetworkタブを開いた状態で、Webページ上のログインフォームにログイン情報を入力して送信すると、たくさんのログが表示されます。ここからログイン情報を送っているPOSTリクエストを探します。左上の検索ウインドウからメソッドを指定してリクエストを検索することができるので、@<tt>{method:POST}と入力するとPOSTリクエストが検索できます。
 
 
-//image[06-hatena-login-network][DevTools上でNetworkタブを選択しPOSTメソッドのHTTPリクエストを表示した画面][scale=1.1]{
+//image[06-hatena-login-network][DevTools上でNetworkタブを選択した画面][scale=1.1]{
 //}
 
 以上の操作をした時点での画面が@<img>{06-hatena-login-network}です。ここにはPOSTメソッドで送信しているフォームデータが表示されています(パスワードは平文で表示されているので隠してあります)。DexadorでPOSTリクエストを送るときはこのフォームデータの形式に従う必要があります。

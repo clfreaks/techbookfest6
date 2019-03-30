@@ -55,12 +55,12 @@ $ ros setup
 ターミナル上で@<tt>{ros install <処理系>}とすることで、処理系を指定してインストールできます。
 
 ここでは、@<b>{SBCL}(Steel Bank Common Lisp)@<fn>{sbcl}をインストールします。
-最新のビルド済みバイナリとして配布されているSBCLをインストールするには@<tt>{sbcl-bin}を、ソースコードからビルドするには@<tt>{sbcl}を指定します。
+ビルド済みバイナリとして配布されているSBCLをインストールするには@<tt>{sbcl-bin}を、ソースコードからビルドするには@<tt>{sbcl}を指定します。
 
 //footnote[sbcl][http://www.sbcl.org/]
 
 //cmd{
-# SBCLの最新のビルド済みバイナリをインストールする
+# SBCLのビルド済みバイナリをインストールする
 $ ros install sbcl-bin
 
 # SBCLを最新のソースコードからビルドしてインストールする
