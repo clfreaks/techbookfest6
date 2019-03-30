@@ -124,7 +124,7 @@ $ ros init fact.ros
 Successfully generated: fact.ros
 //}
 
-生成されたファイルを開き、階乗(factorial)を計算する関数@<code>{fact}を定義してみます。
+生成されたファイルを開き、階乗(factorial)を計算する関数@<code>{fact}を書き加えます。
 
 //emlist[][common-lisp]{
 #!/bin/sh
@@ -161,9 +161,10 @@ $ ros fact.ros 10
 Factorial 10 = 3628800
 //}
 
-=== ros build (実行ファイルの作成)
+=== Roswell Scriptの実行ファイルのビルド
 
-@<tt>{ros build <スクリプト名>}とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。
+@<tt>{ros build <スクリプト名.ros>}とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。
+実行ファイルのファイル名は、@<tt>{.ros}拡張子が外れ、@<tt>{<スクリプト名>}になります。
 
 //cmd{
 $ ros build fact.ros
@@ -258,7 +259,7 @@ To load "rove":
 *
 //}
 
-=== 実行ファイルがインストールされるディレクトリ: @<tt>{~/.roswell/bin}
+=== ライブラリの実行ファイルがインストールされるディレクトリ
 
 @<tt>{ros install <ライブラリ名>}としてライブラリをインストールすると、ライブラリのソースディレクトリ直下にある@<tt>{roswell}ディレクトリ内のRoswell Scriptが@<tt>{~/.roswell/bin}にコピーされます。
 このディレクトリを@<tt>{~/.bashrc}等で環境変数@<tt>{PATH}に設定しておくことで、@<tt>{~/.roswell/bin}内にあるRoswell Scriptをコマンドとして使うことができます。
