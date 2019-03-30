@@ -211,17 +211,7 @@ $ @<b>{heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswe
 
 実行するとEmailとPasswordを要求されるので、事前にアカウント作成した時のものを入力してください。
 
-//cmd{
-heroku-cli: migrating plugins
-heroku-cli: done migrating plugins
-Creating app... !
- ▸    Invalid credentials provided.
-Enter your Heroku credentials:
-Email: xxxxxxxxxx@yyyyyyyyyy.com
-Password: **********
-Creating app... done, ⬢ dry-ridge-44891
-Setting buildpack to https://github.com/gos-k/heroku-buildpack-roswell... done
-https://dry-ridge-44891.herokuapp.com/ | https://git.heroku.com/dry-ridge-44891.git
+//image[05-heroku-create][heroku createの実行結果例]{
 //}
 
 ここで作成されたアプリケーション名は@<tt>{glacial-temple-78277}で
@@ -280,8 +270,8 @@ yubin
 ここにはサービス起動時に実行されるclackupコマンドを記述します。
 @<tt>{$PORT}はHeroku側から渡されるポート番号で、Heroku内部での通信に使用されます。
 
-//cmd{
-$ @<b>{web clackup --port $PORT app.lisp}
+//emlist{
+web clackup --port $PORT app.lisp
 //}
 
 これらのファイルを追加およびプッシュすると、コンパイルが行われサービスがデプロイされます。
