@@ -140,7 +140,7 @@ Obituary"
                 :test #'plump:text-node-p)
 //}
 
-これで@<code>{*root-node*}以下のDOMツリーを破壊的に変更されたので、@<code>{concat-node-text}の結果は大文字に置き換わっています。
+これによって@<code>{*root-node*}以下のDOMツリーが破壊的に変更されたので、@<code>{concat-node-text}の結果は大文字に置き換わっています。
 
 //emlist{
 (concat-node-text *root-node*)
@@ -268,7 +268,8 @@ Chromeの場合、インスペクタのHTMLソースから、クラスやID、�
 例えば、先程のページでClojureのロゴマーク上でインスペクタを起動し、@<tt>{Copy > Copy selector}でコピーした文字列をCLSSに与えると、その部分のノードが得られます。
 
 //emlist{
-(clss:select "body > div.w-nav.clj-navbar > div.w-container > a > img" *clojure-root-node*)
+(clss:select "body > div.w-nav.clj-navbar > div.w-container > a > img"
+             *clojure-root-node*)
 
 ;; #(#<PLUMP-DOM:ELEMENT img>)
 //}
@@ -297,6 +298,7 @@ Dexadorには@<tt>{dex:get}の他にも、@<tt>{dex:post}や@<tt>{dex:request}�
 まず、ブラウザではてなのログインページ(@<tt>{https://www.hatena.ne.jp/login})を開き、DevToolsからNetworkタブを開きます。この画面はHTTPリクエストやそれに対するレスポンスが記録される画面です。ログイン成功時には、はてなのトップページへリダイレクトされるので、ページの遷移や再読み込みでログが消えないように「@<tt>{Preserve log}」チェックボックスを選択しておく必要があることに注意が必要です。
 
 DevToolsのNetworkタブを開いた状態で、Webページ上のログインフォームにログイン情報を入力して送信すると、たくさんのログが表示されます。ここからログイン情報を送っているPOSTリクエストを探します。左上の検索ウインドウからメソッドを指定してリクエストを検索することができるので、@<tt>{method:POST}と入力するとPOSTリクエストが検索できます。
+
 
 //image[06-hatena-login-network][DevTools上でNetworkタブを選択しPOSTメソッドのHTTPリクエストを表示した画面][scale=1.1]{
 //}
