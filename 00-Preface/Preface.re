@@ -18,12 +18,12 @@ Common LispはANSI(米国規格協会)で言語仕様が定められており、
 
 本書はCommon Lispの最近の開発フローやツールの解説、及び具体的なプロジェクト例から構成されています。
 Common Lispの言語解説書は質、量ともにそれなりに出揃っている感がありますが、その一方でどのように環境を構築し、プロジェクトを作っていけばいいのかという具体的な指針に欠けていました。
-本書はその部分をカバーすることを目的としており、言語そのもの詳細な解説はここで挙げているような情報源を参照してください。
+本書はその部分をカバーすることを目的としており、言語そのもの詳細な解説は他書籍などに譲ることとします。
 
-そのため対象読者は、Common Lispに興味があり、言語仕様などは調べたが(あるいは調べられるが)、具体的にどのようにプロジェクトを開発していけばいいのか分からないという人や、これからCommon Lispの世界に入っていこうとする人です。
-また、既にCommon Lispを使って開発をしているが、最近のツールについて知りたいという人にとっても得るものがある本になっていればいいと思います。
+そのため対象読者は、Common Lispに興味があり、言語仕様などは調べたが(あるいは調べられるが)、具体的にどのようにプロジェクトを開発していけばいいのか分からないという人や、これからCommon Lispの世界に入っていこうとする人となります。
+また、既にCommon Lispを使って開発をしていて最近のツールについて知りたいという人にとっても、得るものがある本になっていればいいと思います。
 
-== 参照してほしいリソース
+== 参照してほしい情報源
 
 === 既存のCommon Lispの書籍
 
@@ -36,15 +36,18 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 
 === HyperSpec
 
-HyperSpecはLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
+@<b>{HyperSpec}はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
 
  * @<tt>{http://www.lispworks.com/documentation/HyperSpec/Front/}
 
-Common Lispの仕様に困ったときはGoogleで「clhs restart-case」などで検索すると目的のページが出てくるので便利です。
+Common Lispの仕様に困ったときはGoogleで「@<tt>{clhs restart-case}」などで検索すると目的のページが出てくるので便利です。
 
 === ライブラリの調べ方
 
-QuickdocsとCLikiでは、Common Lisp製のライブラリの情報を目的別に参照することができます。Quickdocsは、Common Lisp製ライブラリのドキュメントサイトです。目的別にライブラリが整理されています。CLikiは、Common Lisp Foundationが運営しているCommon LispのWikiです。Current recommended libraries (推薦ライブラリ) のページでは、推薦ライブラリが目的別で確認できます。
+QuickdocsとCLikiでは、Common Lisp製のライブラリの情報を目的別に参照することができます。
+Quickdocsは、Common Lisp製ライブラリのドキュメントサイトで、目的別にライブラリが整理されています。
+CLikiは、Common Lisp Foundationが運営しているCommon LispのWikiです。
+Current recommended libraries (推薦ライブラリ) のページでは、推薦ライブラリが目的別で確認できます。
 
  * @<b>{Quickdocs}
  ** @<tt>{http://quickdocs.org}
