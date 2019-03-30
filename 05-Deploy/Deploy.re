@@ -196,11 +196,12 @@ $ @<b>{docker run -it -p 5000:5000 yubin}
 
 == Herokuにデプロイする場合
 
-もう一つの例として代表的なPaaSの一つであるHeroku@<fn>{45152b661534ef52c557094b671f9876}にデプロイする方法について説明します。Herokuのアカウント作成やコマンドインストールに関しては、言語に関わらず共通のため省略します。
+もう一つの例として代表的なPaaSの一つであるHeroku@<fn>{45152b661534ef52c557094b671f9876}にデプロイする方法について説明します。
+Herokuのアカウント作成@<fn>{heroku-signup}やコマンドインストールに関しては、言語に関わらず共通のため省略します。
 
 === 使い方
 
-Herokuでは標準でCommon Lispをサポートしていないため、カスタムビルドパックとして@<tt>{heroku-buildpack-roswell}を使用します。
+Herokuでは標準でCommon Lispをサポートしていないため、カスタムビルドパックとして@<tt>{heroku-buildpack-roswell}@<fn>{git-buildpack-roswell}を使用します。
 
 //cmd{
 $ @<b>{heroku create --buildpack https://github.com/gos-k/heroku-buildpack-roswell}
@@ -326,7 +327,10 @@ Webブラウザでアクセスし@<tt>{Hello Clack!}が表示されればデプ�
 === 関連リンク
  * https://devcenter.heroku.com/start
  * https://dashboard.heroku.com
- * https://github.com/gos-k/heroku-buildpack-roswell
+
+//footnote[heroku-signup][https://signup.heroku.com]
+
+//footnote[git-buildpack-roswell][https://github.com/gos-k/heroku-buildpack-roswell]
 
 //footnote[qlot-readme][https://github.com/fukamachi/qlot]
 
