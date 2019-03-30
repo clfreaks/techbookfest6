@@ -12,7 +12,7 @@ ClojureはJVM言語であり、Javaの既存のライブラリ群との相互運
 Common LispはANSI(米国規格協会)で言語仕様が定められており、ANSI規格に従って書かれたプログラムには可搬性があり、将来に渡って動くことが保証されます。そのような理由から、Common Lispは産業や軍事、AI研究などの分野で利用されてきました。
 
 本書の執筆陣は電子マネープラットフォームを開発しているポケットチェンジ社のメンバーが中心となっています。
-このポケットチェンジにおいても決済システムやWebアプリケーションのバックエンドにCommon Lispが活用されています。
+ここでも決済システムやWebアプリケーションのバックエンドにCommon Lispが活用されています。
 
 == 本書の目的と対象読者
 
@@ -29,16 +29,16 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 
 前述した通り、本書ではCommon Lispの文法自体の解説はしないため、おすすめの言語解説書をいくつか挙げておきます。本書と併わせて参照してください。
 
- * 実践Common Lisp: 本格的な言語解説書。実例も多く最初の一冊に適している。原書は無料公開されている。
- * 実用Common Lisp: 通称PAIP。古典的なAI開発を通じてCommon Lispを学ぶ。原書は無料公開されている。
- * Land of Lisp: テキストベースのゲーム開発を通じてCommon Lispを学ぶ。
- * On Lisp: Common Lispのマクロを中心に解説した本。事例も豊富。原書は無料公開されている。
+ * @<b>{実践Common Lisp}: 本格的な言語解説書。実例も多く最初の一冊に適している。原書は無料公開されている。
+ * @<b>{実用Common Lisp}: 通称PAIP。古典的なAI開発を通じてCommon Lispを学ぶ。原書は無料公開されている。
+ * @<b>{Land of Lisp}: テキストベースのゲーム開発を通じてCommon Lispを学ぶ。
+ * @<b>{On Lisp}: Common Lispのマクロを中心に解説した本。事例も豊富。原書は無料公開されている。
 
 === HyperSpec
 
 HyperSpecはLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
 
- * http://www.lispworks.com/documentation/HyperSpec/Front/
+ * @<tt>{http://www.lispworks.com/documentation/HyperSpec/Front/}
 
 Common Lispの仕様に困ったときはGoogleで「clhs restart-case」などで検索すると目的のページが出てくるので便利です。
 
@@ -46,8 +46,7 @@ Common Lispの仕様に困ったときはGoogleで「clhs restart-case」など�
 
 QuickdocsとCLikiでは、Common Lisp製のライブラリの情報を目的別に参照することができます。Quickdocsは、Common Lisp製ライブラリのドキュメントサイトです。目的別にライブラリが整理されています。CLikiは、Common Lisp Foundationが運営しているCommon LispのWikiです。Current recommended libraries (推薦ライブラリ) のページでは、推薦ライブラリが目的別で確認できます。
 
- * Quickdocs
- ** http://quickdocs.org
- * CLiki
- ** https://www.cliki.net
-
+ * @<b>{Quickdocs}
+ ** @<tt>{http://quickdocs.org}
+ * @<b>{CLiki}
+ ** @<tt>{https://www.cliki.net}

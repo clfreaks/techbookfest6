@@ -85,7 +85,7 @@ $ ros install fireflower0/cl-raspi
 
 上記電子部品を以下のようにブレッドボードに配置します。
 
-//image[09-circuit-diagram-blink][LEDと抵抗の配線図][scale=0.5]{
+//image[09-circuit-diagram-blink][LEDと抵抗の配線図][scale=0.8]{
 //}
 
 プログラムは、@<tt>{cl-raspi/examples}ディレクトリ下に@<tt>{blink.lisp}という名前で作成してあります。
@@ -128,7 +128,7 @@ $ ros install fireflower0/cl-raspi
 
 上記電子部品を以下のようにブレッドボードに配置します。
 
-//image[09-circuit-diagram-adt7410][温度センサーの配線図][scale=0.5]{
+//image[09-circuit-diagram-adt7410][温度センサーの配線図][scale=0.8]{
 //}
 
 @<tt>{ADT7410}は@<tt>{I2C}と呼ばれる通信規格を採用しているので、データを送受信する@<tt>{SDA}、通信の同期を取る@<tt>{SCL}、電源@<tt>{VDD}、@<tt>{GND}の4本ケーブルを繋ぐだけで動作します。
@@ -171,6 +171,38 @@ $ ros install fireflower0/cl-raspi
 //}
 
 
+===[column] I2CとSPI
+
+==== I2C
+
+少ない信号線で複数の機器と通信できる規格です。
+以下の図のようにSDAとSCLを枝分かれさせて、複数のI2Cデバイスを接続できます。
+
+//image[09-i2c][I2C通信][scale=1.0]{
+//}
+
+各I2CデバイスにはI2Cアドレスが割り当てられていて、通信元(ここではRaspberry Pi)がI2Cアドレスを指定することで、対象の機器と通信を行います。
+I2Cアドレスは、I2Cデバイスのデータシートや説明書などに記載されています。
+Raspberry Piでは以下のコマンドを実行することで接続されているI2CデバイスのI2Cアドレスを確認することもできます。
+
+//emlist{
+$ i2cdetect -y 1
+//}
+
+==== SPI
+
+I2Cと同様に複数のSPIデバイスを接続でき、I2Cよりも高速で通信ができる規格です。
+以下の図のようにMISOとMOSI、SCLKを枝分かれさせて、複数のSPIデバイスを接続できます。
+
+//image[09-spi][SPI通信][scale=1.0]{
+//}
+
+通信するSPIデバイスを選択するときには、対象のSPIデバイスに接続されたCEをLow(0V)、対象外のSPIデバイスに接続されたCEをHigh(3.3V)にすることで通信対象を選択します。
+Raspberry Piでは同時に2つのSPIデバイスを接続できます。
+
+===[/column]
+
+
 == 実践：温度計付きデジタル時計
 
 
@@ -184,7 +216,7 @@ $ ros install fireflower0/cl-raspi
 
 上記電子部品を以下のようにブレッドボードに配置します。
 
-//image[09-circuit-diagram-simple-temperature][回路図][scale=0.5]{
+//image[09-circuit-diagram-simple-temperature][回路図][scale=0.8]{
 //}
 
 LCDの一行目に日時、二行目に温度が表示されるようにプログラムを作成します。
