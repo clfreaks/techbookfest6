@@ -316,7 +316,7 @@ Webブラウザでアクセスし、郵便番号を入力するページが表�
 
 動作しなかった場合には、@<tt>{heroku logs --tail}とするとHeroku側のログを見る事が出来ます。
 
-=== 関連リンク
+
 
 //footnote[heroku-signup][https://signup.heroku.com]
 
