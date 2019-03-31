@@ -627,6 +627,10 @@ REPLでも結果が返ってきていることを確認できます。
 
 lemでの拡張機能の書き方を紹介します。プロジェクト名はposts-listとして、redditの投稿一覧のビューアを作ります。
 
+本項で作るプロジェクトは、以下のGithubリポジトリからダウンロードすることができます。
+
+ * @<tt>{https://github.com/clfreaks/lem-posts-list}
+
 完成は次のようになります。
 
 //image[02-extension-preview][完成図]{
