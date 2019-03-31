@@ -115,7 +115,7 @@ CL-USER> (loop :for i :from 0 :below 100 :sum i)
 
 REPLは基本的にコマンドラインからの使用と同じですがSLIMEで追加された機能があります。
 
-履歴を辿るには@<tt>{M-p} @<tt>{M-n}で行えます。
+履歴を辿るには@<tt>{M-p}と@<tt>{M-n}で行えます。
 
 現在のパッケージを切り替えるには@<tt>{(in-package パッケージ名)}を入力することでも出来ますが@<tt>{C-c M-p (M-x lisp-set-package)}でもREPLのパッケージを切り替えられます。
 
