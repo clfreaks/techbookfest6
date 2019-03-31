@@ -8,46 +8,50 @@ lisp-modeについての機能を一通り紹介したあと、Lemでの拡張�
 
 Lemで使う用語を確認しておきます。
 
+//embed[latex]{
+\vspace{1\Cvs}
+//}
+
 @<em>{ミニバッファ}
 
 //embed[latex]{
-\vspace{0.3\Cvs}
+\vspace{0.2\Cvs}
 //}
 
 画面の一番下で入力が出来る空間のことです。
 
 //embed[latex]{
-\vspace{1\Cvs}
+\vspace{0.5\Cvs}
 //}
 
 @<em>{バッファ}
 
 //embed[latex]{
-\vspace{0.3\Cvs}
+\vspace{0.2\Cvs}
 //}
 
 バッファはファイルと関連付けられたデータ構造を表します。
 
 //embed[latex]{
-\vspace{1\Cvs}
+\vspace{0.5\Cvs}
 //}
 
 @<em>{ウィンドウ}
 
 //embed[latex]{
-\vspace{0.3\Cvs}
+\vspace{0.2\Cvs}
 //}
 
 ウィンドウは一つのバッファを画面に表示するデータ構造を表します。
 
 //embed[latex]{
-\vspace{1\Cvs}
+\vspace{0.5\Cvs}
 //}
 
 @<em>{コマンド}
 
 //embed[latex]{
-\vspace{0.3\Cvs}
+\vspace{0.2\Cvs}
 //}
 
 コマンドはエディタを操作する機能です。
@@ -55,10 +59,14 @@ Lemで使う用語を確認しておきます。
 コマンドはキーに割り当てられたり@<tt>{M-x}の後、ミニバッファでコマンド名を入力することでも実行できます。
 以後@<tt>{(M-x コマンド名)} と表記します。
 
+//embed[latex]{
+\vspace{0.5\Cvs}
+//}
+
 @<em>{モード}
 
 //embed[latex]{
-\vspace{0.3\Cvs}
+\vspace{0.2\Cvs}
 //}
 
 バッファ上で操作をするときに、たとえばソースコードを表示する場合、言語専用の振舞いをしてほしいことがあります。
