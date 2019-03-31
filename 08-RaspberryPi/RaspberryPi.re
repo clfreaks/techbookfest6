@@ -274,9 +274,11 @@ LCDの制御を入れるとコードが長くなるので@<tt>{cl-raspi/bo1602dg
 //image[09-simple-temperature-pic][実行中の様子][scale=0.5]{
 //}
 
-
+//embed[latex]{
+\vspace{-1\Cvs}
+//}
+ 
 == 終わりに
-
 
 ここまで読んでくださってありがとうございます。
 Raspberry Pi での電子工作では Python が主流となっているようですが、Common Lisp でもできるよという話でした。
