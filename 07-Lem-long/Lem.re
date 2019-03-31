@@ -72,7 +72,7 @@ viに合わせたい場合は@<tt>{M-x vi-mode}と入力することで切り替
 == SLIME
 
 SLIME(Superior Lisp Interaction Mode for Emacs)は元はEmacs上でCommon Lispの開発を行えるようにするEmacs用のプロダクトでした。
-Common Lispランタイム上で動作するswnakサーバがあり、Emacs上のslimeとクライアントサーバ方式でswank rpcという独自プロトコルでやりとりを行い、パワルルなREPL、補完、デバッガ、インスペクタなどを提供します。
+Common Lispランタイム上で動作するswnakサーバがあり、Emacs上のslimeとクライアントサーバ方式でswank rpcという独自プロトコルでやりとりを行い、パワフルなREPL、補完、デバッガ、インスペクタなどを提供します。
 今もよく使われていますが、vimやatomなどのエディタでもslimeの実装が開発されていて、lemも同様にslimeを実装し、デフォルトでサポートしています。
 
 === lisp-mode
