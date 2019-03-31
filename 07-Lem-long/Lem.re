@@ -591,17 +591,9 @@ CL-USER> (match m "1000")
 1000
 //}
 
-//embed[latex]{
-\vspace{-0.5\Cvs}
-//}
-
 matcherを使ってmatch関数を呼び出すことで入力を数値に変換することができました。
 
 次はエラーが出る例を試してみます。
-
-//embed[latex]{
-\vspace{-0.5\Cvs}
-//}
 
 //emlist[][lisp]{
 CL-USER> (match m "123d")
