@@ -93,7 +93,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 === lispファイルを編集中のキー操作
 @<tt>{C-x C-f}で拡張子が@<tt>{.lisp}のファイルを開くとlisp用のキーがいくつか使えるようになります。ここでは便利なものを紹介します。
 
-//table[lemlispmodekeytable][lispファイルのキー操作]{
+//table{
 キー	操作
 ------------
 @<tt>{C-c C-e}	直前の式を評価する。
@@ -116,7 +116,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 \vspace{-0.5\Cvs}
 //}
 
-//table[lemkeytable][2章で取り扱ったlemのキー操作]{
+//table{
 キー	操作
 ------------
 @<tt>{C-x C-c}	Lemの終了
@@ -147,7 +147,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 \vspace{-0.5\Cvs}
 //}
 
-//table[lemkeytable2][便利なlemのキー操作]{
+//table{
 キー	操作
 ------------
 @<tt>{C-b}	前の文字へ移動
