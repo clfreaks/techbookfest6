@@ -166,7 +166,13 @@ exec ros -Q -- $0 "$@"
       (uiop:quit -1))))
 //}
 
-③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
+③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。
+
+//embed[latex]{
+\vspace{0.5\Cvs}
+//}
+
+④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
 
 //embed[latex]{
 \clearpage
