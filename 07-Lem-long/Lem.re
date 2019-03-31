@@ -88,7 +88,7 @@ Lemで使う用語を確認しておきます。
 
 == 初期化ファイルについて
 
-lemを起動時に初期化ファイルが読み込まれます。
+Lemの起動時に初期化ファイルが読み込まれます。
 ファイル名は@<tt>{~/.lemrc}または@<tt>{~/.lem/init.lisp}です。以下のように書きます。
 
 //emlist[][lisp]{
@@ -99,13 +99,11 @@ lemを起動時に初期化ファイルが読み込まれます。
 ;; ここから設定を記述
 //}
 
-一例として次のリポジトリが参考になります。
-
- * @<tt>{https://github.com/fukamachi/.lem/}
+一例として次のリポジトリが参考になります。@<tt>{https://github.com/fukamachi/.lem/}
 
 == コマンド一覧
 
-コマンド一覧は@<tt>{M-x describe-bindings}で表示されます。
+現在のモードのコマンド一覧は@<tt>{M-x describe-bindings}で表示されます。
 このときに出るポップアップウィンドウはTypeoutウィンドウと呼ばれるものです。
 Moreとよく似た操作方法でSpaceで1ページ分スクロール、閉じるには最後のページまでスクロールされた状態でSpaceを押すか、@<tt>{q}を入力します。
 
@@ -114,7 +112,7 @@ Moreとよく似た操作方法でSpaceで1ページ分スクロール、閉じ�
 デフォルトではEmacsの操作にある程度合わせています。
 viに合わせたい場合は@<tt>{M-x vi-mode}と入力することで切り替えられます。
 元に戻すには@<tt>{M-x emacs-mode}です。
-起動時に自動でvi-modeにするには@<tt>{~/.lem.d/init.lisp}に次の式を加えます。
+起動時に自動でvi-modeにするには@<tt>{~/.lem/init.lisp}に次の式を加えます。
 
 //emlist{
 (lem-vi-mode:vi-mode)
@@ -205,8 +203,8 @@ CL-USER>
       (* n (fact (1- n)))))
 //}
 
-あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロをSWANKサーバ側で定義さていると出来ます。
-例えばcl-ppcreにregister-groups-bindというマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
+あとから追加されたマクロなどで特別なインデントをしたい場合は、そのマクロがSWANKサーバ側で定義されていると出来ます。
+例えばcl-ppcreに@<tt>{register-groups-bind}というマクロがありますが、これはcl-ppcreを読み込んでない状態では関数と同じインデントにされてしまいます。
 
 //emlist[][lisp]{
 (ppcre:register-groups-bind (key value)
@@ -243,7 +241,7 @@ CL-USER> (ql:quickload :cl-ppcre)
 //}
 
 静的にインデントを設定したい場合は@<tt>{lem-lisp-syntax:set-indentation}を使います。
-@<tt>{~/.lem.d/init.lisp}に次の式を追加してみます。
+@<tt>{~/.lem/init.lisp}に次の式を追加してみます。
 
 //embed[latex]{
 \vspace{-0.5\Cvs}
@@ -259,7 +257,7 @@ CL-USER> (ql:quickload :cl-ppcre)
 
 === 入力補完
 
-Lemでは入力中にTabを押すことで補完が出来ます。
+Lemでは入力中に@<tt>{Tab}を押すことで補完が出来ます。
 
 //image[02-lem-completion][]{
 //}
@@ -287,7 +285,7 @@ lispファイル上の式を評価してみます。例としてfoo.lispとい�
 
 関数fooの中で@<tt>{C-M-x}とすると、そのdefunが評価され、定義されます。
 
-REPLで定義した関数を呼びだしてみます。
+定義した関数をREPLで呼びだしてみます。
 
 //emlist[][lisp]{
 CL-USER> (foo 0)
