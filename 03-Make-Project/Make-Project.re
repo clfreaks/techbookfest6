@@ -1,21 +1,26 @@
 
 = プロジェクトの作成
 
-Common Lispでライブラリやアプリケーションを開発して他者に配布するには、規定の方法でシステムを構築する必要があります。プロジェクトに必要なファイルを1つずつ書くのは手間がかかりますが、Common Lisp製ライブラリのcl-projectを用いると、プロジェクトに必要なファイル群を生成することができます。
+Common Lispでライブラリやアプリケーションを開発して他者に配布するには、ある決まったファイル構成でプロジェクトを作る必要があります。
+プロジェクトに必要なファイルを1つずつ用意するのは手間のかかる作業ですが、Common Lisp製ライブラリの@<b>{cl-project}を用いることで、最低限必要なファイルを一通り生成することができます。
 
-本章では、cl-projectで生成された雛形を編集しながら、小さなCommon Lispプロジェクトを開発する方法を紹介します。
+本章では、cl-projectで生成されたプロジェクトの雛形を元に、小さなCommon Lispプロジェクトを開発していきます。
 
 == cl-project
 
-まず、Roswellでcl-projectをインストールします。インストール後は、プロジェクトの雛形を生成するmake-projectコマンドが使えるようになります。
+まず、Roswellでcl-projectをインストールします。
 
 //cmd{
 $ ros install fukamachi/cl-project
 //}
 
+cl-projectインストール後は、プロジェクトの雛形を生成するコマンド@<tt>{make-project}が使えるようになります。
+
+
 == プロジェクトの作成例 - 地名検索システムyubin
 
-zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。完成後は、次のように利用できます。
+この章では小さなプロジェクトの例として、zipcloudのWeb APIを用いて、郵便番号から地名を検索するシステムを作ります。
+完成後は、次のようにインストールし、コマンドとして実行できるようになります。
 
 //cmd{
 $ ros install clfreaks/yubin
@@ -29,48 +34,54 @@ $ yubin 6380321
 
 === プロジェクトの雛形生成
 
-まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quriを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
+まず、cl-project付属の@<tt>{make-project}コマンドを用いてプロジェクトの雛形を生成します。
+ここでは、プロジェクト名を@<tt>{yubin}とし、依存ライブラリとしてDexador、Jonathanを指定してプロジェクトを生成します。
+DexadorはHTTPクライアント、JonathanはJSONを扱うためのライブラリです。
+この際、生成したプロジェクトをRoswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動してから@<tt>{make-project}を実行します。
 
 //cmd{
 $ cd ~/.roswell/local-projects
-$ make-project yubin --depends-on dexador jonathan quri
+$ make-project yubin --depends-on dexador jonathan
+$ tree yubin
+yubin
+├── README.markdown
+├── README.org
+├── src
+│   └── main.lisp
+├── tests
+│   └── main.lisp
+└── yubin.asd
 //}
 
-上記のようにmake-projectコマンドを実行後、システム定義ファイル(yubin.asd)、メインファイル(src/main.lisp)、テストファイル(tests/main.lisp)、READMEファイルが生成されます。
+上記のように@<tt>{make-project}コマンドを実行すると、システム定義ファイル(@<tt>{yubin.asd})、メインファイル(@<tt>{src/main.lisp})、テストファイル(@<tt>{tests/main.lisp})、READMEファイルが生成されます。
 
-//embed[latex]{
-\vspace{1\Cvs}
-//}
-
-では、生成されたファイルを編集しながら、簡単なアプリを作成していきましょう。
+では、生成されたファイルを編集しながら、簡単なアプリケーションを作成していきましょう。
 
 === システム定義ファイル(yubin.asd)
 
-Common Lispでは、主にASDF(Another System Definition Facility)を用いてプロジェクトを管理します。システム定義ファイルを規定の方法で記述することにより、プロジェクトの読み込みからテストまで行うことができます。では、make-projectコマンドで生成されたシステム定義ファイル(yubin.asd)を見てみましょう。
+Common Lispでは、@<b>{ASDF}(Another System Definition Facility)と呼ばれるソフトウェアを用いてプロジェクトを定義し、依存関係の解決を行います。
+ASDFではシステム定義ファイルを記述することにより、プロジェクトの読み込みやテストの実行などを行うことができます。
+
+では、@<tt>{make-project}コマンドで生成されたシステム定義ファイル@<tt>{yubin.asd}の内容を見てみましょう。
 
 //emlist{
 (defsystem "yubin"
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ("dexador"
-               "jonathan")
+  :depends-on ("dexador" "jonathan")
   :components ((:module "src"
                 :components
                 ((:file "main"))))
   ;; 以下は省略
 )
 //}
+ここで、@<tt>{:depends-on}と@<tt>{:components}に注目してください。
 
-:depends-on と :components に注目してください。:depends-on には、make-projectで指定した依存ライブラリが挿入されます。ここに記入されたライブラリが、Quicklispのアーカイブからダウンロードされて読み込まれます。 :components 内には、:depends-on で記されたライブラリのロード後に読み込むファイルを指定します。ここでは :file "main" と指定されていますが、これはsrcフォルダ内のmain.lispを指します。
-
-//embed[latex]{
-\vspace{1\Cvs}
-//}
-
-//embed[latex]{
-\clearpage
-//}
+@<tt>{:depends-on}には、@<tt>{make-project}で指定した依存ライブラリが入っています。
+@<tt>{yubin}をロードすると、ここで指定されているライブラリが自動的にQuicklispのアーカイブからダウンロードされ、ロードされます。
+@<tt>{:components}には、依存ライブラリのロード後に読み込むファイルを指定します。
+ここでは@<tt>{(:file "main")}と指定されていますが、これは@<tt>{src}フォルダ内の@<tt>{main.lisp}を指しています。
 
 === メインファイル(main.lisp)
 
@@ -79,11 +90,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
 //emlist{
 (defpackage #:yubin ; ①
   (:use #:cl)
-  (:import-from #:quri
-                #:make-uri)
-  (:import-from #:jonathan
-                #:parse)
-  (:import-from #:dexador)
+  (:import-from #:jonathan #:parse)
   (:export #:get-place))
 (in-package #:yubin)
 
@@ -101,23 +108,27 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
                        (getf response :|message|)
                        zipcode
                        (getf response :|status|))))))
+
 //}
 
-①では、yubinパッケージを定義しています。依存するパッケージを (:import-from #:ライブラリ名) の形式で指定します。依存ライブラリから特定のシンボルを取り込むときは、(:import-from #:ライブラリ名 #:シンボル名) とします。
-例えば (:import-from #:jonathan #:parse) という箇所は、jonathanのparse関数を取り込むという意味です。また、後で定義するget-place関数が外部から利用できるように、get-placeをexportします。
+①では、@<tt>{yubin}パッケージを定義しています。
+外部パッケージから特定のシンボルをインポートするときには、@<tt>{(:import-from #:<パッケージ名> #:<シンボル名>)}の形式でシンボル名を指定します。こうすることで、呼び出し時にパッケージ名をシンボルの前に付ける必要がなくなります。
+例えば、@<tt>{yubin}のパッケージ定義の中で@<tt>{(:import-from #:jonathan #:parse)}と指定しておくことで、@<tt>{jonathan:parse}ではなく、単に@<tt>{parse}として呼び出すことができます。
 
-②では、get-place関数を定義しています。get-place関数は、引数 @<tt>{zipcode} からURLを作り、HTTPリクエストをして結果のJSONをパースし、結果を住所として文字列で返します。もし結果が返ってこなかった場合にはエラーを投げます。
+また、@<tt>{:export}の後に外部へ公開するシンボルを指定します。後で定義する@<tt>{get-place}関数が外部から利用できるように、@<tt>{#:get-place}を指定しておきます。
+
+②では、@<tt>{get-place}関数を定義しています。@<tt>{get-place}関数は、引数 @<tt>{zipcode} からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
 
 === Roswell Script
 
-インストール後にyubinコマンドが使えるように、プロジェクト内のroswellフォルダ内にRoswell Scriptを作成します。Roswell Scriptは、@<tt>{ros init}コマンドで生成される雛形を元に作成します。
+1.5節で解説したように、プロジェクト直下の@<tt>{roswell}ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、@<tt>{yubin}コマンドが使えるようになります。Roswell Scriptは、@<tt>{ros init}コマンドで生成される雛形を元に作成します。
 
 //cmd{
 $ mkdir roswell && cd roswell
 $ ros init yubin.ros
 //}
 
-生成された雛形を次のように編集します。
+生成されたファイルを次のように編集します。
 
 //emlist{
 #!/bin/sh
@@ -142,11 +153,15 @@ exec ros -Q -- $0 "$@"
       (uiop:quit -1))))
 //}
 
-③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。④では、@<tt>{main} 関数を定義しています。yubinコマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
+③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
 
 == プロジェクトの共有
 
-プロジェクトの完成後は、プロジェクトをGitHubのリポジトリにpushすることで、プロジェクトを他者と共有することができます。
+プロジェクトが完成したら、GitHubのリポジトリに登録しておきます。こうすることで、以降はRoswell経由でインストールできるようになり、プロジェクトを他者と共有することができます。
+
+//embed[latex]{
+\clearpage
+//}
 
 //cmd{
 $ git push -u origin master
@@ -155,16 +170,13 @@ $ yubin 6390321
 奈良県吉野郡天川村坪内
 //}
 
-//embed[latex]{
-\clearpage
-//}
-
 == package-inferred-system
 
-@<tt>{package-inferred-system}は、ASDFのオプションとして提供されているパッケージ管理方法です。この手法は、全てのファイルはdefpackageで始まり固有のパッケージ名をもつことから、one package per file (1つのファイルにつき1パッケージ)と呼ばれます。パッケージ名をファイルのパス名と合致するように作成して、ファイル内でパッケージの依存関係を記述することで、パッケージ間の依存関係が推測(inferred)されて解決されます。
+@<b>{package-inferred-system}は、ASDFのオプション機能として提供されているパッケージ管理方法です。package-inferred-systemでは、プロジェクト以下の全ての@<tt>{.lisp}ファイルでパッケージが定義されます。
+パッケージ名をファイルのパスと合致するように作成し、@<tt>{defpackage}内の@<tt>{import-from}に依存するパッケージを記述することで、パッケージ間の依存関係が自動的に推測(inferred)されて解決されます。
 
 package-inferred-systemを用いた実例としては、第8章をご参照ください。
 
 == まとめ
 
-本章では、cl-projectで生成されたプロジェクトを元にプロジェクトを作成して、Roswellで作成したプロジェクトを共有する方法を紹介しました。Roswellとcl-projectを合わせて使うと、小さなプロジェクトであれば、プロジェクトの作成から公開がこんなに早くできるのかと思っていただけたら幸いです。
+本章では、cl-projectで生成された雛形を元にプロジェクトを作成し、Roswellからインストールできるようになるまでの方法を紹介しました。Roswellとcl-projectを合わせて使うことで、プロジェクトの作成から公開がこんなに早くできるのかと思っていただれば幸いです。

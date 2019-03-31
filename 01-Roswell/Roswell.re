@@ -268,7 +268,7 @@ To load "rove":
 export PATH=$PATH:~/.roswell/bin
 //}
 
-例えばRoveの場合、ソースディレクトリ直下の@<tt>{roswell}フォルダ内に@<tt>{rove.ros}が入っています。
+例えばRoveの場合、ソースディレクトリ直下の@<tt>{roswell}ディレクトリ内に@<tt>{rove.ros}が入っています。
 @<tt>{ros install fukamachi/rove}とすることで、@<tt>{rove.ros}が@<tt>{~/.roswell/bin/rove}にコピーされます。
 インストール後は@<tt>{rove}コマンドが使えるようになります。
 
