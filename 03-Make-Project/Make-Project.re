@@ -176,10 +176,6 @@ exec ros -Q -- $0 "$@"
 
 プロジェクトが完成したら、GitHubのリポジトリに登録しておきます。こうすることで、以降はRoswell経由でインストールできるようになり、プロジェクトを他者と共有することができます。
 
-//embed[latex]{
-\clearpage
-//}
-
 //cmd{
 $ git push -u origin master
 $ ros install clfreaks/yubin
