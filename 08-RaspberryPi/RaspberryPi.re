@@ -171,10 +171,10 @@ $ ros install fireflower0/cl-raspi
 
 ===[column] I2CとSPI
 
-==== I2C
+==== I2C (Inter-Integrated Circuit)
 
-少ない信号線で複数の機器と通信できる規格です。
-以下の図のようにSDAとSCLを枝分かれさせて、複数のI2Cデバイスを接続できます。
+少ない信号線で複数の機器と通信できる規格です。@<br>{}
+以下の図のようにデータを送受信する@<tt>{SDA(Serial data)}と通信の同期を取る@<tt>{SCL(Serial clock)}を枝分かれさせて、複数のI2Cデバイスを接続できます。
 
 //image[09-i2c][I2C通信][scale=1.0]{
 //}
@@ -187,16 +187,18 @@ Raspberry Piでは以下のコマンドを実行することで接続されて�
 $ i2cdetect -y 1
 //}
 
-==== SPI
+==== SPI (Serial Peripheral Interface)
 
 I2Cと同様に複数のSPIデバイスを接続でき、I2Cよりも高速で通信ができる規格です。
-以下の図のようにMISOとMOSI、SCLKを枝分かれさせて、複数のSPIデバイスを接続できます。
+主に更新頻度の高いセンサーからの読み取りや、SDカードといった大容量データのやり取りで使われます。@<br>{}
+以下の図のようにデータを送受信する@<tt>{MISO(Master Input Slave Output)}と@<tt>{MOSI(Master Output Slave Input)}、通信の同期を取る@<tt>{SCLK(Serial Clock)}を枝分かれさせて、複数のSPIデバイスを接続できます。
+@<tt>{CE(Chip enable)}は各SPIデバイスの@<tt>{CS(Chip Select)}と接続します。
 
 //image[09-spi][SPI通信][scale=1.0]{
 //}
 
-通信するSPIデバイスを選択するときには、対象のSPIデバイスに接続されたCEをLow(0V)、対象外のSPIデバイスに接続されたCEをHigh(3.3V)にすることで通信対象を選択します。
-Raspberry Piでは同時に2つのSPIデバイスを接続できます。
+通信するSPIデバイスを選択するときには、対象のSPIデバイスに接続された@<tt>{CE}を@<tt>{Low(0V)}、対象外のSPIデバイスに接続された@<tt>{CE}を@<tt>{High(3.3V)}にすることで通信対象を選択します。
+Raspberry PiではCEが2つしかないため、同時に2つまでしかSPIデバイスを接続できません。
 
 ===[/column]
 
@@ -214,7 +216,7 @@ Raspberry Piでは同時に2つのSPIデバイスを接続できます。
 
 上記電子部品を以下のようにブレッドボードに配置します。
 
-//image[09-circuit-diagram-simple-temperature][回路図][scale=0.8]{
+//image[09-circuit-diagram-simple-temperature][温度計付きデジタル時計の配線図][scale=0.8]{
 //}
 
 LCDの一行目に日時、二行目に温度が表示されるようにプログラムを作成します。
