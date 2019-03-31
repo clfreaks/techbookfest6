@@ -39,6 +39,10 @@ $ yubin 6380321
 DexadorはHTTPクライアント、JonathanはJSONを扱うためのライブラリです。
 この際、生成したプロジェクトをRoswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動してから@<tt>{make-project}を実行します。
 
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
+
 //cmd{
 $ cd ~/.roswell/local-projects
 $ make-project yubin --depends-on dexador jonathan
@@ -63,6 +67,10 @@ Common Lispでは、@<b>{ASDF}(Another System Definition Facility)と呼ばれ�
 ASDFではシステム定義ファイルを記述することにより、プロジェクトの読み込みやテストの実行などを行うことができます。
 
 では、@<tt>{make-project}コマンドで生成されたシステム定義ファイル@<tt>{yubin.asd}の内容を見てみましょう。
+
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 //emlist{
 (defsystem "yubin"
@@ -119,6 +127,10 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
 また、@<tt>{:export}の後に外部へ公開するシンボルを指定します。後で定義する@<tt>{get-place}関数が外部から利用できるように、@<tt>{#:get-place}を指定しておきます。
 
 ②では、@<tt>{get-place}関数を定義しています。@<tt>{get-place}関数は、引数 @<tt>{zipcode} からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
+
+//embed[latex]{
+\clearpage
+//}
 
 === Roswell Script
 
