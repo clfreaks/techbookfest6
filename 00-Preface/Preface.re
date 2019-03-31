@@ -23,6 +23,10 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 そのため対象読者は、Common Lispに興味があり、言語仕様などは調べたが(あるいは調べられるが)、具体的にどのようにプロジェクトを開発していけばいいのか分からないという人や、これからCommon Lispの世界に入っていこうとする人となります。
 また、既にCommon Lispを使って開発をしていて最近のツールについて知りたいという人にとっても、得るものがある本になっていればいいと思います。
 
+== clfreaksとは
+
+clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisper集団です。不定期でハッカソンやPodcast@<fn>{clfreaks-org}の配信を行っています。
+
 == 参照してほしい情報源
 
 === 既存のCommon Lispの書籍
@@ -36,9 +40,7 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 
 === HyperSpec
 
-@<b>{HyperSpec}はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
-
- * @<tt>{http://www.lispworks.com/documentation/HyperSpec/Front/}
+@<b>{HyperSpec}はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます@<fn>{hyperspec}。
 
 Common Lispの仕様に困ったときはGoogleで「@<tt>{clhs restart-case}」などで検索すると目的のページが出てくるので便利です。
 
@@ -49,7 +51,9 @@ Quickdocsは、Common Lisp製ライブラリのドキュメントサイトで、
 CLikiは、Common Lisp Foundationが運営しているCommon LispのWikiです。
 Current recommended libraries (推薦ライブラリ) のページでは、推薦ライブラリが目的別で確認できます。
 
- * @<b>{Quickdocs}
- ** @<tt>{http://quickdocs.org}
- * @<b>{CLiki}
- ** @<tt>{https://www.cliki.net}
+ * @<b>{Quickdocs}： @<tt>{http://quickdocs.org}
+ * @<b>{CLiki}： @<tt>{https://www.cliki.net}
+
+//footnote[hyperspec][http://www.lispworks.com/documentation/HyperSpec/Front/]
+
+//footnote[clfreaks-org][http://clfreaks.org]
