@@ -29,11 +29,11 @@ $ yubin 6380321
 
 === プロジェクトの雛形生成
 
-まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quri、roveを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
+まず、プロジェクトの雛形を生成します。プロジェクト名をyubin、依存ライブラリにdexador、jonathan、quriを指定してプロジェクトの雛形を生成します。Roswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動後、make-projectを実行します。
 
 //cmd{
 $ cd ~/.roswell/local-projects
-$ make-project yubin --depends-on dexador jonathan quri rove
+$ make-project yubin --depends-on dexador jonathan quri
 //}
 
 上記のようにmake-projectコマンドを実行後、システム定義ファイル(yubin.asd)、メインファイル(src/main.lisp)、テストファイル(tests/main.lisp)、READMEファイルが生成されます。
@@ -54,8 +54,7 @@ Common Lispでは、主にASDF(Another System Definition Facility)を用いて�
   :author ""
   :license ""
   :depends-on ("dexador"
-               "jonathan"
-               "rove")
+               "jonathan")
   :components ((:module "src"
                 :components
                 ((:file "main"))))
