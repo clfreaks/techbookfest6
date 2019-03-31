@@ -25,7 +25,7 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 
 == clfreaksとは
 
-clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisper集団です。不定期でハッカソンやPodcast@<fn>{clfreaks-org}の配信を行っています。
+clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisp集団です。不定期でハッカソンやPodcast@<fn>{clfreaks-org}の配信を行っています。
 
 == 参照してほしい情報源
 
