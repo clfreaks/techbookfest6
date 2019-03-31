@@ -362,7 +362,7 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
 (rove:run :yubin/tests)
 //}
 
-コマンドラインから実行するには「@<tt>{rove}」コマンドを使います。@<tt>{rove}コマンドは第一章の終わりでインストール方法を紹介しています。@<tt>{rove}コマンドの引数にASDファイルを渡すとそのシステムの @<code>{asdf:test-system} を呼び出し、テストが実行されます。
+コマンドラインから実行するには「@<tt>{rove}」コマンドを使います。@<tt>{rove}コマンドは第1章の終わりでインストール方法を紹介しています。@<tt>{rove}コマンドの引数にASDファイルを渡すとそのシステムの @<code>{asdf:test-system} を呼び出し、テストが実行されます。
 
 //cmd{
 $ @<b>{rove yubin.asd}
