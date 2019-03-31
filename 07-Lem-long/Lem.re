@@ -31,7 +31,7 @@ lisp-modeについての機能を一通り紹介したあと、Lemでの拡張�
 コマンドはキーに割り当てられたり@<tt>{M-x}の後、ミニバッファでコマンド名を入力することでも実行できます。
 以後@<tt>{(M-x コマンド名)} と表記します。
 
-//footnote[reddit][米国のソーシャルニュースサイト、掲示。https://www.reddit.com]
+//footnote[reddit][米国のソーシャルニュースサイト、掲示板。https://www.reddit.com]
 
 //embed[latex]{
 \clearpage
