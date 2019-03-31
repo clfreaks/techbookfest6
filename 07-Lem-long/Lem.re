@@ -1,5 +1,5 @@
 
-= Lem
+= 詳解Lem
 
 この章では2章で説明したLemについての詳細を見ていきます。
 lisp-modeについての機能を一通り紹介したあと、Lemでの拡張機能の書き方をシンプルなreddit@<fn>{reddit}のビューアーを作りながら説明していきます。
@@ -99,7 +99,9 @@ lemを起動時に初期化ファイルが読み込まれます。
 ;; ここから設定を記述
 //}
 
-一例として次のリポジトリが参考になります。 https://github.com/fukamachi/.lem/
+一例として次のリポジトリが参考になります。
+
+ * @<tt>{https://github.com/fukamachi/.lem/}
 
 == コマンド一覧
 
@@ -109,7 +111,7 @@ Moreとよく似た操作方法でSpaceで1ページ分スクロール、閉じ�
 
 == vi-mode
 
-デフォルトではemacsの操作にある程度合わせています。
+デフォルトではEmacsの操作にある程度合わせています。
 viに合わせたい場合は@<tt>{M-x vi-mode}と入力することで切り替えられます。
 元に戻すには@<tt>{M-x emacs-mode}です。
 起動時に自動でvi-modeにするには@<tt>{~/.lem.d/init.lisp}に次の式を加えます。
@@ -121,8 +123,8 @@ viに合わせたい場合は@<tt>{M-x vi-mode}と入力することで切り替
 == SLIME
 
 SLIME(Superior Lisp Interaction Mode for Emacs)は元はEmacs上でCommon Lispの開発を行えるようにするEmacs用のプロダクトでした。
-Common Lispランタイム上で動作するswnakサーバがあり、Emacs上のslimeとクライアントサーバ方式でswank rpcという独自プロトコルでやりとりを行い、パワフルなREPL、補完、デバッガ、インスペクタなどを提供します。
-今もよく使われていますが、vimやatomなどのエディタでもslimeの実装が開発されていて、lemも同様にslimeを実装し、デフォルトでサポートしています。
+Common Lispランタイム上で動作するSWANKサーバがあり、Emacs上のSLIMEとクライアントサーバ方式でSwank RPCという独自プロトコルでやりとりを行い、パワフルなREPL、補完、デバッガ、インスペクタなどを提供します。
+今もよく使われていますが、VimやAtomなどのエディタでもSLIMEの実装が開発されていて、Lemも同様にSLIMEを実装し、デフォルトでサポートしています。
 
 === lisp-mode
 
@@ -140,7 +142,7 @@ REPLを開くには@<tt>{start-lisp-repl}コマンドを使います。
 M-x start-lisp-repl
 //}
 
-lemとは別のプロセスを起動してSLIMEで接続するにはslimeコマンドを使います。
+Lemとは別のプロセスを起動してSLIMEで接続するにはslimeコマンドを使います。
 このコマンドはREPLも同時に開きます。
 
 //emlist{
@@ -324,7 +326,7 @@ CL-USER> (foo 0)
 === マクロ展開
 
 Common Lispではマクロ展開をするための関数としてmacroexpandがあり、一段階だけ展開したい場合の関数としてmacroexpand-1があります。
-lemからマクロ展開をするには@<tt>{C-c C-m (M-x lisp-macroexpand)}を使います。
+Lemからマクロ展開をするには@<tt>{C-c C-m (M-x lisp-macroexpand)}を使います。
 このコマンドは一段階だけマクロを展開します。
 マクロ展開にはSWANKサーバ側でそのマクロを定義されている必要があるため、事前にマクロを評価しておく必要があります。
 例としてHyperSpecのmacroexpandの例で定義されているマクロ@<tt>{alpha}, @<tt>{beta}でマクロ展開してみます。
@@ -416,7 +418,7 @@ SLIMEではエディタからaproposを使える以下のインターフェー�
 Common Lispではオブジェクトの中身を見たり、必要ならその場で値を変更できるinspectという関数があります。
 SLIMEではエディタから使うためのインターフェースを提供しています。
 
-試しにlemのウィンドウをinspectしてみます。
+試しにLemのウィンドウをinspectしてみます。
 RPELで取り出したい式を評価し、その評価結果の値をinspectしてみます。
 
 //emlist{
@@ -444,7 +446,7 @@ Common Lispでは最後にREPLで評価した値が@<tt>{*}に入るので、@<t
 
 inspectのコマンドの一覧についてはinspectバッファで@<tt>{M-x describe-bindings}を実行してください。
 
-試しにlemのウィンドウの中のmodeline-formatを変更してみます。@<br>{}
+試しにLemのウィンドウの中のmodeline-formatを変更してみます。@<br>{}
 modeline-foramtを選択しチェックを付け、@<tt>{[set value]}を選択するとミニバッファに次の入力画面が出ます。
 
 //emlist[][lisp]{
@@ -662,9 +664,9 @@ REPLでも結果が返ってきていることを確認できます。
  
 == 拡張機能の書き方
 
-lemでの拡張機能の書き方を紹介します。プロジェクト名はposts-listとして、redditの投稿一覧のビューアを作ります。
+Lemでの拡張機能の書き方を紹介します。プロジェクト名はposts-listとして、redditの投稿一覧のビューアを作ります。
 
-本項で作るプロジェクトは、以下のGithubリポジトリからダウンロードすることができます。
+本項で作るプロジェクトは、以下のGitHubリポジトリからダウンロードすることができます。
 
  * @<tt>{https://github.com/clfreaks/lem-posts-list}
 
@@ -685,7 +687,7 @@ lemでの拡張機能の書き方を紹介します。プロジェクト名はpo
 
 === プロジェクトの作成
 
-lemの拡張機能は、他のプロジェクトと同様に、ASDFのシステムとして扱います。ベースとするディレクトリの下に、拡張機能と同じ名前のディレクトリを用意し、その下に各ファイルを配置します。以下のコマンドでプロジェクトのテンプレートを生成します。
+Lemの拡張機能は、他のプロジェクトと同様に、ASDFのシステムとして扱います。ベースとするディレクトリの下に、拡張機能と同じ名前のディレクトリを用意し、その下に各ファイルを配置します。以下のコマンドでプロジェクトのテンプレートを生成します。
 
 //emlist{
 $ ros init lem posts-list
@@ -710,7 +712,7 @@ CL-USER> (ql:quickload :lem-posts-list)
 
 === 投稿リストを取得
 
-subredditを指定して、redditの投稿をjsonで取得します。1つの投稿をpostという構造体にして、postのリストを返す処理を用意します。これ自体はlemとは関係ないので@<tt>{posts.lisp}に分離します。
+subredditを指定して、redditの投稿をjsonで取得します。1つの投稿をpostという構造体にして、postのリストを返す処理を用意します。これ自体はLemとは関係ないので@<tt>{posts.lisp}に分離します。
 
 //emlist[][lisp]{
 (defpackage #:lem-posts-list/posts
