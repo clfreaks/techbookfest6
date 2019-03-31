@@ -112,6 +112,10 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 
 本章で取り扱ったキー操作は次の通りです。
 
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
+
 //table[lemkeytable][2章で取り扱ったlemのキー操作]{
 キー	操作
 ------------
@@ -131,11 +135,17 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 @<tt>{C-g}	中断
 //}
 
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 ===  便利なキー操作
 
-
 最小限ではないけれど、編集のために便利なキーを紹介します。
+
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 //table[lemkeytable2][便利なlemのキー操作]{
 キー	操作
