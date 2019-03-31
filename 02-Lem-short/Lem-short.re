@@ -93,12 +93,20 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 === lispファイルを編集中のキー操作
 @<tt>{C-x C-f}で拡張子が@<tt>{.lisp}のファイルを開くとlisp用のキーがいくつか使えるようになります。ここでは便利なものを紹介します。
 
+//embed[latex]{
+\vspace{1\Cvs}
+//}
+
 //table{
 キー	操作
 ------------
 @<tt>{C-c C-e}	直前の式を評価する。
 @<tt>{C-M-q}	直後の式をインデントする。　　　　　　　　　　　　　　　　　　　　
 @<tt>{C-c z}	画面をreplに切り替える
+//}
+
+//embed[latex]{
+\vspace{1\Cvs}
 //}
 
 === キー操作で困ったときは
@@ -113,7 +121,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 本章で取り扱ったキー操作は次の通りです。
 
 //embed[latex]{
-\vspace{-0.5\Cvs}
+\vspace{1\Cvs}
 //}
 
 //table{
@@ -136,7 +144,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 //}
 
 //embed[latex]{
-\vspace{-0.5\Cvs}
+\vspace{1\Cvs}
 //}
 
 ===  便利なキー操作
@@ -144,7 +152,7 @@ replの画面はちょっとした式の入力(たとえば@<tt>{(loop for i to 
 最小限ではないけれど、編集のために便利なキーを紹介します。
 
 //embed[latex]{
-\vspace{-0.5\Cvs}
+\vspace{1\Cvs}
 //}
 
 //table{
