@@ -61,7 +61,7 @@
 \vspace{1.3\Cvs}
 //}
 
-@<em>{佐々木 涼輔}
+@<em>{cxxxr}
 
 //embed[latex]{
 \vspace{0.3\Cvs}
