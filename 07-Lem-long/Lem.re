@@ -581,10 +581,6 @@ CL-USER> (declaim (optimize (debug 3)))
                                                  
 REPLからmatcherインスタンスを作ってmatch関数を使ってみます。
 
-//embed[latex]{
-\vspace{-1\Cvs}
-//}
-
 //emlist[][lisp]{
 CL-USER> (defparameter m
            (make-instance 'matcher :pattern "\\d+" :action 'convert-integer))
