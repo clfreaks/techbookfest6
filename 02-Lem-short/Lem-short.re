@@ -17,7 +17,7 @@ LemをインストールするにはRoswellを使うのが簡単です。
 次のコマンドでインストールできます。
 
 
-//emlist{
+//cmd{
 $ ros install cxxxr/lem
 //}
 
@@ -26,7 +26,7 @@ Lemは256色をサポートしたターミナルで使うことを想定して�
 linuxのターミナルの場合、デフォルトでは8色しか表示できない事が多いのでTERM変数を変更してください。
 
 
-//emlist{
+//cmd{
 $ export TERM=xterm-256color
 //}
 
@@ -56,7 +56,7 @@ LemではEmacsと同じようにControlやMetaをプリフィクスとするコ�
 lemコマンドはRoswellからインストールしている場合に使えます。
 
 
-//emlist{
+//cmd{
 $ lem [ファイル名]
 //}
 

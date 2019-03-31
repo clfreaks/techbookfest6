@@ -69,7 +69,8 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ("dexador" "jonathan")
+  :depends-on ("dexador"
+               "jonathan")
   :components ((:module "src"
                 :components
                 ((:file "main"))))
