@@ -54,7 +54,7 @@ oclclなどのOpenCLライブラリを公開している。
 \vspace{0.5\Cvs}
 //}
 
-@<em>{今井 悟士}
+@<em>{今井 悟士 (masatoi0)}
 
 //embed[latex]{
 \vspace{0.2\Cvs}
