@@ -34,7 +34,7 @@
 \vspace{0.2\Cvs}
 //}
 
-第4・5章を担当。高速なHTTPサーバーである「Woo」を含む70余りのプロダクトをGitHub上に公開し、Common Lispにおいて世界ランク一位の評価を得ている。現在はポケットチェンジでリードエンジニアとしてポケペイのサーバーサイド開発からサービス設計まで広く担当。夢は、Common Lispを使って日本を世界に負けない国にすること。
+第4・5章を担当。高速なHTTPサーバーである「Woo」を含む70余りのプロダクトをGitHub上に公開し、Common Lispにおいて世界ランク一位の評価を得ている。夢は、Common Lispを使って日本を世界に負けない国にすること。
 
 //embed[latex]{
 \vspace{0.5\Cvs}
@@ -48,7 +48,8 @@
 
 第5章を担当。
 産業機器や数値計算のソフトウェア開発をしていたが、同僚やcl-cudaの影響を受けてCommon Lispの世界に。
-oclclなどのOpenCLライブラリを公開している。
+oclclなどのOpenCL関連ライブラリを公開している。
+もうCは書きたくない。
 
 //embed[latex]{
 \vspace{0.5\Cvs}
@@ -81,7 +82,7 @@ oclclなどのOpenCLライブラリを公開している。
 \vspace{0.5\Cvs}
 //}
 
-@<em>{原島 孝文}
+@<em>{原島 孝文 (fireflower0)}
 
 //embed[latex]{
 \vspace{0.2\Cvs}

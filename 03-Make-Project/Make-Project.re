@@ -39,6 +39,10 @@ $ yubin 6380321
 DexadorはHTTPクライアント、JonathanはJSONを扱うためのライブラリです。
 この際、生成したプロジェクトをRoswellから読み込めるように、@<tt>{~/.roswell/local-projects}に移動してから@<tt>{make-project}を実行します。
 
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
+
 //cmd{
 $ cd ~/.roswell/local-projects
 $ make-project yubin --depends-on dexador jonathan
@@ -63,6 +67,10 @@ Common Lispでは、@<b>{ASDF}(Another System Definition Facility)と呼ばれ�
 ASDFではシステム定義ファイルを記述することにより、プロジェクトの読み込みやテストの実行などを行うことができます。
 
 では、@<tt>{make-project}コマンドで生成されたシステム定義ファイル@<tt>{yubin.asd}の内容を見てみましょう。
+
+//embed[latex]{
+\vspace{-0.5\Cvs}
+//}
 
 //emlist{
 (defsystem "yubin"
@@ -120,6 +128,10 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
 
 ②では、@<tt>{get-place}関数を定義しています。@<tt>{get-place}関数は、引数 @<tt>{zipcode} からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
 
+//embed[latex]{
+\clearpage
+//}
+
 === Roswell Script
 
 1.5節で解説したように、プロジェクト直下の@<tt>{roswell}ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、@<tt>{yubin}コマンドが使えるようになります。Roswell Scriptは、@<tt>{ros init}コマンドで生成される雛形を元に作成します。
@@ -154,15 +166,17 @@ exec ros -Q -- $0 "$@"
       (uiop:quit -1))))
 //}
 
-③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
+③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。
 
-== プロジェクトの共有
-
-プロジェクトが完成したら、GitHubのリポジトリに登録しておきます。こうすることで、以降はRoswell経由でインストールできるようになり、プロジェクトを他者と共有することができます。
+④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
 
 //embed[latex]{
 \clearpage
 //}
+
+== プロジェクトの共有
+
+プロジェクトが完成したら、GitHubのリポジトリに登録しておきます。こうすることで、以降はRoswell経由でインストールできるようになり、プロジェクトを他者と共有することができます。
 
 //cmd{
 $ git push -u origin master
