@@ -93,3 +93,45 @@ oclclなどのOpenCL関連ライブラリを公開している。
 「ハッカーと画家」を読んでLispの存在を知り、のめり込んでいった。
 電子工作や低レイヤーにも興味があり、Common Lispと合わせて勉強している。
 アプリケーションエンジニアとして精進し、目標はLisp Hacker。
+
+//embed[latex]{
+\clearpage
+//}
+
+= 国内のLispコミュニティ紹介
+
+@<em>{Shibuya.lisp}
+
+//embed[latex]{
+\vspace{0.2\Cvs}
+//}
+
+Shibuya.lispは渋谷を中心とする半径2万キロをカバーするLisp系言語のコミュニティです。
+2008年の発足から継続的に活動しており、近年ではlispmeetupと題して月例のミートアップを開催しています。
+また、隔月でみんなで週末に集まって作業するもくもく会も開催しています。
+どちらも参加登録は以下のconnpassのグループページから辿れます。
+
+ * @<tt>{https://lisp.connpass.com/}
+
+Shibuya.lispでは随時発表者または参加者を募集しています。
+Shibuya.lispではSlackも用意しており、下記リンクから参加できます。Common Lispに限らず、ClojureやSchemeの質問をすることができます。
+
+Shibuya.lispに関する情報は以下のShibuya.lispの公式サイトからご覧ください。
+
+ * @<tt>{https://shibuya.lisp-users.org/}
+
+@<em>{関西Lispユーザー会}
+
+//embed[latex]{
+\vspace{0.2\Cvs}
+//}
+
+関西Lispユーザー会は大阪を拠点に、関西のLispユーザの拡大と、ユーザ間での情報共有を目的としたコミュニティです。
+『関西Lispユーザ会』という発表聴講質問型イベントと 『関西もくもく.lisp』という手を動かす形式のイベントを隔月で行っています。
+大阪市内もしくは京都市内で開催されることが多いです。
+お近くで一緒にLispを楽しみたい方は、一度参加をご検討ください。
+
+ * 関西Lispユーザー会のconnpassグループページ
+ ** @<tt>{https://kansai-lisp-useres.connpass.com/}
+ * 関西Lispユーザー会のSlackへの登録はこちらから
+ ** @<tt>{https://kansai-lisp-users.herokuapp.com/}
