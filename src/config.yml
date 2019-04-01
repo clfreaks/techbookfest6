@@ -276,8 +276,18 @@ epubmaker:
   # epubmaker:階層を使うものはここまで
 
 # LaTeX用のスタイルファイル(styディレクトリ以下に置くこと)
+# texstyle: reviewmacro
+# tatsumacroは、電子書籍版の制作に利用する
+# texstyle: tatsumacro
 texstyle: reviewmacro
+
 #
+# LaTeX用のdocumentclassを指定する
+# tatsumacro利用の場合はこちら
+# texdocumentclass: ["jsbook", "oneside,14pt,uplatex"]
+# TechBoosterの指定は次の通り
+# texdocumentclass: ["jsbook", "b5j,twoside,openany,uplatex"]
+
 # LaTeX用のdocumentclassを指定する
 # texdocumentclass: ["jsbook", "uplatex,oneside"]
 #

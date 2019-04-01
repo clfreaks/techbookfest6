@@ -40,3 +40,19 @@ linkcolor=black%
 }%
 
 \sloppy
+
+\renewcommand\frontmatter{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \@mainmatterfalse
+  \setcounter{page}{3}
+%  \pagenumbering{roman}}
+}
+\renewcommand\mainmatter{%
+    \cleardoublepage
+  \@mainmattertrue
+%  \pagenumbering{arabic}}
+}
