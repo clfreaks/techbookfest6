@@ -82,7 +82,7 @@ oclclなどのOpenCL関連ライブラリを公開している。
 \vspace{0.5\Cvs}
 //}
 
-@<em>{原島 孝文}
+@<em>{原島 孝文 (fireflower0)}
 
 //embed[latex]{
 \vspace{0.2\Cvs}
