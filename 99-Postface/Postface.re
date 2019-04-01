@@ -48,7 +48,7 @@
 
 第5章を担当。
 産業機器や数値計算のソフトウェア開発をしていたが、同僚やcl-cudaの影響を受けてCommon Lispの世界に。
-oclclなどのOpenCLライブラリを公開している。
+oclclなどのOpenCL関連ライブラリを公開している。
 
 //embed[latex]{
 \vspace{0.5\Cvs}
