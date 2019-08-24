@@ -339,8 +339,8 @@ tests/main.lisp に関数 @<code>{get-place} のテストを追加します。�
   (testing "should return the address for a given postal code in a number"
     (ok (equal (yubin:get-place 6380321) "奈良県吉野郡天川村坪内")
         "6380321 -> 奈良県吉野郡天川村坪内")
-    (ok (equal (yubin:get-place 1500000) "東京都渋谷区"
-        "1500000 -> 東京都渋谷区")))
+    (ok (equal (yubin:get-place 1500000) "東京都渋谷区")
+        "1500000 -> 東京都渋谷区"))
   (testing "should return the address for a given postal code in a string"
     (ok (equal (yubin:get-place "6380321") "奈良県吉野郡天川村坪内")
         "\"6380321\" -> 奈良県吉野郡天川村坪内")
