@@ -15,6 +15,17 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}}
 
+%%[ad-hoc] a trick to put upstyle single quotes literally in PDF
+\begingroup
+\catcode`'=\active
+\catcode``=\active
+\g@addto@macro\@noligs{%
+  \def\grnchry@tt@textquotesingle{{\fontfamily{\ttdefault}\textquotesingle}}%
+  \def\grnchry@tt@textasciigrave{{\fontfamily{\ttdefault}\textasciigrave}}%
+  \let'\grnchry@tt@textquotesingle
+  \let`\grnchry@tt@textasciigrave}%
+\endgroup
+
 %% using Helvetica as sans-serif
 \renewcommand{\sfdefault}{phv}
 
