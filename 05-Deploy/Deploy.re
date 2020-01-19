@@ -106,13 +106,13 @@ git lsx https://github.com/fukamachi/lsx    # LSXはgitリポジトリからダ�
 
 Qlotが有効な状態でCommon Lisp環境を起動するにはプロジェクトルートに移動し、実行コマンドの前に @<tt>{qlot exec} をつけます。たとえばREPLを起動するには @<tt>{qlot exec ros run} のようにします。LemでSLIMEを起動するときには @<tt>{C-u M-x slime} を実行して @<tt>{qlot/sbcl-bin/1.4.8} のように処理系名の前に @<tt>{qlot/} がついたものを選択します。
 
-QlotではRoswellスクリプトの対応もしています。qlfileによりインストールされる依存ライブラリのRoswellスクリプトは @<tt>{quicklisp/bin/} の下にインストールされます。たとえば @<tt>{clack} の場合は @<tt>{quicklisp/bin/clackup} がインストールされます。このスクリプトの実行に限り @<tt>{qlot exec} を省略してもQlotが有効な状態で実行されます。
+QlotではRoswellスクリプトの対応もしています。qlfileによりインストールされる依存ライブラリのRoswellスクリプトは @<tt>{.qlot/bin/} の下にインストールされます。たとえば @<tt>{clack} の場合は @<tt>{.qlot/bin/clackup} がインストールされます。このスクリプトの実行に限り @<tt>{qlot exec} を省略してもQlotが有効な状態で実行されます。
 
 //cmd{
 # REPLを起動
 $ @<b>{qlot exec ros run}
 # Roswellスクリプトの実行
-$ @<b>{quicklisp/bin/clackup app.lisp}
+$ @<b>{.qlot/bin/clackup app.lisp}
 //}
 
 
