@@ -13,7 +13,7 @@ jobs:
           name: Build PDF
           command: |
             review-pdfmaker config.yml
-          working_directory: ./
+          working_directory: ./src
       - store_artifacts:
-          path: ./book.pdf
+          path: ./src/book.pdf
           destination: book.pdf
