@@ -1,16 +1,19 @@
-version: 2
+version: 2.1
+executors:
+  my-executor:
+    docker:
+      - image: nuitsjp/mdview:2.5
 
 jobs:
   build:
-    docker:
-      - image: nuitsjp/mdview:2.5
+    executor: my-executor
     steps:
       - checkout
       - run:
           name: Build PDF
           command: |
             review-pdfmaker config.yml
-          working_directory: ./src
+          working_directory: ./
       - store_artifacts:
-          path: ./src/book.pdf
+          path: ./book.pdf
           destination: book.pdf
