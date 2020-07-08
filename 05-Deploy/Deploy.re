@@ -86,10 +86,10 @@ $ @<b>{touch qlfile}
 $ @<b>{qlot install}
 //}
 
-完了すると新しく @<tt>{qlfile.lock} と @<tt>{quicklisp/} ディレクトリが作られます。 @<tt>{qlfile.lock} は @<tt>{qlfile} を元に必要なライブラリバージョンを解決した情報が含まれているので、必ずリポジトリに含めてください。 @<tt>{quicklisp/} ディレクトリは依存ライブラリのソースコードがダウンロードされているため、リポジトリに含める必要はありません。以下はgitリポジトリを使う場合の利用例です。
+完了すると新しく @<tt>{qlfile.lock} と @<tt>{.qlot} ディレクトリが作られます。 @<tt>{qlfile.lock} は @<tt>{qlfile} を元に必要なライブラリバージョンを解決した情報が含まれているので、必ずリポジトリに含めてください。 @<tt>{.qlot/} ディレクトリは依存ライブラリのソースコードがダウンロードされているため、リポジトリに含める必要はありません。以下はgitリポジトリを使う場合の利用例です。
 
 //cmd{
-$ @<b>{echo quicklisp/ >> .gitignore}
+$ @<b>{echo .qlot/ >> .gitignore}
 $ @<b>{git add qlfile qlfile.lock}
 $ @<b>{git commit -m 'Start using Qlot.'}
 //}
