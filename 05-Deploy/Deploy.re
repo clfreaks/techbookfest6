@@ -109,6 +109,8 @@ Qlotが有効な状態でCommon Lisp環境を起動するにはプロジェク�
 QlotではRoswellスクリプトの対応もしています。qlfileによりインストールされる依存ライブラリのRoswellスクリプトは @<tt>{.qlot/bin/} の下にインストールされます。たとえば @<tt>{clack} の場合は @<tt>{.qlot/bin/clackup} がインストールされます。このスクリプトの実行に限り @<tt>{qlot exec} を省略してもQlotが有効な状態で実行されます。
 
 //cmd{
+# .qlot/local-projectからシンボリックリンクを張る
+$ @<b>{ln -s ~/.roswell/local-projects/yubin .qlot/local-projects/}
 # REPLを起動
 $ @<b>{qlot exec ros run}
 # Roswellスクリプトの実行
