@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Roswell.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1 id="環境構築ツールroswell">環境構築ツール「Roswell」</h1>
+<p>本章は<strong><a href="https://github.com/roswell/roswell">Roswell</a></strong>について解説します。 Roswellは複数のCommon Lisp処理系のインストール、管理、切り替えや、処理系によって異なるコマンドラインオプションの共通化などを行なう処理系マネージャです。 Roswellの使い方はCommon Lisp処理系を使う上での導入になるため、他の章に入る前に説明します。</p>
+<h2 id="roswellのインストール">Roswellのインストール</h2>
+<h3 id="debian系linuxでのインストール">Debian系Linuxでのインストール</h3>
+<p>Debian系Linuxではapt経由でのインストールが可能です。以下のコマンドでRoswellをインストールすることができます。</p>
+<pre><code>$ sudo apt install roswell</code></pre>
+<p>また、<a href="https://github.com/roswell/roswell/releases">こちらのページ</a>からdebファイルでも配布されています。ここでダウンロードしたファイルに対して以下のコマンドを実行することによってもインストールできます。</p>
+<pre><code>$ sudo dpkg -i roswell_&lt;バージョン&gt;.deb</code></pre>
+<h3 id="homebrewを利用したインストール-linux-macos">Homebrewを利用したインストール (Linux / macOS)</h3>
+<p>LinuxとmacOSではHomebrewが導入済みの場合、以下のコマンドでRoswellをインストールすることができます。</p>
+<pre><code>$ brew install roswell</code></pre>
+<h3 id="ソースコードからのインストール-その他のlinux-freebsd-macosなど">ソースコードからのインストール (その他のLinux / FreeBSD / macOSなど)</h3>
+<p>Homebrewが使えない環境では、Roswellをソースコードからコンパイルする方法もあります。 ソースコードからのコンパイルには、以下の環境を備えたLinux/FreeBSD/macOSが必要です。</p>
+<ul>
+<li>Cのコンパイル環境</li>
+<li>libcurlと、そのヘッダ</li>
+<li>automake/autoconf</li>
+</ul>
+<p>Debianベースの環境の場合、インストール手順は次の通りです。</p>
+<pre><code>$ if which apt-get &gt; /dev/null; then sudo apt-get -y install git build-essential \
+ automake libcurl4-openssl-dev;fi
+$ git clone -b release https://github.com/roswell/roswell.git
+$ cd roswell
+$ sh bootstrap
+$ ./configure
+$ make
+$ sudo make install
+$ ros setup</code></pre>
+<h3 id="windowsでのインストール">Windowsでのインストール</h3>
+<p>WindowsではScoop(Windows用のアプリインストーラ、アプリ管理ツール)が導入済みの場合、以下のコマンドでRoswellをインストールすることができます。</p>
+<pre><code>$ scoop install roswell</code></pre>
+<p>Windows環境でのインストール用にバイナリファイルが用意されています。</p>
+<ul>
+<li><a href="https://github.com/roswell/roswell/wiki/Installation#windows" class="uri">https://github.com/roswell/roswell/wiki/Installation#windows</a></li>
+</ul>
+<p>解凍したディレクトリ下で <code>ros shell</code> を実行すると、msysを含んだ環境が提供されます(このセットアップには長時間かかります)。 本書の内容はWindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、Windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。</p>
+<p>Roswellのインストールについての詳細は <a href="https://github.com/roswell/roswell/wiki/Installation" class="uri">https://github.com/roswell/roswell/wiki/Installation</a> を参照してください。</p>
+<h3 id="roswellがインストールされていることを確認する">Roswellがインストールされていることを確認する</h3>
+<p>適切にインストールが完了していれば、<code>ros</code>コマンドが実行可能になっているはずです。ターミナル上で単に <code>ros</code> と入力するとヘルプが表示されます。 また、 <code>ros -V</code> とすることでバージョン情報を表示できます。</p>
+<pre><code>$ ros -V
+roswell 20.06.14.107
+build with gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+libcurl=7.58.0
+Quicklisp=2020-01-04
+Dist=2020-07-15
+lispdir=&#39;/home/user/etc/roswell/&#39;
+homedir=&#39;/home/user/.roswell/&#39;
+configdir=&#39;/home/user/.roswell/&#39;</code></pre>
+<h2 id="roswellを利用したcommon-lisp処理系のインストール">Roswellを利用したCommon Lisp処理系のインストール</h2>
+<p>ターミナル上で <code>ros install &lt;処理系&gt;</code> とすることで、処理系を指定してインストールできます。</p>
+<p>ここでは、<strong><a href="http://www.sbcl.org/">SBCL(Steel Bank Common Lisp)</a></strong> をインストールします。 ビルド済みバイナリとして配布されているSBCLをインストールするには <code>sbcl-bin</code> を、ソースコードからビルドするには <code>sbcl</code> を指定します。</p>
+<pre><code># SBCLのビルド済みバイナリをインストールする
+$ ros install sbcl-bin
+
+# SBCLを最新のソースコードからビルドしてインストールする
+$ ros install sbcl</code></pre>
+<p>処理系のバージョンを指定してインストールすることもできます。 バージョンを指定してインストールするには、 <code>ros install &lt;処理系&gt;/&lt;バージョン&gt;</code> のようにスラッシュの後にバージョンを指定します。</p>
+<pre><code># SBCL(1.4.1)のバイナリをインストールする
+$ ros install sbcl-bin/1.4.1
+
+# SBCL(1.4.1)をビルドしてインストールする
+$ ros install sbcl/1.4.1</code></pre>
+<p><code>ros list installed</code>で現在インストール済みの処理系を確認できます。 また、<code>ros use &lt;処理系&gt;/&lt;バージョン&gt;</code>で使用する処理系を切り替えることができます。</p>
+<pre><code># インストール済みの処理系を確認
+$ ros list installed
+
+Installed versions of sbcl-bin:
+sbcl-bin/1.4.1
+sbcl-bin/1.4.16
+
+# 使用する処理系の切り替え
+$ ros use sbcl-bin/1.4.1</code></pre>
+<h2 id="replの起動">REPLの起動</h2>
+<p><code>ros run</code>でCommon Lisp処理系を起動することができます。そうするとREPLが起動し、プロンプトが表示されて入力待ち状態になります。 ここにLisp式を入力することで評価結果が印字されます。</p>
+<p>終了するには<code>(quit)</code>を入力します。</p>
+<pre><code>$ ros run
+* (princ &quot;hello, world&quot;)
+hello, world
+&quot;hello, world&quot;
+* (quit)
+$</code></pre>
+<h2 id="roswell-script">Roswell Script</h2>
+<p><strong>Roswell Script</strong>を用いると、Common Lispでコマンドラインから利用できるスクリプトを書くことができます。 各処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収することができます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることもできます。</p>
+<h3 id="雛形からroswell-scriptを作成する">雛形からRoswell Scriptを作成する</h3>
+<p>ターミナル上で<code>ros init &lt;スクリプト名.ros&gt;</code>とすると、Roswell Scriptの雛形が生成されます。</p>
+<pre><code>$ ros init fact.ros
+Successfully generated: fact.ros</code></pre>
+<p>例として、階乗(factorial)を計算するスクリプトを書いてみます。 生成されたファイル<code>fact.ros</code>を開くと、何もしないスクリプトができています。ここに以下のように、<code>fact</code>関数を書き加え、<code>main</code>関数を修正して保存します。</p>
+<div class="sourceCode"><pre class="sourceCode lisp"><code class="sourceCode commonlisp">#!/bin/sh
+<span class="co">#|-*- mode:lisp -*-|#</span>
+<span class="co">#|</span>
+<span class="co">exec ros -Q -- $0 &quot;$@&quot;</span>
+<span class="co">|#</span>
+(<span class="kw">progn</span> <span class="co">;;init forms</span>
+  (ros:ensure-asdf)
+  <span class="co">;;#+quicklisp(ql:quickload &#39;() :silent t)</span>
+  )
+
+(<span class="kw">defpackage</span><span class="fu"> </span>:ros.script.hoge<span class="fl">.3759651958</span>
+  (<span class="bu">:use</span> :cl))
+(<span class="kw">in-package</span> :ros.script.hoge<span class="fl">.3759651958</span>)
+
+(<span class="kw">defun</span><span class="fu"> fact </span>(n)
+  (<span class="kw">if</span> (<span class="kw">zerop</span> n)
+      <span class="dv">1</span>
+      (<span class="op">*</span> n (fact (<span class="op">1-</span> n)))))
+
+(<span class="kw">defun</span><span class="fu"> main </span>(n &amp;<span class="kw">rest</span> argv)
+  (<span class="kw">declare</span> (<span class="kw">ignore</span> argv))
+  (<span class="kw">format</span> <span class="kw">t</span> <span class="st">&quot;~&amp;Factorial ~D = ~D~%&quot;</span> n (fact (<span class="kw">parse-integer</span> n))))</code></pre></div>
+<h3 id="roswell-scriptの実行">Roswell Scriptの実行</h3>
+<p><code>ros &lt;スクリプト名.ros&gt; 引数</code> の形式でコマンドを実行することで、スクリプト中の<code>main</code>関数に指定した引数が渡されて実行されます。</p>
+<pre><code>$ ros fact.ros 10
+Factorial 10 = 3628800</code></pre>
+<p><code>ros init</code>で作られたスクリプトには実行可能フラグがついているので、単に <code>./fact.ros 10</code> でも実行できます。</p>
+<h3 id="roswell-scriptの実行ファイルのビルド">Roswell Scriptの実行ファイルのビルド</h3>
+<p><code>ros build &lt;スクリプト名.ros&gt;</code>とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。 実行ファイルのファイル名は、<code>.ros</code>拡張子が外れ、<code>&lt;スクリプト名&gt;</code>になります。</p>
+<pre><code>$ ros build fact.ros</code></pre>
+<p>ビルド前後の実行時間を比較すると、ビルド後は大幅に高速化されていることが分かります。</p>
+<pre><code># ビルド前
+$ time ros fact.ros 10
+Factorial 10 = 3628800
+
+real    0m1.476s
+user    0m1.447s
+sys 0m0.015s
+
+# ビルド後
+$ time ./fact 10
+Factorial 10 = 3628800
+
+real    0m0.011s
+user    0m0.008s
+sys 0m0.001s</code></pre>
+<h2 id="roswellによるライブラリのインストール">Roswellによるライブラリのインストール</h2>
+<p>Roswellには、処理系のインストールだけでなく、ライブラリをインストールする機能もあります。 ライブラリのインストールには、<strong>Quicklisp</strong>のアーカイブからインストールする方法と、GitHubリポジトリからインストールする方法があります。 Quicklispは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたソフトウェアです。</p>
+<p>ライブラリのインストールには<code>ros install</code>コマンドを使用します。 <code>ros install &lt;ライブラリ名&gt;</code>とすることで、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。 ここでは、第4章で使用するテストフレームワークライブラリ<strong>Rove</strong>をインストールしてみましょう。</p>
+<pre><code>$ ros install rove
+To load &quot;rove&quot;:
+  Load 1 ASDF system:
+    asdf
+  Install 1 Quicklisp release:
+    rove
+Downloading http://beta.quicklisp.org/archive/rove/2019-03-07/rove-20190307-git.tgz
+##########################################################################
+; Loading &quot;rove&quot;
+[package rove/core/result]........................
+(中略)
+[3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
+Found 1 scripts: rove
+/home/snmsts/.roswell/bin/rove
+up to date. stop</code></pre>
+<p><code>ros install &lt;GitHubアカウント名&gt;/&lt;リポジトリ名&gt;</code>とすると、Quicklispからではなく、GitHubリポジトリからインストールできます。　</p>
+<p>ここでは、先程インストールしたRoveをGitHubからインストールし直してみます。 Quicklispの更新とテストは毎月一度手作業で行なわれています。そのため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。</p>
+<pre><code>$ ros install fukamachi/rove
+Installing from github fukamachi/rove
+To load &quot;rove&quot;:
+  Load 1 ASDF system:
+    rove
+; Loading &quot;rove&quot;
+[package rove/core/result]........................
+(中略)
+Found 1 scripts: rove
+/home/snmsts/.roswell/bin/rove
+up to date. stop</code></pre>
+<p><code>ros install</code>でGitHubからライブラリをインストールすると、ローカル環境の <code>~/.roswell/local-projects</code> 以下にソースコードがダウンロードされインストールされます。 デフォルトではこの<code>~/.roswell/local-projects</code>からライブラリが読み込まれます。</p>
+<p>インストールしたライブラリをRoswellのREPLで読み込むには、<code>(ql:quickload :&lt;ライブラリ名&gt;)</code>とします。</p>
+<pre><code>$ ros run
+* (ql:quickload :rove)
+To load &quot;rove&quot;:
+  Load 1 ASDF system:
+    rove
+; Loading &quot;rove&quot;
+
+(:ROVE)
+*</code></pre>
+<h3 id="ライブラリの実行ファイルがインストールされるディレクトリ">ライブラリの実行ファイルがインストールされるディレクトリ</h3>
+<p><code>ros install &lt;ライブラリ名&gt;</code>としてライブラリをインストールすると、ライブラリのソースディレクトリ直下にある<code>roswell</code>ディレクトリ内のRoswell Scriptが<code>~/.roswell/bin</code> 以下にコピーされます。 このディレクトリを <code>~/.bashrc</code> 等で環境変数 <code>PATH</code> に設定しておくことで、 <code>~/.roswell/bin</code> 内にあるRoswell Scriptをコマンドとして使うことができます。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="va">PATH=$PATH</span>:~/.roswell/bin</code></pre></div>
+<p>例えばRoveの場合、ソースディレクトリ直下の<code>roswell</code>ディレクトリ内に<code>rove.ros</code>が入っています。 <code>ros install fukamachi/rove</code>とすることで、<code>rove.ros</code>が<code>~/.roswell/bin/rove</code>にコピーされます。 インストール後は<code>rove</code>コマンドが使えるようになります。</p>
+<pre><code>$ rove
+Usage: rove [option...] test-file
+
+Options:
+    -r, --reporter REPORTER-NAME    Reporter style (one of &quot;spec&quot;, &quot;dot&quot;, or &quot;none&quot;)</code></pre>
+<h3 id="ライブラリの更新">ライブラリの更新</h3>
+<p><code>ros update &lt;ライブラリ名&gt;</code>とすることで、ライブラリをGitHub上の最新版に更新することができます。</p>
+<pre><code>$ ros update rove</code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>この章では、Common Lispの環境構築ソフトウェアとしてのRoswellを紹介しました。</p>
+<ul>
+<li>Roswell自体のインストール方法</li>
+<li>RoswellによるCommon Lisp処理系のインストール方法とREPLの起動方法</li>
+<li>Roswell Scriptの雛形の生成とスクリプトの書き方、実行ファイルのビルドについて</li>
+<li>Roswellを利用したCommon Lispのライブラリのインストール方法</li>
+</ul>
+
+</body>
+</html>

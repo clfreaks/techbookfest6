@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Lem-short.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1 id="エディタlem">エディタ「Lem」</h1>
+<p><strong>Lem</strong>はほぼ全ての機能がCommon Lispにより実装されているエディタです。 単なるエディタにとどまらず、Common Lispの開発環境一式を提供しています。また、Lem自体がCommon Lispにより拡張可能です。</p>
+<p>本書の執筆陣の過半数がCommon Lispでの開発に主にLemを使用している実績からいって、ことCommon Lispの開発にかけては必要十分な機能を提供できていると思われます。 また、まだ数は少ないものの、Common Lisp以外の言語のコード編集もサポートしています。 操作体系はEmacsと似たものになっていますが、vi(Vim)モードも用意されており、設定により切り替えて使えるようになっています。</p>
+<p>本章では、3章以降で必要とされるLemの基本操作、Common Lisp開発に関連した機能に絞って紹介します。 Lemの用語や拡張機能の実装方法などの、より詳細な解説については7章を参照してください。</p>
+<h2 id="lemのインストール">Lemのインストール</h2>
+<p>Lemは以下のようにRoswellからインストールできます。Roswellについては1章を参照してください。</p>
+<pre><code>$ ros install cxxxr/lem</code></pre>
+<p>Lemは256色をサポートしたターミナル上で使うことを想定しています。 Linuxのターミナルの場合、デフォルトでは8色しか表示できない事が多いので、<code>TERM</code>環境変数で明示的に256色を指定しておきます。</p>
+<pre><code>$ export TERM=xterm-256color</code></pre>
+<h2 id="キーバインドの表記について">キーバインドの表記について</h2>
+<p>LemではEmacsと同じように<code>Control</code>や<code>Meta</code>をプリフィクスとするコマンドを使用します。これらは次のように表記されます。</p>
+<ul>
+<li><code>C-</code> : <code>Control</code>キーを押しながら別のキーを打つことを意味します。</li>
+<li><code>M-</code> : <code>Meta</code>キーを押しながら別のキーを打つことを意味します。Metaキーには通常Altキーが割り当てられています。macOSのターミナルでは設定でOptionキーに割り当てることができます。</li>
+</ul>
+<p>例えば、</p>
+<ul>
+<li><code>C-o</code>は<code>Control</code>を押しながら<code>o</code>を押すことを意味します。</li>
+<li><code>C-x o</code>は <code>Control</code>を押しながら<code>x</code>を押した後、一度<code>Control</code>を離して、単独で<code>o</code>を押すことを意味します。</li>
+<li><code>C-x C-o</code>は<code>Control</code>を押しながら<code>x</code>を押し、さらに続けて<code>Control</code>を押しながら<code>o</code>を押すことを意味します。</li>
+</ul>
+<p><code>M-x</code>は少し特殊で、<code>M-x</code>を入力した時点でプロンプトが現われ、続いてコマンドを入力し、<code>Return</code>で確定します(コマンド名は途中まで入力した状態で<code>Tab</code>を押すことで補完できます)。これは例えば<code>M-x describe-bindings</code>のように表記されます。</p>
+<h2 id="lemの基本的な使い方">Lemの基本的な使い方</h2>
+<h3 id="起動と終了">起動と終了</h3>
+<p>コマンドラインからLemを起動するには<code>lem</code>コマンドを使用します。 1章で解説したように、LemをRoswellからインストールした場合、<code>~/.roswell/bin</code>以下にLemの実行可能ファイルができます。 <code>PATH</code>環境変数にこのディレクトリを含むように設定しておくと、以下のようにLemを起動できます。</p>
+<pre><code>$ lem
+
+# 開くファイルを指定して起動する場合
+$ lem [ファイル名]</code></pre>
+<p>初回起動時にはLemのビルドを行うので多少時間がかかります。次回以降は一瞬で起動するようになります。</p>
+<p>Lemを終了するには<code>C-x C-c</code>と入力してください。</p>
+<h3 id="ファイルの編集と保存">ファイルの編集と保存</h3>
+<p>Lemを起動したらファイルを開いてみましょう。 <code>C-x C-f</code>と入力すると、画面中央にパスを入力する領域(これを<strong>ミニバッファ</strong>と呼びます)が表示され、ファイルのパスを入力して<code>Return</code>を押すことでファイルを開くことができます。 この入力画面で<code>Tab</code>を押すと補完が働き、既存のディレクトリやファイルから選択できます。また、存在しないファイル名を入力すると新規にファイルが作られます。</p>
+<p>編集が終わったら<code>C-x C-s</code>で編集内容を保存できます。 <!-- 編集のキーとしてはundo`C-\\`とredo`C-_`の操作は特殊なので覚えておきましょう。 (ここで書くことではない、後のコマンド表に書いておけばいい) --></p>
+<h3 id="複数のファイルの編集">複数のファイルの編集</h3>
+<p><code>C-x C-f</code>でファイルを開いた後に、さらに<code>C-x C-f</code>で別のファイルを開くことができます。 このとき、画面には後から開いたファイルの内容が表示されますが、先に開いていたファイルは隠されているだけで、裏ではファイルの内容が保持されています。 ファイルの内容を保持しているもののことを<strong>バッファ</strong>と呼びます。</p>
+<p>複数ファイルを開いている時に、<code>C-x b</code>を押すと、ミニバッファに<code>Use Buffer:</code>というプロンプトが出てきます。 ここにファイル名を入力し<code>Return</code>で確定すると、編集するファイルを切り替えられます。 ファイル名(正確にはバッファ名)を全てキーボードで入力するのは面倒ですが、ここでも<code>Tab</code>を押すことで補完が働き、現在存在しているバッファが候補として表示されます。補完候補は<code>↑</code>、<code>↓</code>で選択するか、候補文字列の一部をさらに入力することで対象を絞り込めます。</p>
+<p>編集を終え、ファイルを閉じる(バッファを削除する)には<code>C-x k</code>を使います。このとき<code>C-x C-s</code>で保存されていない内容は破棄されるので注意してください。</p>
+<h3 id="画面の分割">画面の分割</h3>
+<p>Lemでは画面領域を分割することができます。 現在の画面を上下に2分割するには<code>C-x 2</code>、左右に2分割するには<code>C-x 3</code>を入力します。</p>
+<p>画面を分割すると、分割前の画面で開いていたファイルがそれぞれの画面に表示されています。<code>C-x C-f</code>でファイルを開いたり、<code>C-x b</code>でバッファを切り替えましょう。 編集中の画面(カーソルがある画面)を別の画面に切り替えるには<code>M-o</code>を使います。</p>
+<p>分割を解除して1つの画面領域にしたいときは、<code>C-x 0</code>で現在の画面、<code>C-x 1</code>で現在の画面以外を消すことができます。</p>
+<h3 id="slime">SLIME</h3>
+<p><strong>SLIME</strong> は The Superior Lisp Interaction Mode for Emacs の略で、元々はEmacs用のCommon Lisp開発用パッケージです。 LemにはこのSLIMEをほぼ再現したものが標準で組込まれており、インストールした時点からCommon Lisp開発のための機能が全て利用できます。</p>
+<p>SLIMEを起動するにはLem上で、<code>M-x slime</code>と入力します。これにより画面が分割され、<code>CL-USER&gt;</code>というプロンプトが表示されている画面が現われます。 この画面はREPLと呼ばれ、Lisp式を入力するとその評価結果を返す機能を持っています。</p>
+<p><code>10</code>のような数値を入力してreturnすると結果として<code>10</code>が返ります。 <code>(+ 2 (* 3 4) 5)</code>のような少し複雑な式を入力すると<code>19</code>のようにきちっと計算しているのがわかります。</p>
+<p>コマンドプロンプトと同様replでも同じ式を何度も打ち込んだり、過去に打った式を編集してもう一度打ち込みたい時の為に履歴を参照することができます。普通のコマンドプロンプトでは履歴の参照は<code>↑</code>,<code>↓</code>キーで行ないますが、lemのreplではカーソルが動いてしまいます。履歴の参照は<code>↑</code>にあたるのが<code>M-p</code>,<code>↓</code>にあたるのが<code>M-n</code>です。</p>
+<p>replの画面はちょっとした式の入力(たとえば<code>(loop for i to 100000 collect i)</code> など)で簡単に画面を埋めつくしてしまうことがあるため、消去したくなることがあります。<code>C-c M-o</code> と入力すると散らかった画面を消すことができます。また、間違って決して終了しない式を入力してしまった際(たとえば、<code>(loop while t :do (sleep 0))</code>)に、 <code>C-c C-c</code>を押すと式の実行を強制終了することができます。デバッガが立ち上がりますが、<code>q</code>で終了させることができます。</p>
+<h3 id="lispファイルを編集中のキー操作">lispファイルを編集中のキー操作</h3>
+<p><code>C-x C-f</code>で拡張子が<code>.lisp</code>のファイルを開くとlisp用のキーがいくつか使えるようになります。ここでは便利なものを紹介します。</p>
+<p>//embed[latex]{  //}</p>
+<p>//table{ キー 操作 ------------ <code>C-c C-e</code> 直前の式を評価する。 <code>C-M-q</code> 直後の式をインデントする。　　　　　　　　　　　　　　　　　　　　 <code>C-c z</code> 画面をreplに切り替える //}</p>
+<p>//embed[latex]{  //}</p>
+<h3 id="キー操作で困ったときは">キー操作で困ったときは</h3>
+<p>ここまでで学んだことは必要最小限の内容なので、何かのはずみで本章で説明していない状態になってキー操作ができないと感じるようなことがあるかもしれません。そういう場合には、とりあえず<code>C-g</code>を何回か押すと復帰できるので覚えておくと良いでしょう。全て保証できるわけではありませんが…</p>
+<p>//embed[latex]{ //}</p>
+<h3 id="本章で取り扱ったキー操作">本章で取り扱ったキー操作</h3>
+<p>本章で取り扱ったキー操作は次の通りです。</p>
+<p>//embed[latex]{  //}</p>
+<p>//table{ キー 操作 ------------ <code>C-x C-c</code> Lemの終了 <code>C-x C-f</code> ファイルを開く <code>C-\\</code> undo(やりなおし) <code>C-_</code> redo(やりなおしのやりなおし) <code>C-x C-f</code> ファイルを開く <code>C-x C-s</code> 変更の保存 <code>C-x b</code> 編集対象の切り替え <code>C-x k</code> 編集の終了 <code>C-x 0</code> 現在の画面の削除 <code>C-x 1</code> 現在の画面以外を削除 <code>C-x 2</code> 現在の画面を上下ふたつに分割 <code>C-x 3</code> 現在の画面を左右ふたつに分割　　　　　　　　　　　　　　　　　　 <code>M-o</code> 画面の移動 <code>C-g</code> 中断 //}</p>
+<p>//embed[latex]{  //}</p>
+<h3 id="便利なキー操作">便利なキー操作</h3>
+<p>最小限ではないけれど、編集のために便利なキーを紹介します。</p>
+<p>//embed[latex]{  //}</p>
+<p>//table{ キー 操作 ------------ <code>C-b</code> 前の文字へ移動 <code>C-f</code> 次の文字へ移動 <code>C-p</code> 前の行へ移動 <code>C-n</code> 次の行へ移動 <code>M-C-b</code> 前の式へ移動 <code>M-C-f</code> 次の式へ移動 <code>M-C-u</code> 式の外へ移動(直前の<code>(</code>へ移動) <code>M-C-d</code> 式の中へ移動(直後の<code>)</code>の次へ移動) <code>C-h</code> 直前の文字削除 <code>C-d</code> 現在位置の文字削除 <code>C-k</code> 行の削除 <code>C-Space</code> 選択の開始 <code>C-w</code> 選択の開始した位置から現在のカーソル位置までのカット <code>M-w</code> 選択の開始した位置から現在のカーソル位置までのコピー　　　　　 <code>M-y</code> ペースト //}</p>
+
+</body>
+</html>
