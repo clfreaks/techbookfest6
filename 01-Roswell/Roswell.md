@@ -11,7 +11,7 @@ Roswellのインストールについての最新情報はRoswellのGithub Wiki�
 
 ### Debian系Linuxでのインストール
 
-[こちらのページ](https://github.com/roswell/roswell/releases)からdebファイルが配布されています。ここでダウンロードしたファイルに対して以下のコマンドを実行することによってインストールできます。
+Debian系Linuxに対しては、[こちらのページ](https://github.com/roswell/roswell/releases)からdebファイルが配布されています。ここでダウンロードしたファイルに対して以下のコマンドを実行することによってインストールできます。
 
 ```
 $ sudo dpkg -i roswell_<バージョン>.deb
@@ -34,7 +34,7 @@ Homebrewが使えない環境では、Roswellをソースコードから直接�
 - libcurlと、そのヘッダ
 - automake/autoconf
 
-Debianベースの環境の場合、ソースコードからのインストール手順は次の通りです。
+DebianベースのLinuxの場合、ソースコードからのインストール手順は次のようになります。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential \
@@ -47,6 +47,8 @@ $ make
 $ sudo make install
 $ ros setup
 ```
+
+その他のLinuxディストリビューションでのインストール方法については[インストールガイド](https://github.com/roswell/roswell/wiki/Installation) を参照してください。
 
 ### Windowsでのインストール
 
@@ -64,7 +66,7 @@ $ scoop install roswell
 
 ### Roswellがインストールされていることを確認する
 
-適切にインストールが完了していれば、`ros`コマンドが実行可能になっているはずです。ターミナル上で単に `ros` と入力するとヘルプが表示されます。
+適切にインストールが完了していれば、`ros`コマンドが実行可能になっているはずです。コマンドプロンプトで単に `ros` と入力するとヘルプが表示されます。
 また、 `ros -V` とすることでバージョン情報を表示できます。
 
 ```
@@ -81,7 +83,7 @@ configdir='/home/user/.roswell/'
 
 ## Roswellを利用したCommon Lisp処理系のインストール
 
-ターミナル上で `ros install <処理系名>` とすることで、処理系を指定してインストールすることができます。
+コマンドプロンプトで `ros install <処理系名>` とすることで、処理系を指定してインストールすることができます。
 
 ここでは、**[SBCL(Steel Bank Common Lisp)](http://www.sbcl.org/)** をインストールします。
 ビルド済みバイナリとして配布されているSBCLをインストールするには `sbcl-bin` を、ソースコードからビルドするには `sbcl` を指定します。
@@ -94,8 +96,8 @@ $ ros install sbcl-bin
 $ ros install sbcl
 ```
 
-処理系のバージョンを指定してインストールすることもできます。
-バージョンを指定してインストールするには、 `ros install <処理系>/<バージョン>` のようにスラッシュの後にバージョンを指定します。
+また、特定のバージョンを指定してインストールすることもできます。
+バージョンを指定してインストールするには、 `ros install <処理系>/<バージョン>` のようにスラッシュの後にバージョンを指定します。バージョン省略時には最新のバージョンがインストールされます。
 
 ```
 # SBCL(1.4.1)のバイナリをインストールする
@@ -105,7 +107,7 @@ $ ros install sbcl-bin/1.4.1
 $ ros install sbcl/1.4.1
 ```
 
-`ros list installed`で現在インストール済みの処理系を確認できます。
+`ros list installed` で現在インストール済みの処理系を確認できます。
 また、`ros use <処理系>/<バージョン>`で使用する処理系を切り替えることができます。
 
 ```
@@ -122,7 +124,7 @@ $ ros use sbcl-bin/1.4.1
 
 ## REPLの起動
 
-`ros run`でRoswellに設定されたCommon Lisp処理系を起動することができます。そうするとREPLが起動し、プロンプトが表示されて入力待ち状態になります。REPLは Read Eval Print Loop の略で、ここにLisp式を入力することで評価結果が印字される対話的インターフェースです。
+コマンドプロンプトから`ros run`と入力することで、`ros use`によってRoswellに設定されたCommon Lisp処理系を起動することができます。そうするとREPLが起動し、プロンプトが表示されて入力待ち状態になります。REPLは Read Eval Print Loop の略で、Lisp式を入力することで評価結果が印字される、対話的なインターフェースです。
 
 Lisp処理系を終了するには`(quit)`を入力します。
 
@@ -138,19 +140,20 @@ $
 ## Roswell Script
 
 **Roswell Script** を用いると、コマンドラインから利用できるスクリプトをCommon Lispで書くことができます。
-各Lisp処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収できます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることもできます。
+各Lisp処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収できます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることも可能です。
 
 ### 雛形からRoswell Scriptを作成する
 
-ターミナル上で`ros init <スクリプト名.ros>`とすると、Roswell Scriptの雛形が生成されます。
+コマンドプロンプトで`ros init <スクリプト名.ros>`とすると、Roswell Scriptの雛形ファイルが生成されます。
 
 ```
 $ ros init fact.ros
 Successfully generated: fact.ros
 ```
 
-例として、階乗(factorial)を計算するスクリプトを書いてみます。
-生成されたファイル`fact.ros`を開くと、何もしないスクリプトができています。ここに以下のように、`fact`関数を書き加え、`main`関数を修正して保存します。
+このファイルを編集し、階乗(factorial)を計算するスクリプトを書いてみましょう。
+生成されたファイル`fact.ros`を開くと、何もしないスクリプトができています。
+このファイルに対して以下のように、`fact`関数を書き加え、`main`関数を`fact`を呼ぶように修正し、保存します。
 
 ```lisp
 #!/bin/sh
@@ -179,7 +182,7 @@ exec ros -Q -- $0 "$@"
 
 ### Roswell Scriptの実行
 
-`ros <スクリプト名.ros> 引数` の形式でコマンドを実行することで、スクリプト中の`main`関数に指定した引数が渡されて実行されます。
+コマンドプロンプトから `ros <スクリプト名.ros> 引数` の形式でコマンドを実行することで、スクリプト中の`main`関数にコマンドで指定した引数が渡され、実行されます。
 
 ```
 $ ros fact.ros 10
@@ -191,7 +194,7 @@ Factorial 10 = 3628800
 ### Roswell Scriptの実行ファイルのビルド
 
 `ros build <スクリプト名.ros>`とすると、指定したRoswell Scriptがビルドされ、実行ファイルが生成されます。
-実行ファイルのファイル名は、`.ros`拡張子が外れ、`<スクリプト名>`になります。
+実行ファイルのファイル名は、`.ros`拡張子が外れて`<スクリプト名>`になります。
 
 ```
 $ ros build fact.ros
@@ -204,20 +207,29 @@ $ ros build fact.ros
 $ time ros fact.ros 10
 Factorial 10 = 3628800
 
-real	0m1.476s
-user	0m1.447s
-sys	0m0.015s
+0.405 secs
 
 # ビルド後
 $ time ./fact 10
 Factorial 10 = 3628800
 
-real	0m0.011s
-user	0m0.008s
-sys	0m0.001s
+0.142 secs
 ```
 
-一方で実行ファイルはLispのランタイムを含んでいるため、サイズが大きくなるというデメリットがあります。
+ビルド前のRoswell Scriptは単なるテキストファイルなので軽量ですが、ビルド後の実行ファイルはLispのランタイムを含んでいるため、サイズがかなり大きくなるというデメリットがあります。
+SBCLの場合はデフォルトでランタイムイメージが圧縮され、実行ファイルの大きさは約12MBになります。
+圧縮を無効化することでファイルサイズの増大と引き換えにさらに起動時間を短縮することもできます。
+
+```
+$ ros build fact.ros --disable-compression
+
+0.015 secs
+
+```
+
+この場合のファイルサイズは役43MBになっています。
+
+ros buildのより詳細なオプションについては[こちら](https://github.com/roswell/roswell/wiki/Building-images-and-executables)を参照してください。
 
 ## Roswellによるライブラリのインストール
 
