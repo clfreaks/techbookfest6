@@ -235,11 +235,13 @@ ros buildのより詳細なオプションについては[こちら](https://git
 
 Roswellには、Lisp処理系のインストールだけでなく、ライブラリをインストールする機能もあります。
 ライブラリのインストールには、 **Quicklisp** のアーカイブからインストールする方法と、GitHubリポジトリからインストールする方法があります。
+
+### Quicklispからのライブラリのインストール
 Quicklispは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたソフトウェアです。
 
 ライブラリのインストールには`ros install`コマンドを使用します。
 `ros install <ライブラリ名>`とすることで、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。
-ここでは、第4章で使用するテストフレームワークライブラリ **Rove** をインストールしてみましょう。
+ここでは、第4章で使用するテストフレームワークライブラリ **[Rove](https://github.com/fukamachi/rove)** をインストールしてみましょう。
 
 ```
 $ ros install rove
@@ -259,9 +261,10 @@ Found 1 scripts: rove
 up to date. stop
 ```
 
-`ros install <GitHubアカウント名>/<リポジトリ名>`とすると、Quicklispからではなく、GitHubリポジトリからインストールできます。　
+### Githubリポジトリからのライブラリのインストール
+`ros install <GitHubアカウント名>/<リポジトリ名>`とすると、GitHubリポジトリからライブラリをインストールできます。　
 
-ここでは、先程インストールしたRoveをGitHubからインストールし直してみます。
+ここでは、先程インストールしたRoveをGitHubのリポジトリからインストールし直してみます。
 Quicklispの更新とテストは毎月一度手作業で行なわれています。そのため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。
 
 ```
@@ -278,10 +281,10 @@ Found 1 scripts: rove
 up to date. stop
 ```
 
-`ros install`でGitHubからライブラリをインストールすると、ローカル環境の `~/.roswell/local-projects` 以下にソースコードがダウンロードされインストールされます。
-デフォルトではこの`~/.roswell/local-projects`からライブラリが読み込まれます。
+`ros install` でGitHubからライブラリをインストールすると、ローカル環境の `~/.roswell/local-projects` 以下にソースコードがダウンロードされインストールされます。
+デフォルトではこの `~/.roswell/local-projects` から優先的にライブラリが読み込まれます。
 
-インストールしたライブラリをRoswellのREPLで読み込むには、`(ql:quickload :<ライブラリ名>)`とします。
+インストールしたライブラリをLisp処理系で読み込むには、REPLで `(ql:quickload :<ライブラリ名>)` を評価します。
 
 ```
 $ ros run
@@ -295,6 +298,15 @@ To load "rove":
 *
 ```
 
+ロードしたライブラリが実際にどのディレクトリから読み込まれているかを確認するには `(asdf:system-source-directory :rove)` を評価します。
+
+```
+* (asdf:system-source-directory :rove)
+#P"/home/user/.roswell/local-projects/fukamachi/rove/"
+```
+
+今、QuicklispとGithubリポジトリの双方からインストールされたRoveが存在していますが、実際にロードされているのはGithubのRoveであることが分かります。これは `~/.roswell/local-projects` がより優先的に読み込まれるためです。
+
 ### ライブラリの実行ファイルがインストールされるディレクトリ
 
 `ros install <ライブラリ名>`としてライブラリをインストールすると、ライブラリのソースディレクトリ直下にある`roswell`ディレクトリ内のRoswell Scriptが`~/.roswell/bin` 以下にコピーされます。
@@ -305,8 +317,7 @@ export PATH=$PATH:~/.roswell/bin
 ```
 
 例えばRoveの場合、ソースディレクトリ直下の`roswell`ディレクトリ内に`rove.ros`が入っています。
-`ros install fukamachi/rove`とすることで、`rove.ros`が`~/.roswell/bin/rove`にコピーされます。
-インストール後は`rove`コマンドが使えるようになります。
+`ros install fukamachi/rove`とすることで、`rove.ros`が`~/.roswell/bin/rove`にコピーされ、インストール後は`rove`コマンドが使えるようになります。
 
 ```
 $ rove
