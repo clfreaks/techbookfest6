@@ -1,8 +1,8 @@
 # 環境構築ツール「Roswell」
 
-本章は**[Roswell](https://github.com/roswell/roswell)**について解説します。
+本章ではCommon Lispの環境構築ツール **[Roswell](https://github.com/roswell/roswell)** について解説します。
 Roswellは複数のCommon Lisp処理系のインストール、管理、切り替えや、処理系によって異なるコマンドラインオプションの共通化などを行なう処理系マネージャです。
-Roswellの使い方はCommon Lisp処理系を使う上での導入になるため、他の章に入る前に説明します。
+Roswellの使い方はCommon Lispを使う上での導入になるため、他の章に入る前に説明します。
 
 ## Roswellのインストール
 
