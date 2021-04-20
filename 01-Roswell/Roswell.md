@@ -6,15 +6,12 @@ Roswellの使い方はCommon Lispを使う上での導入になるため、他�
 
 ## Roswellのインストール
 
+Roswellのインストールについての最新情報はRoswellのGithub Wikiにある [インストールガイド](https://github.com/roswell/roswell/wiki/Installation) を参照してください。
+以下では、本書執筆時点での主だったインストール方法について解説しています。
+
 ### Debian系Linuxでのインストール
 
-Debian系Linuxではapt経由でのインストールが可能です。以下のコマンドでRoswellをインストールすることができます。
-
-```
-$ sudo apt install roswell
-```
-
-また、[こちらのページ](https://github.com/roswell/roswell/releases)からdebファイルでも配布されています。ここでダウンロードしたファイルに対して以下のコマンドを実行することによってもインストールできます。
+[こちらのページ](https://github.com/roswell/roswell/releases)からdebファイルが配布されています。ここでダウンロードしたファイルに対して以下のコマンドを実行することによってインストールできます。
 
 ```
 $ sudo dpkg -i roswell_<バージョン>.deb
@@ -22,7 +19,7 @@ $ sudo dpkg -i roswell_<バージョン>.deb
 
 ### Homebrewを利用したインストール (Linux / macOS)
 
-LinuxとmacOSではHomebrewが導入済みの場合、以下のコマンドでRoswellをインストールすることができます。
+LinuxとmacOS環境では、Homebrewが導入済みの場合、以下のコマンドでRoswellをインストールすることができます。
 
 ```
 $ brew install roswell
@@ -30,14 +27,14 @@ $ brew install roswell
 
 ### ソースコードからのインストール (その他のLinux / FreeBSD / macOSなど)
 
-Homebrewが使えない環境では、Roswellをソースコードからコンパイルする方法もあります。
-ソースコードからのコンパイルには、以下の環境を備えたLinux/FreeBSD/macOSが必要です。
+Homebrewが使えない環境では、Roswellをソースコードから直接コンパイルする方法もあります。
+ソースコードからのコンパイルには、以下の環境を備えたLinux / FreeBSD / macOSが必要です。
 
 - Cのコンパイル環境
 - libcurlと、そのヘッダ
 - automake/autoconf
 
-Debianベースの環境の場合、インストール手順は次の通りです。
+Debianベースの環境の場合、ソースコードからのインストール手順は次の通りです。
 
 ```
 $ if which apt-get > /dev/null; then sudo apt-get -y install git build-essential \
@@ -59,14 +56,11 @@ WindowsではScoop(Windows用のアプリインストーラ、アプリ管理ツ
 $ scoop install roswell
 ```
 
-Windows環境でのインストール用にバイナリファイルが用意されています。
+また、Windows環境でのインストール用にバイナリファイルが用意されています。
 
 - [https://github.com/roswell/roswell/wiki/Installation#windows](https://github.com/roswell/roswell/wiki/Installation#windows)
 
-解凍したディレクトリ下で `ros shell` を実行すると、msysを含んだ環境が提供されます(このセットアップには長時間かかります)。
-本書の内容はWindowsに向けて書かれているわけではないので、本書の共としての推奨はしませんが、Windowsネイティブな開発がしたい場合には思い出してもらえると良いかと思います。
-
-Roswellのインストールについての詳細は [https://github.com/roswell/roswell/wiki/Installation](https://github.com/roswell/roswell/wiki/Installation) を参照してください。
+解凍したディレクトリ下で `ros shell` を実行すると、msysを含んだ環境がインストールされます(このセットアップには長時間かかります)。
 
 ### Roswellがインストールされていることを確認する
 
@@ -87,7 +81,7 @@ configdir='/home/user/.roswell/'
 
 ## Roswellを利用したCommon Lisp処理系のインストール
 
-ターミナル上で `ros install <処理系>` とすることで、処理系を指定してインストールできます。
+ターミナル上で `ros install <処理系名>` とすることで、処理系を指定してインストールすることができます。
 
 ここでは、**[SBCL(Steel Bank Common Lisp)](http://www.sbcl.org/)** をインストールします。
 ビルド済みバイナリとして配布されているSBCLをインストールするには `sbcl-bin` を、ソースコードからビルドするには `sbcl` を指定します。
@@ -128,10 +122,9 @@ $ ros use sbcl-bin/1.4.1
 
 ## REPLの起動
 
-`ros run`でCommon Lisp処理系を起動することができます。そうするとREPLが起動し、プロンプトが表示されて入力待ち状態になります。
-ここにLisp式を入力することで評価結果が印字されます。
+`ros run`でRoswellに設定されたCommon Lisp処理系を起動することができます。そうするとREPLが起動し、プロンプトが表示されて入力待ち状態になります。REPLは Read Eval Print Loop の略で、ここにLisp式を入力することで評価結果が印字される対話的インターフェースです。
 
-終了するには`(quit)`を入力します。
+Lisp処理系を終了するには`(quit)`を入力します。
 
 ```
 $ ros run
@@ -144,8 +137,8 @@ $
 
 ## Roswell Script
 
-**Roswell Script**を用いると、Common Lispでコマンドラインから利用できるスクリプトを書くことができます。
-各処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収することができます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることもできます。
+**Roswell Script** を用いると、コマンドラインから利用できるスクリプトをCommon Lispで書くことができます。
+各Lisp処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収できます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることもできます。
 
 ### 雛形からRoswell Scriptを作成する
 
@@ -193,7 +186,7 @@ $ ros fact.ros 10
 Factorial 10 = 3628800
 ```
 
-`ros init`で作られたスクリプトには実行可能フラグがついているので、単に `./fact.ros 10` でも実行できます。
+`ros init`で作られたスクリプトには実行可能フラグがついているので、単に `./fact.ros 10` とすることでも実行できます。
 
 ### Roswell Scriptの実行ファイルのビルド
 
@@ -224,15 +217,17 @@ user	0m0.008s
 sys	0m0.001s
 ```
 
+一方で実行ファイルはLispのランタイムを含んでいるため、サイズが大きくなるというデメリットがあります。
+
 ## Roswellによるライブラリのインストール
 
-Roswellには、処理系のインストールだけでなく、ライブラリをインストールする機能もあります。
-ライブラリのインストールには、**Quicklisp**のアーカイブからインストールする方法と、GitHubリポジトリからインストールする方法があります。
+Roswellには、Lisp処理系のインストールだけでなく、ライブラリをインストールする機能もあります。
+ライブラリのインストールには、 **Quicklisp** のアーカイブからインストールする方法と、GitHubリポジトリからインストールする方法があります。
 Quicklispは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたソフトウェアです。
 
 ライブラリのインストールには`ros install`コマンドを使用します。
 `ros install <ライブラリ名>`とすることで、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。
-ここでは、第4章で使用するテストフレームワークライブラリ**Rove**をインストールしてみましょう。
+ここでは、第4章で使用するテストフレームワークライブラリ **Rove** をインストールしてみましょう。
 
 ```
 $ ros install rove
