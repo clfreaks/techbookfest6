@@ -307,6 +307,8 @@ To load "rove":
 
 今、QuicklispとGithubリポジトリの双方からインストールされたRoveが存在していますが、実際にロードされているのはGithubのRoveであることが分かります。これは `~/.roswell/local-projects` がより優先的に読み込まれるためです。
 
+どのバージョンのライブラリが読み込まれるかをより厳密に管理したいときは、プロジェクト内で依存ライブラリのバージョンを固定できるツール **[Qlot](https://github.com/fukamachi/qlot)** を使います。Qlotについては5章で解説します。
+
 ### ライブラリの実行ファイルがインストールされるディレクトリ
 
 `ros install <ライブラリ名>`としてライブラリをインストールすると、ライブラリのソースディレクトリ直下にある`roswell`ディレクトリ内のRoswell Scriptが`~/.roswell/bin` 以下にコピーされます。
@@ -336,7 +338,7 @@ $ ros update rove
 ```
 
 ## まとめ
-この章では、Common Lispの環境構築ソフトウェアとしてのRoswellを紹介しました。
+この章では、Common Lispの環境構築ツールとしてのRoswellを紹介しました。
 
 - Roswell自体のインストール方法
 - RoswellによるCommon Lisp処理系のインストール方法とREPLの起動方法
