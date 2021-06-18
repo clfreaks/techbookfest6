@@ -41,7 +41,7 @@ clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisp集�
 
 [HyperSpec](http://www.lispworks.com/documentation/HyperSpec/Front/)はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
 
-Common Lispの仕様に困ったときは、Googleで`clhs restart-case`などと検索すると目的のページが出てくるので便利です。
+Common Lispの仕様に困ったときは、Googleで`clhs restart-case`のようにclhs(Common Lisp HyperSpec)と一緒に検索すると目的のページが出てくるので便利です。
 
 ### ライブラリの調べ方
 
