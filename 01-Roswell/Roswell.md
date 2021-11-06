@@ -227,7 +227,7 @@ $ ros build fact.ros --disable-compression
 
 ```
 
-この場合のファイルサイズは役43MBになっています。
+この場合のファイルサイズは約43MBになっています。
 
 ros buildのより詳細なオプションについては[こちら](https://github.com/roswell/roswell/wiki/Building-images-and-executables)を参照してください。
 
@@ -237,10 +237,12 @@ Roswellには、Lisp処理系のインストールだけでなく、ライブラ
 ライブラリのインストールには、 **Quicklisp** のアーカイブからインストールする方法と、GitHubリポジトリからインストールする方法があります。
 
 ### Quicklispからのライブラリのインストール
-Quicklispは、Common Lispで利用されるライブラリの集積と依存関係の解決を目的としたソフトウェアです。
+[Quicklisp](https://www.quicklisp.org/beta/)は、Common Lispで利用されるライブラリの集積と、ライブラリ間の依存関係の解決を目的としたソフトウェアです。
 
-ライブラリのインストールには`ros install`コマンドを使用します。
-`ros install <ライブラリ名>`とすることで、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。
+ライブラリのインストールには`ros install`コマンドを使用します。以下のコマンドを実行すると、Quicklispのアーカイブからライブラリがダウンロードされ、ローカル環境にインストールされます。
+```
+ros install <ライブラリ名>
+```
 ここでは、第4章で使用するテストフレームワークライブラリ **[Rove](https://github.com/fukamachi/rove)** をインストールしてみましょう。
 
 ```
@@ -262,7 +264,12 @@ up to date. stop
 ```
 
 ### Githubリポジトリからのライブラリのインストール
-`ros install <GitHubアカウント名>/<リポジトリ名>`とすると、GitHubリポジトリからライブラリをインストールできます。　
+Quicklispに登録されていないライブラリでも、Githubにリポジトリが登録されていれば以下のようにインストールすることができます。
+
+```
+ros install <GitHubアカウント名>/<リポジトリ名>
+```
+
 
 ここでは、先程インストールしたRoveをGitHubのリポジトリからインストールし直してみます。
 Quicklispの更新とテストは毎月一度手作業で行なわれています。そのため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。
@@ -327,6 +334,9 @@ Usage: rove [option...] test-file
 
 Options:
     -r, --reporter REPORTER-NAME    Reporter style (one of "spec", "dot", or "none")
+
+$ which rove
+/home/user/.roswell/bin/rove
 ```
 
 ### ライブラリの更新
