@@ -58,32 +58,67 @@ WindowsではScoop(Windows用のアプリインストーラ、アプリ管理ツ
 $ scoop install roswell
 ```
 
-また、Windows環境でのインストール用にバイナリファイルが用意されています。
+また、Windows環境でのインストール用にはバイナリファイルも用意されています。
 
 - [https://github.com/roswell/roswell/wiki/Installation#windows](https://github.com/roswell/roswell/wiki/Installation#windows)
 
-解凍したディレクトリ下で `ros shell` を実行すると、msysを含んだ環境がインストールされます(このセットアップには長時間かかります)。
+解凍したディレクトリ内で `ros shell` を実行すると、msysを含んだ環境がインストールされます(このセットアップには長時間かかります)。
 
 ### Roswellがインストールされていることを確認する
 
 適切にインストールが完了していれば、`ros`コマンドが実行可能になっているはずです。コマンドプロンプトで単に `ros` と入力するとヘルプが表示されます。
+
+```
+$ ros
+Common Lisp environment setup Utility.
+
+Usage:
+
+   ros [options] Command [arguments...]
+or
+   ros [options] [[--] script-path arguments...]
+
+commands:
+   run       Run repl
+   install   Install a given implementation or a system for roswell environment
+   update    Update installed systems.
+   build     Make executable from script.
+   use       Change default implementation.
+   init      Creates a new ros script, optionally based on a template.
+   fmt       Indent lisp source.
+   list      List Information
+   template  Manage templates
+   delete    Delete installed implementations
+   config    Get and set options
+   version   Show the roswell version information
+
+Use "ros help [command]" for more information about a command.
+
+Additional help topics:
+
+   options
+
+Use "ros help [topic]" for more information about the topic.
+```
+
 また、 `ros -V` とすることでバージョン情報を表示できます。
+
 
 ```
 $ ros -V
-roswell 20.06.14.107
-build with gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-libcurl=7.58.0
-Quicklisp=2020-01-04
-Dist=2020-07-15
+roswell 21.10.14.111(d99872a)
+build with gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+libcurl=7.68.0
+Quicklisp=2021-02-13
+Dist=2022-07-08
 lispdir='/home/user/etc/roswell/'
 homedir='/home/user/.roswell/'
-configdir='/home/user/.roswell/'
+sbcl-bin-variant=''
 ```
 
 ## Roswellを利用したCommon Lisp処理系のインストール
 
-コマンドプロンプトで `ros install <処理系名>` とすることで、処理系を指定してインストールすることができます。
+コマンドプロンプトで `ros install <処理系名>` とすることで、Common Lisp処理系を指定してインストールすることができます。
 
 ここでは、**[SBCL(Steel Bank Common Lisp)](http://www.sbcl.org/)** をインストールします。
 ビルド済みバイナリとして配布されているSBCLをインストールするには `sbcl-bin` を、ソースコードからビルドするには `sbcl` を指定します。
@@ -96,8 +131,8 @@ $ ros install sbcl-bin
 $ ros install sbcl
 ```
 
-また、特定のバージョンを指定してインストールすることもできます。
-バージョンを指定してインストールするには、 `ros install <処理系>/<バージョン>` のようにスラッシュの後にバージョンを指定します。バージョン省略時には最新のバージョンがインストールされます。
+また、処理系の特定のバージョンを指定してインストールすることもできます。
+バージョンを指定してインストールするには、 `ros install <処理系>/<バージョン>` のようにrosコマンドを実行します。なおバージョン省略時には最新のバージョンがインストールされます。
 
 ```
 # SBCL(1.4.1)のバイナリをインストールする
@@ -139,8 +174,8 @@ $
 
 ## Roswell Script
 
-**Roswell Script** を用いると、コマンドラインから利用できるスクリプトをCommon Lispで書くことができます。
-各Lisp処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収できます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることも可能です。
+**Roswell Script** を用いると、コマンドラインから実行可能なスクリプトをCommon Lispで書くことができます。
+各Common Lisp処理系にもスクリプティング用のモードがありますが、Roswell Scriptとして書いておくことでスクリプトへの引数の与え方などの処理系ごとの違いを吸収できます。また、Roswell Scriptをビルドしてスタンドアロンの実行ファイルを作ることも可能です。
 
 ### 雛形からRoswell Scriptを作成する
 
@@ -163,12 +198,12 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  ;;#+quicklisp(ql:quickload '() :silent t)
+  #+quicklisp(ql:quickload '() :silent t)
   )
 
-(defpackage :ros.script.hoge.3759651958
+(defpackage :ros.script.fact.3873079466
   (:use :cl))
-(in-package :ros.script.hoge.3759651958)
+(in-package :ros.script.fact.3873079466)
 
 (defun fact (n)
   (if (zerop n)
@@ -178,6 +213,8 @@ exec ros -Q -- $0 "$@"
 (defun main (n &rest argv)
   (declare (ignore argv))
   (format t "~&Factorial ~D = ~D~%" n (fact (parse-integer n))))
+
+;;; vim: set ft=lisp lisp:
 ```
 
 ### Roswell Scriptの実行
@@ -201,6 +238,7 @@ $ ros build fact.ros
 ```
 
 ビルド前後の実行時間を比較すると、ビルド後は大幅に高速化されていることが分かります。
+スクリプト内で依存ライブラリを指定している場合はロード、コンパイルの時間がなくなるため、この差はさらに顕著になります。
 
 ```
 # ビルド前
@@ -259,7 +297,7 @@ Downloading http://beta.quicklisp.org/archive/rove/2019-03-07/rove-20190307-git.
 (中略)
 [3/3] Attempting to install the scripts in roswell/ subdirectory of the system...
 Found 1 scripts: rove
-/home/snmsts/.roswell/bin/rove
+/home/user/.roswell/bin/rove
 up to date. stop
 ```
 
@@ -272,7 +310,7 @@ ros install <GitHubアカウント名>/<リポジトリ名>
 
 
 ここでは、先程インストールしたRoveをGitHubのリポジトリからインストールし直してみます。
-Quicklispの更新とテストは毎月一度手作業で行なわれています。そのため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。
+Quicklispの更新は毎月一度手作業で行なわれているため、同じライブラリを指定した場合でもGitHubの方がより最新版になります。
 
 ```
 $ ros install fukamachi/rove
@@ -284,7 +322,7 @@ To load "rove":
 [package rove/core/result]........................
 (中略)
 Found 1 scripts: rove
-/home/snmsts/.roswell/bin/rove
+/home/user/.roswell/bin/rove
 up to date. stop
 ```
 
@@ -346,6 +384,8 @@ $ which rove
 ```
 $ ros update rove
 ```
+
+これはライブラリのソースディレクトリ内で`git pull`することと同義です。
 
 ## まとめ
 この章では、Common Lispの環境構築ツールとしてのRoswellを紹介しました。
