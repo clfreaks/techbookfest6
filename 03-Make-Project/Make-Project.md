@@ -36,7 +36,7 @@ $ yubin 6380321
 まず、cl-project付属の `make-project` コマンドを用いてプロジェクトの雛形を生成します。
 ここでは、プロジェクト名を `yubin` とし、依存ライブラリとしてHTTPクライアントの `Dexador`、JSONライブラリの `Jonathan` を指定してプロジェクトを生成します。
 
-この際、生成したプロジェクトがRoswellからLisp処理系から読み込めるように、`~/.roswell/local-projects` に移動してからmake-projectを実行します。
+この際、生成したプロジェクトがRoswellのLisp処理系から読み込めるように、`~/.roswell/local-projects` に移動してからmake-projectを実行します。
 あるいは、make-projectの結果できたディレクトリへのシンボリックリンクを`~/.roswell/local-projects`に置きます。
 
 ```
@@ -54,7 +54,7 @@ yubin
 └── yubin.asd
 ```
 
-上記のようにmake-projectコマンドを実行すると、システム定義ファイル( `yubin.asd` )、メインファイル( `src/main.lisp` )、テストファイル( `tests/main.lisp` )、READMEファイル( `README.markdown`、 `README.org` )が生成されます。
+上記のようにmake-projectコマンドを実行すると、システム定義ファイル( `yubin.asd` )、メインファイル( `src/main.lisp` )、テストファイル( `tests/main.lisp` )、READMEファイル( `README.markdown`、 `README.org` )が生成されます。READMEファイルはMarkdown形式とOrg形式の両方が生成されますが、通常はどちらか一方を使用します。
 
 では、生成されたファイルを編集しながら、簡単なアプリケーションを作成していきましょう。
 
@@ -121,9 +121,11 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
 
 ②では、`get-place` 関数を定義しています。`get-place` 関数は、引数 `zipcode` からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
 
+なお、`quri`はURLを扱うためのライブラリで、`dexador`の依存ライブラリとして自動的にロードされるため、`depends-on`に明示的に指定する必要はありません。
+
 ### Roswell Script
 
-1.5節で解説したように、プロジェクト直下の `roswell` ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、`yubin` コマンドが使えるようになります。Roswell Scriptは、`ros init` コマンドで生成される雛形を元に作成します。
+第1章で解説したように、プロジェクト直下の `roswell` ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、`yubin` コマンドが使えるようになります。Roswell Scriptは、`ros init` コマンドで生成される雛形を元に作成します。
 
 ```bash
 $ mkdir roswell && cd roswell
@@ -166,7 +168,7 @@ exec ros -Q -- $0 "$@"
 ```bash
 $ git push -u origin master
 $ ros install clfreaks/yubin
-$ yubin 6390321
+$ yubin 6380321
 奈良県吉野郡天川村坪内
 ```
 
@@ -179,4 +181,4 @@ package-inferred-systemを用いた実例としては、第8章をご参照く�
 
 ## まとめ
 
-本章では、cl-projectで生成された雛形を元にプロジェクトを作成し、Roswellからインストールできるようになるまでの方法を紹介しました。Roswellとcl-projectを合わせて使うことで、プロジェクトの作成から公開がこんなに早くできるのかと思っていただれば幸いです。
+本章では、cl-projectで生成された雛形を元にプロジェクトを作成し、Roswellからインストールできるようになるまでの方法を紹介しました。Roswellとcl-projectを合わせて使うことで、プロジェクトの作成から公開がこんなに早くできるのかと思っていただければ幸いです。
