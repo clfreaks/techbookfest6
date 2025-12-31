@@ -58,18 +58,14 @@ yubin
 
 では、生成されたファイルを編集しながら、簡単なアプリケーションを作成していきましょう。
 
-=== システム定義ファイル(yubin.asd)
+### システム定義ファイル(yubin.asd)
 
-Common Lispでは、@<b>{ASDF}(Another System Definition Facility)と呼ばれるソフトウェアを用いてプロジェクトを定義し、依存関係の解決を行います。
+Common Lispでは、**ASDF**(Another System Definition Facility)と呼ばれるソフトウェアを用いてプロジェクトを定義し、依存関係の解決を行います。
 ASDFではシステム定義ファイルを記述することにより、プロジェクトの読み込みやテストの実行などを行うことができます。
 
-では、@<tt>{make-project}コマンドで生成されたシステム定義ファイル@<tt>{yubin.asd}の内容を見てみましょう。
+では、`make-project` コマンドで生成されたシステム定義ファイル `yubin.asd` の内容を見てみましょう。
 
-//embed[latex]{
-\vspace{-0.5\Cvs}
-//}
-
-//emlist{
+```common-lisp
 (defsystem "yubin"
   :version "0.1.0"
   :author ""
@@ -81,19 +77,20 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
                 ((:file "main"))))
   ;; 以下は省略
 )
-//}
-ここで、@<tt>{:depends-on}と@<tt>{:components}に注目してください。
+```
 
-@<tt>{:depends-on}には、@<tt>{make-project}で指定した依存ライブラリが入っています。
-@<tt>{yubin}をロードすると、ここで指定されているライブラリが自動的にQuicklispのアーカイブからダウンロードされ、ロードされます。
-@<tt>{:components}には、依存ライブラリのロード後に読み込むファイルを指定します。
-ここでは@<tt>{(:file "main")}と指定されていますが、これは@<tt>{src}フォルダ内の@<tt>{main.lisp}を指しています。
+ここで、`:depends-on` と `:components` に注目してください。
 
-=== メインファイル(main.lisp)
+`:depends-on` には、`make-project` で指定した依存ライブラリが入っています。
+`yubin` をロードすると、ここで指定されているライブラリが自動的にQuicklispのアーカイブからダウンロードされ、ロードされます。
+`:components` には、依存ライブラリのロード後に読み込むファイルを指定します。
+ここでは `(:file "main")` と指定されていますが、これは `src` フォルダ内の `main.lisp` を指しています。
 
-では、@<tt>{main.lisp}を次のように編集しましょう。
-  
-//emlist{
+### メインファイル(main.lisp)
+
+では、`main.lisp` を次のように編集しましょう。
+
+```common-lisp
 (defpackage #:yubin ; ①
   (:use #:cl)
   (:import-from #:jonathan #:parse)
@@ -114,33 +111,28 @@ ASDFではシステム定義ファイルを記述することにより、プロ�
                        (getf response :|message|)
                        zipcode
                        (getf response :|status|))))))
+```
 
-//}
+①では、`yubin` パッケージを定義しています。
+外部パッケージから特定のシンボルをインポートするときには、`(:import-from #:<パッケージ名> #:<シンボル名>)` の形式でシンボル名を指定します。こうすることで、呼び出し時にパッケージ名をシンボルの前に付ける必要がなくなります。
+例えば、`yubin` のパッケージ定義の中で `(:import-from #:jonathan #:parse)` と指定しておくことで、`jonathan:parse` ではなく、単に `parse` として呼び出すことができます。
 
-①では、@<tt>{yubin}パッケージを定義しています。
-外部パッケージから特定のシンボルをインポートするときには、@<tt>{(:import-from #:<パッケージ名> #:<シンボル名>)}の形式でシンボル名を指定します。こうすることで、呼び出し時にパッケージ名をシンボルの前に付ける必要がなくなります。
-例えば、@<tt>{yubin}のパッケージ定義の中で@<tt>{(:import-from #:jonathan #:parse)}と指定しておくことで、@<tt>{jonathan:parse}ではなく、単に@<tt>{parse}として呼び出すことができます。
+また、`:export` の後に外部へ公開するシンボルを指定します。後で定義する `get-place` 関数が外部から利用できるように、`#:get-place` を指定しておきます。
 
-また、@<tt>{:export}の後に外部へ公開するシンボルを指定します。後で定義する@<tt>{get-place}関数が外部から利用できるように、@<tt>{#:get-place}を指定しておきます。
+②では、`get-place` 関数を定義しています。`get-place` 関数は、引数 `zipcode` からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
 
-②では、@<tt>{get-place}関数を定義しています。@<tt>{get-place}関数は、引数 @<tt>{zipcode} からURLを作り、zipcloudのWeb APIに対してHTTPリクエストし、レスポンスのJSONをパースし、結果の住所を文字列として返します。もし結果が返ってこなかった場合にはエラーを発生させます。
+### Roswell Script
 
-//embed[latex]{
-\clearpage
-//}
+1.5節で解説したように、プロジェクト直下の `roswell` ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、`yubin` コマンドが使えるようになります。Roswell Scriptは、`ros init` コマンドで生成される雛形を元に作成します。
 
-=== Roswell Script
-
-1.5節で解説したように、プロジェクト直下の@<tt>{roswell}ディレクトリ内にRoswell Scriptを作っておくことで、このパッケージをRoswellからインストールしたときに、@<tt>{yubin}コマンドが使えるようになります。Roswell Scriptは、@<tt>{ros init}コマンドで生成される雛形を元に作成します。
-
-//cmd{
+```bash
 $ mkdir roswell && cd roswell
 $ ros init yubin.ros
-//}
+```
 
 生成されたファイルを次のように編集します。
 
-//emlist{
+```common-lisp
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
@@ -161,34 +153,30 @@ exec ros -Q -- $0 "$@"
     (error (e)
       (format *standard-output* "~&Error: ~A~%" e)
       (uiop:quit -1))))
-//}
+```
 
-③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して @<tt>{ql:quickload} に @<tt>{:yubin} を指定します。
+③の行は、デフォルトでコメントアウトされていますが、コメントアウトを解除して `ql:quickload` に `:yubin` を指定します。
 
-④では、@<tt>{main} 関数を定義しています。@<tt>{yubin}コマンドが呼ばれるとき、この @<tt>{main} 関数が実行されます。
+④では、`main` 関数を定義しています。`yubin` コマンドが呼ばれるとき、この `main` 関数が実行されます。
 
-//embed[latex]{
-\clearpage
-//}
-
-== プロジェクトの共有
+## プロジェクトの共有
 
 プロジェクトが完成したら、GitHubのリポジトリに登録しておきます。こうすることで、以降はRoswell経由でインストールできるようになり、プロジェクトを他者と共有することができます。
 
-//cmd{
+```bash
 $ git push -u origin master
 $ ros install clfreaks/yubin
 $ yubin 6390321
 奈良県吉野郡天川村坪内
-//}
+```
 
-== package-inferred-system
+## package-inferred-system
 
-@<b>{package-inferred-system}は、ASDFのオプション機能として提供されているパッケージ管理方法です。package-inferred-systemでは、プロジェクト以下の全ての@<tt>{.lisp}ファイルでパッケージが定義されます。
-パッケージ名をファイルのパスと合致するように作成し、@<tt>{defpackage}内の@<tt>{import-from}に依存するパッケージを記述することで、パッケージ間の依存関係が自動的に推測(inferred)されて解決されます。
+**package-inferred-system** は、ASDFのオプション機能として提供されているパッケージ管理方法です。package-inferred-systemでは、プロジェクト以下の全ての `.lisp` ファイルでパッケージが定義されます。
+パッケージ名をファイルのパスと合致するように作成し、`defpackage` 内の `import-from` に依存するパッケージを記述することで、パッケージ間の依存関係が自動的に推測(inferred)されて解決されます。
 
 package-inferred-systemを用いた実例としては、第8章をご参照ください。
 
-== まとめ
+## まとめ
 
 本章では、cl-projectで生成された雛形を元にプロジェクトを作成し、Roswellからインストールできるようになるまでの方法を紹介しました。Roswellとcl-projectを合わせて使うことで、プロジェクトの作成から公開がこんなに早くできるのかと思っていただれば幸いです。

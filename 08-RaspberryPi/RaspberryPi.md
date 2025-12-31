@@ -1,0 +1,253 @@
+# Raspberry Pi電子工作
+
+`Raspberry Pi` で電子工作と言えば、`Python` を使って紹介している記事や本が多いですが、`Common Lisp` でも同じようにできます。
+いくつかの基本的な電子工作の例を挙げ、最後に実践として温度計付きデジタル時計の作り方について説明したいと思います。
+
+## 今回使用したRaspberry PiとOS
+
+ハードは `Raspberry Pi 3`、OSは `Raspbian Stretch` を使用します。
+`Raspbian Stretch` はミラーサイト[^raspbian-mirror-site]を使うと公式サイトよりも早くダウンロード出来ます。
+執筆時での最新版は `raspbian-2018-11-15` です。
+
+## Common Lisp環境構築
+
+### Roswellインストール
+
+Roswellは基本的に `homebrew (Linuxではlinuxbrew)` でインストールしますが、`homebrew` がRaspberry PiのCPUであるARM32をサポートしていないため、ソースコードをビルドしてインストールします。(Roswellのwiki[^roswell-wiki]を参照)
+
+### Common Lispインストール
+
+ARM32の `SBCL` がスレッド対応していないため、今回は `CCL` を使用します。
+
+```text
+$ ros install ccl-bin
+```
+
+## GPIO制御ライブラリについて
+
+### WiringPi
+
+GPIO制御ライブラリとして `Wiring Pi`[^wiring-pi-official-site]を使用しています。
+これは、`Raspbian Stretch` には最初からインストールされているので別途インストールする必要はありません。
+
+### CFFI
+
+Common LispからはCFFI[^cffi-official-site][^cffi-user-manual]でラッパーを作成して呼び出しています。
+CFFIとは、Common LispからC言語で作成された関数を呼び出すためのインターフェースです。
+今回、ラッパーは自分が用意したのでそれをインストールして下さい。[^cl-raspi-github]
+
+```text
+$ ros install fireflower0/cl-raspi
+```
+
+`Quicklisp` でロードして使用して下さい。
+
+```lisp
+(ql:quickload :cl-raspi)
+```
+
+## 基本的な電子工作
+
+ここでは基本的な電子工作の例としてLEDを点滅させるLチカと、I2C温度センサーの使い方について簡単に説明します。
+
+### LED
+
+最初は電子工作の基本、Lチカです。
+電子部品は次のものを使用しました。
+
+- 赤色LED 1個
+- 330Ω抵抗(橙橙茶金) 1個
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+![LEDと抵抗の配線図](../images/09-circuit-diagram-blink.jpg)
+
+プログラムは、`cl-raspi/examples` ディレクトリ下に `blink.lisp` という名前で作成してあります。
+
+```lisp
+(defpackage :cl-raspi/examples/blink
+  (:use :cl
+        :cl-raspi/lib-wiring-pi) ; ラッパーをインポート
+  (:export :main))               ; main関数をエクスポート
+(in-package :cl-raspi/examples/blink)
+
+(defconstant +pin+ 11)           ; GPIOピン番号(今回はGPIO11)を定数定義
+
+(defun main ()
+  (wiringpi-setup-gpio)          ; 1. GPIOを初期化
+  (pin-mode +pin+ +output+)      ; 2. GPIO11を出力モードに設定
+  (loop
+     (digital-write +pin+ 1)     ; 3. GPIO11の電圧のHigh(1)に設定
+     (delay 500)                 ; 4. 500ms待機
+     (digital-write +pin+ 0)     ; 3. GPIO11の電圧のLow(0)に設定
+     (delay 500)))               ; 4. 500ms待機
+```
+
+`cl-raspi/examples/blink` の `main` 関数を実行して下さい。
+
+```lisp
+(cl-raspi/examples/blink:main)
+```
+
+### I2C 温度センサー
+
+次は温度センサーの制御です。
+電子部品は次のものを使用しました。
+
+- ADT7410を使用した温度センサーモジュール[^i2c-temperature-sensor]
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+![温度センサーの配線図](../images/09-circuit-diagram-adt7410.jpg)
+
+`ADT7410` は `I2C` と呼ばれる通信規格を採用しているので、データを送受信する `SDA`、通信の同期を取る `SCL`、電源 `VDD`、`GND` の4本ケーブルを繋ぐだけで動作します。
+
+プログラムは、`cl-raspi/examples` ディレクトリ下に `i2c-temperature-sensor.lisp` という名前で作成してあります。
+
+```lisp
+(defpackage :cl-raspi/examples/i2c-temperature-sensor
+  (:use :cl
+        :cl-raspi/lib-wiring-pi) ; ラッパーをインポート
+  (:export :main))               ; main関数をエクスポート
+(in-package :cl-raspi/examples/i2c-temperature-sensor)
+
+(defconstant +i2c-addr+ #X48)    ; I2C温度センサーのアドレスを定数定義
+
+;; バイトスワップ処理
+(defun byte-swap (num-value)
+  (let* ((str-value  (write-to-string num-value :base 16)) ; 数値を16進数の文字列に変換
+         (temp-msb   (subseq str-value 0 2))               ; 上位ビットを取得
+         (temp-lsb   (subseq str-value 2)))                ; 下位ビットを取得
+    (parse-integer (concatenate 'string temp-lsb temp-msb) ; 上位/下位を入れ替え数値に変換
+                   :radix 16)))
+
+;; 取得したデータを温度データに変換する処理
+(defun get-data (fd)
+  (* (byte-swap (wiringpi-i2c-read-reg16 fd #X00)) 0.0078))
+
+(defun main ()
+  (let ((fd (wiringpi-i2c-setup +i2c-addr+))) ; I2Cシステムを初期化
+    ;; レジスタ 0x03 に 0x80 を書き込むことで16ビットの高精度で温度を取得できる
+    (wiringpi-i2c-write-reg8 fd #X03 #X80)
+    ;; 温度データ取得しコンソールに出力
+    (format t "~d~%" (get-data fd))))
+```
+
+`i2c-temperature-sensor` の `main` 関数を実行して下さい。
+
+```lisp
+(cl-raspi/examples/i2c-temperature-sensor:main)
+```
+
+#### コラム: I2CとSPI
+
+##### I2C (Inter-Integrated Circuit)
+
+少ない信号線で複数の機器と通信できる規格です。
+以下の図のようにデータを送受信する `SDA(Serial data)` と通信の同期を取る `SCL(Serial clock)` を枝分かれさせて、複数のI2Cデバイスを接続できます。
+
+![I2C通信](../images/09-i2c.png)
+
+各I2CデバイスにはI2Cアドレスが割り当てられていて、通信元(ここではRaspberry Pi)がI2Cアドレスを指定することで、対象の機器と通信を行います。
+I2Cアドレスは、I2Cデバイスのデータシートや説明書などに記載されています。
+Raspberry Piでは以下のコマンドを実行することで接続されているI2CデバイスのI2Cアドレスを確認することもできます。
+
+```text
+$ i2cdetect -y 1
+```
+
+##### SPI (Serial Peripheral Interface)
+
+I2Cと同様に複数のSPIデバイスを接続でき、I2Cよりも高速で通信ができる規格です。
+主に更新頻度の高いセンサーからの読み取りや、SDカードといった大容量データのやり取りで使われます。
+以下の図のようにデータを送受信する `MISO(Master Input Slave Output)` と `MOSI(Master Output Slave Input)`、通信の同期を取る `SCLK(Serial Clock)` を枝分かれさせて、複数のSPIデバイスを接続できます。
+`CE(Chip enable)` は各SPIデバイスの `CS(Chip Select)` と接続します。
+
+![SPI通信](../images/09-spi.png)
+
+通信するSPIデバイスを選択するときには、対象のSPIデバイスに接続された `CE` を `Low(0V)`、対象外のSPIデバイスに接続された `CE` を `High(3.3V)` にすることで通信対象を選択します。
+Raspberry PiではCEが2つしかないため、同時に2つまでしかSPIデバイスを接続できません。
+
+## 実践：温度計付きデジタル時計
+
+実践として温度計付きデジタル時計を作ってみましょう。
+電子部品は次のものを使用しました。
+
+- 16桁×2行英数カナ表示液晶モジュール【MI2CLCD-01】[^mi2clcd-01]
+  搭載液晶：BO1602DGRNJB
+  値段：1000円
+- ADT7410を使用した温度センサーモジュール
+  値段：500円
+
+上記電子部品を以下のようにブレッドボードに配置します。
+
+![温度計付きデジタル時計の配線図](../images/09-circuit-diagram-simple-temperature.png)
+
+LCDの一行目に日時、二行目に温度が表示されるようにプログラムを作成します。
+LCDの制御を入れるとコードが長くなるので `cl-raspi/bo1602dgrnjb` としてまとめました。
+使い方は `bo1602dgrnjb-init` で初期化して、`bo1602dgrnjb-text` で何行目に文字列を表示するか指定します。
+
+プログラムは、`cl-raspi/examples` ディレクトリ下に `simple-temperature.lisp` という名前で作成してあります。
+
+```lisp
+(defpackage :cl-raspi/examples/simple-temperature
+  (:use :cl
+        :cl-raspi/lib-wiring-pi
+        :cl-raspi/bo1602dgrnjb)
+  (:export :main))
+(in-package :cl-raspi/examples/simple-temperature)
+
+;; I2C device address (0x48)
+(defconstant +i2c-addr-adt7410+ #X48)
+
+(defun byte-swap (num-value)
+  (let* ((str-value  (write-to-string num-value :base 16))
+         (temp-msb   (subseq str-value 0 2))
+         (temp-lsb   (subseq str-value 2)))
+    (parse-integer (concatenate 'string temp-lsb temp-msb)
+                   :radix 16)))
+
+(defun get-data (fd)
+  (* (byte-swap (wiringpi-i2c-read-reg16 fd #X00)) 0.0078))
+
+(defun get-date ()
+  (multiple-value-bind (second minute hour date month)
+      (decode-universal-time (get-universal-time))
+    (format nil "~A/~A ~A:~A:~A" month date hour minute second)))
+
+(defun main ()
+  (let ((adt7410-fd (wiringpi-i2c-setup +i2c-addr-adt7410+)))
+    (bo1602dgrnjb-init)   ; LCDの初期化
+    (wiringpi-i2c-write-reg8 adt7410-fd #X03 #X80)
+    (loop
+      ;; 1行目に日時を表示
+      (bo1602dgrnjb-text 1 (get-date))
+      ;; 2行目に温度を表示
+      (bo1602dgrnjb-text 2 (format nil "temp:~,2f" (get-data adt7410-fd)))
+      (delay 1000))))
+```
+
+`simple-temperature` の `main` 関数を実行して下さい。
+
+```lisp
+(cl-raspi/examples/simple-temperature:main)
+```
+
+実行すると以下のようになります。
+
+![実行中の様子](../images/09-simple-temperature-pic.png)
+
+## 終わりに
+
+ここまで読んでくださってありがとうございます。
+Raspberry Pi での電子工作では Python が主流となっているようですが、Common Lisp でもできるよという話でした。
+これを読んでCommon LispでもRaspberry Pi電子工作をエンジョイして頂ければ幸いです。
+
+[^raspbian-mirror-site]: http://ftp.jaist.ac.jp/pub/raspberrypi/raspbian/images/
+[^roswell-wiki]: https://github.com/roswell/roswell/wiki/Installation#building-from-source
+[^wiring-pi-official-site]: http://wiringpi.com/
+[^cffi-official-site]: https://common-lisp.net/project/cffi/
+[^cffi-user-manual]: https://common-lisp.net/project/cffi/manual/index.html
+[^cl-raspi-github]: https://github.com/fireflower0/cl-raspi
+[^i2c-temperature-sensor]: http://akizukidenshi.com/catalog/g/gM-06675/
+[^mi2clcd-01]: https://www.marutsu.co.jp/pc/i/137795/
