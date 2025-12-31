@@ -24,7 +24,7 @@ Common Lispの言語解説書は質、量ともにそれなりに出揃ってい
 
 ## clfreaksとは
 
-clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisp集団です。不定期でハッカソンや[Podcast](http://clfreaks.org)の配信を行っています。
+clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisp集団です。不定期でハッカソンや[Podcast](https://clfreaks.org)の配信を行っています。
 
 ## 参照してほしい情報源
 
@@ -33,16 +33,16 @@ clfreaksは深町英太郎と佐野匡俊を中心に集まったCommon Lisp集�
 前述した通り、本書ではCommon Lispの言語機能自体の解説は目的ではないので、おすすめの解説書をいくつか挙げておきます。本書と併わせて参照してください。
 
 - **実践Common Lisp**: 本格的な言語解説書です。実例も多く、最初の一冊に適しています。
-  - 英文の原書は次のURLで無料公開されています([http://www.gigamonkeys.com/book/](http://www.gigamonkeys.com/book/))。
+  - 英文の原書は次のURLで無料公開されています([http://www.gigamonkeys.com/book/](https://www.gigamonkeys.com/book/))。
 - **実用Common Lisp**: 通称PAIP。古典的なAI開発を通じてCommon Lispを学ぶことができます。
   - 英文の原書は次のURLで無料公開されています([https://github.com/norvig/paip-lisp](https://github.com/norvig/paip-lisp))。
 - **Land of Lisp**: テキストベースのゲーム開発などを通じてCommon Lispを学ぶことができます。
 - **On Lisp**: Common Lispのマクロを中心に解説した本です。事例も豊富です。
-  - 英文の原書は次のURLで無料公開されています([http://www.paulgraham.com/onlisptext.html](http://www.paulgraham.com/onlisptext.html))。
+  - 英文の原書は次のURLで無料公開されています([http://www.paulgraham.com/onlisptext.html](https://www.paulgraham.com/onlisptext.html))。
 
 ### HyperSpec
 
-[HyperSpec](http://www.lispworks.com/documentation/HyperSpec/Front/)はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
+[HyperSpec](https://www.lispworks.com/documentation/HyperSpec/Front/)はLispWorksが提供しているANSI Common Lispの仕様書です。ページデザインの古臭さは否めませんが、無料でWeb上で読めるリソースとしては非常に有用です。テキストブラウザでも読めるためエディタ上から参照することもできます。
 
 Common Lispの仕様に困ったときは、Googleで`clhs restart-case`のようにclhs(Common Lisp HyperSpec)と一緒に検索すると目的のページが出てくるので便利です。
 
@@ -50,6 +50,6 @@ Common Lispの仕様に困ったときは、Googleで`clhs restart-case`のよ�
 
 Common Lispのライブラリの情報を目的別に調査するためのWebサイトとして、QuickdocsとCLikiがあります。
 
-- [Quickdocs](http://quickdocs.org)は、Common Lisp製ライブラリのドキュメントサイトで、目的別にライブラリが整理されています。
+- [Quickdocs](https://quickdocs.org)は、Common Lisp製ライブラリのドキュメントサイトで、目的別にライブラリが整理されています。
 - [CLiki](https://www.cliki.net)は、Common Lisp Foundationが運営しているCommon LispのWikiです。
 Current recommended libraries (推薦ライブラリ) のページでは、推薦ライブラリが目的別で確認できます。
