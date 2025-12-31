@@ -11,6 +11,10 @@ Common Lispでライブラリやアプリケーションを開発し、配布す
 
 ```
 $ ros install fukamachi/cl-project
+
+$ make-project
+Usage:
+    make-project /home/user/common-lisp/sample --name sample --description "sample project." --author "Your name" --license LLGPL --depends-on alexandria split-sequence
 ```
 
 上記コマンドでcl-projectインストールすると、プロジェクトの雛形を生成するコマンド `make-project` が使えるようになります。

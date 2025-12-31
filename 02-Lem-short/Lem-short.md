@@ -12,17 +12,29 @@ Lemの用語や拡張機能の実装方法などのより詳細な解説につ�
 
 ## Lemのインストール
 
+ここではLinuxかmacOSを想定したインストール方法を紹介します。
+
+まず事前準備として、Lemのインストールには `ncurses` というライブラリが必要になるので、以下のようにインストールしておきます。
+
+```
+# Linux(Debian/Ubuntu)の場合
+$ sudo apt install libncurses-dev
+
+# macOSまたはLinuxでHomebrewが導入されている場合
+$ brew install ncurses
+```
+
 Lemの最新版は以下のようにRoswellからインストールできます。Roswellの詳細については1章を参照してください。
 
 ```
 $ ros install lem-project/lem
 ```
 
-Lemは256色表示をサポートしたターミナルエミュレータ上で実行することを想定しています。
+Lemは256色表示をサポートしたターミナルエミュレータ上で実行されることが想定されています。
 Linuxのターミナルの場合はデフォルトでは8色表示になっている事が多いので、 `~/.bashrc`などで以下のように`TERM`環境変数を明に設定しておくとよいでしょう。
 
 ```
-$ export TERM=xterm-256color
+export TERM=xterm-256color
 ```
 
 ## 起動と終了
@@ -39,16 +51,6 @@ $ lem <ファイル名>
 ```
 
 初回起動時はLemのビルドを行うので多少時間がかかりますが、次回以降はコンパイル済みのLispイメージをロードするだけなので瞬時に起動するようになります。
-
-Lemのビルドのためには `ncurses` というライブラリが必要です。もしライブラリが見つからずにLemのビルドが失敗する場合は以下のようにインストールしてください。
-
-```
-# Debian/Ubuntuの場合
-sudo apt install libncurses-dev
-
-# macOSの場合
-brew install ncurses
-```
 
 Lemを終了するにはキーボードから`C-x C-c`というコマンドを入力します。コマンドの表記と入力方法については後述します。
 
