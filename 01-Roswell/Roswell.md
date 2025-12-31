@@ -120,7 +120,7 @@ sbcl-bin-variant=''
 
 コマンドプロンプトで `ros install <処理系名>` とすることで、Common Lisp処理系を指定してインストールすることができます。
 
-ここでは、**[SBCL(Steel Bank Common Lisp)](http://www.sbcl.org/)** をインストールします。
+ここでは、**[SBCL(Steel Bank Common Lisp)](https://www.sbcl.org/)** をインストールします。
 ビルド済みバイナリとして配布されているSBCLをインストールするには `sbcl-bin` を、ソースコードからビルドするには `sbcl` を指定します。
 
 ```
@@ -386,6 +386,20 @@ $ ros update rove
 ```
 
 これはライブラリのソースディレクトリ内で`git pull`することと同義です。
+
+## Roswellのヘルプ機能
+
+各コマンドの詳細なオプションや使い方を知りたい場合は、`ros help <コマンド名>`で確認できます。
+
+```
+$ ros help install
+(installコマンドの詳細なヘルプが表示される)
+
+$ ros help build
+(buildコマンドの詳細なヘルプが表示される)
+```
+
+本章で紹介した以外にも多くのオプションやサブコマンドがあるため、必要に応じてヘルプを参照してください。
 
 ## まとめ
 この章では、Common Lispの環境構築ツールとしてのRoswellを紹介しました。
